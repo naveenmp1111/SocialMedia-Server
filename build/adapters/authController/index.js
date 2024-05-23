@@ -22,7 +22,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         try {
             const { username } = req.params;
             const isAvailable = await dbUserRepository.getUserByUsername(username);
-            // console.log('isavailable',isAvailable)
+            console.log('isavailable', isAvailable);
             if (!isAvailable) {
                 res.json({
                     available: true,
