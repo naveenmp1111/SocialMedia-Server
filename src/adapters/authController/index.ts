@@ -1,25 +1,37 @@
-import { Request, Response } from 'express';
+import { Request, Response, response } from 'express';
 import asyncHandler from 'express-async-handler'
 import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
+import { MailSenderServie } from '../../frameworks/services/mailSenderService';
+import { MailSenderServiceInterface } from '../../application/services/mailSenderService';
+import { OtpDbInterface } from '../../application/repositories/otpDbRepository';
+import { OtpRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/otpRepositoryMongoDb';
 
 //use-case import 
-import { userLogin, userRegister } from '../../application/user-cases/auth/userAuth';
+import { userLogin, userRegister, handleSendOtp, handleOtpVerification } from '../../application/user-cases/auth/userAuth';
 
 //importing types
 import { UserInterface } from '../../types/userInterface';
+import { HttpStatus } from '../../types/httpStatus';
+import AppError from '../../utils/appError';
 
 
 const authController = (
     authServiceImpl: AuthService,
     authServieInterface: AuthServiceInterface,
     userDbRepositoryImpl: UserRepositoryMongoDb,
-    userDbRepositoryInterface: UserDbInterface
+    userDbRepositoryInterface: UserDbInterface,
+    otpDbRepositoryImpl: OtpRepositoryMongoDb,
+    otpDbRepositoryInterface: OtpDbInterface,
+    mailSenderServiceImpl: MailSenderServie,
+    mailSenderServiceInterface: MailSenderServiceInterface
 ) => {
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl())
     const authService = authServieInterface(authServiceImpl())
+    const dbOtpRepository = otpDbRepositoryInterface(otpDbRepositoryImpl())
+    const mailSenderService = mailSenderServiceInterface(mailSenderServiceImpl())
 
     const registerUser = asyncHandler(async (req: Request, res: Response) => {
         // console.log('data from body',req.body)
@@ -35,7 +47,7 @@ const authController = (
         try {
             const { username } = req.params
             const isAvailable = await dbUserRepository.getUserByUsername(username)
-            console.log('isavailable',isAvailable)
+            // console.log('isavailable',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -75,7 +87,7 @@ const authController = (
     })
 
     const loginUser = asyncHandler(async (req: Request, res: Response) => {
-        try {
+
             const { email, password }: { email: string; password: string } = req.body
             const userDetails = await userLogin(
                 email,
@@ -89,17 +101,32 @@ const authController = (
                 user: userDetails
             })
 
-        } catch (error) {
-            if (error instanceof Error) {
-                res.json({
-                    status: 'failed',
-                    message: error.message,
-                    user: null
+    })
+
+    const sendOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
+
+            // console.log('body data', req.body)
+            const { email }: { email: string } = req.body
+            // console.log('email is', email)
+            const response = await handleSendOtp(email, dbOtpRepository, mailSenderService)
+            if (response) {
+                res.status(HttpStatus.OK).json({
+                    status: "success",
+                    message: "Otp send to your mail",
                 })
             }
-            console.error('Error in the Login user', error)
+    })
 
-        }
+    const verifyOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
+
+            const { otp, email } = req.body
+            const verify = await handleOtpVerification(email, otp, dbOtpRepository)
+            if (verify) {
+                res.status(HttpStatus.OK).json({
+                    status: 'success',
+                    message: 'Otp verified Successfully'
+                })
+            }
     })
 
 
@@ -108,7 +135,9 @@ const authController = (
         registerUser,
         usernameAvailability,
         emailAvailability,
-        loginUser
+        loginUser,
+        sendOtpForEmailVerification,
+        verifyOtpForEmailVerification
     }
 }
 export default authController;

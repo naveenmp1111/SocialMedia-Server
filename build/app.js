@@ -10,11 +10,12 @@ const http_1 = __importDefault(require("http"));
 const server_1 = __importDefault(require("./frameworks/webserver/server"));
 const connection_1 = __importDefault(require("./frameworks/database/monogDB/connection"));
 const routes_1 = __importDefault(require("./frameworks/webserver/routes"));
+const errorHandlingMiddleware_1 = __importDefault(require("./frameworks/webserver/middlewares/errorHandlingMiddleware"));
 exports.app = (0, express_1.default)();
 exports.server = http_1.default.createServer(exports.app);
 //connecting mongodb
 (0, connection_1.default)();
 (0, express_2.default)(exports.app);
 (0, routes_1.default)(exports.app);
-// app.post('/api/auth/signup',()=>{console.log('worked auth')})
+exports.app.use(errorHandlingMiddleware_1.default);
 (0, server_1.default)(exports.server).startServer();

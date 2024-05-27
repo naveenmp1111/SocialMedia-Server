@@ -4,6 +4,10 @@ import authController from '../../../adapters/authController';
 import { authServiceInterface } from '../../../application/services/authServiceInterfaces';
 import { userRepositoryMongoDb } from '../../database/monogDB/repositories/userRepositoryMongoDb';
 import { userDbRepository } from '../../../application/repositories/userDbRepository';
+import { otpDbRepository } from '../../../application/repositories/otpDbRepository';
+import { otpRepositoryMongoDb } from '../../database/monogDB/repositories/otpRepositoryMongoDb';
+import { mailSenderService } from '../../services/mailSenderService';
+import { mailSenderServiceInterface } from '../../../application/services/mailSenderService';
 
 const authRouter=()=>{
     const router=express()
@@ -12,13 +16,19 @@ const authRouter=()=>{
         authService,
         authServiceInterface,
         userRepositoryMongoDb,
-        userDbRepository
+        userDbRepository,
+        otpRepositoryMongoDb,
+        otpDbRepository,
+        mailSenderService,
+        mailSenderServiceInterface
     )
 
     router.post('/signup', controller.registerUser)
     router.get('/usernameAvailability/:username',controller.usernameAvailability)
     router.get('/emailAvailability/:email',controller.emailAvailability)
     router.post('/login',controller.loginUser)
+    router.post('/sendOtp',controller.sendOtpForEmailVerification)
+    router.post('/verifyOtp',controller.verifyOtpForEmailVerification)
 
     return router
 }

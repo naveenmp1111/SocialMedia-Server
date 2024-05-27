@@ -2,10 +2,13 @@ import { UserDbInterface } from "../../repositories/userDbRepository";
 import { AuthServiceInterface } from "../../services/authServiceInterfaces";
 import AppError from "../../../utils/appError"; 
 import { HttpStatus } from "../../../types/httpStatus";
+import otpGenerator from 'otp-generator'
 
 //importing from types
 
 import { UserInterface } from "../../../types/userInterface";
+import { MailSenderServiceInterface } from "../../services/mailSenderService";
+import { OtpDbInterface } from "../../repositories/otpDbRepository";
 
 
 
@@ -35,7 +38,6 @@ export const userLogin=async(
     dbUserRepository:ReturnType<UserDbInterface>,
     authService:ReturnType<AuthServiceInterface>
 )=>{
-    console.log('coming to use cases')
     const user=await dbUserRepository.getUserByEmail(email)
     if(!user){
         throw new AppError('Invalid email',HttpStatus.UNAUTHORIZED)
@@ -63,4 +65,47 @@ export const userLogin=async(
   };
     
   return userDetails
+}
+
+export const handleSendOtp=async(
+    email:string,
+    dbOtpRepository:ReturnType<OtpDbInterface>,
+    mailSenderService:ReturnType<MailSenderServiceInterface>,
+)=>{
+        const otpString =otpGenerator.generate(6, {
+            lowerCaseAlphabets: false,
+            upperCaseAlphabets: false,
+            specialChars: false,
+        });
+        const otp=parseInt(otpString)
+          console.log('Otp is ',otp)
+        //   console.log('type is ',typeof otp)
+          await dbOtpRepository.saveNewOtp({email,otp})
+          const response= await mailSenderService.sendVerificationMail(email,otp)
+        //   console.log('response in userAuth in user case',response)
+          return response
+}
+
+export const handleOtpVerification=async(
+    email:string,
+    otp:number,
+    dbOtpRepository:ReturnType<OtpDbInterface>,
+)=>{
+        const otpObj=await dbOtpRepository.getLatestOtp(email)
+        if (!otpObj) {
+            throw new AppError("Invalid otp!", HttpStatus.UNAUTHORIZED);
+          }
+
+          const currentTime:number = new Date().getTime()
+          const otpCreationTime:number = new Date(otpObj.createdAt).getTime()
+        
+          if ((currentTime - otpCreationTime) > 60000) {
+            throw new AppError('Otp time out',HttpStatus.UNAUTHORIZED)
+          }
+
+        if(otpObj.otp!=otp){
+            throw new AppError("Invalid otp!", HttpStatus.UNAUTHORIZED);
+        }
+          if(otpObj.otp==otp)return true
+
 }

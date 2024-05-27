@@ -6,9 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 //use-case import 
 const userAuth_1 = require("../../application/user-cases/auth/userAuth");
-const authController = (authServiceImpl, authServieInterface, userDbRepositoryImpl, userDbRepositoryInterface) => {
+const httpStatus_1 = require("../../types/httpStatus");
+const authController = (authServiceImpl, authServieInterface, userDbRepositoryImpl, userDbRepositoryInterface, otpDbRepositoryImpl, otpDbRepositoryInterface, mailSenderServiceImpl, mailSenderServiceInterface) => {
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
     const authService = authServieInterface(authServiceImpl());
+    const dbOtpRepository = otpDbRepositoryInterface(otpDbRepositoryImpl());
+    const mailSenderService = mailSenderServiceInterface(mailSenderServiceImpl());
     const registerUser = (0, express_async_handler_1.default)(async (req, res) => {
         // console.log('data from body',req.body)
         const user = req.body;
@@ -22,7 +25,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         try {
             const { username } = req.params;
             const isAvailable = await dbUserRepository.getUserByUsername(username);
-            console.log('isavailable', isAvailable);
+            // console.log('isavailable',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -63,31 +66,43 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         }
     });
     const loginUser = (0, express_async_handler_1.default)(async (req, res) => {
-        try {
-            const { email, password } = req.body;
-            const userDetails = await (0, userAuth_1.userLogin)(email, password, dbUserRepository, authService);
-            res.json({
-                status: 'success',
-                message: 'Login successfull',
-                user: userDetails
+        const { email, password } = req.body;
+        const userDetails = await (0, userAuth_1.userLogin)(email, password, dbUserRepository, authService);
+        res.json({
+            status: 'success',
+            message: 'Login successfull',
+            user: userDetails
+        });
+    });
+    const sendOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
+        // console.log('body data', req.body)
+        const { email } = req.body;
+        // console.log('email is', email)
+        const response = await (0, userAuth_1.handleSendOtp)(email, dbOtpRepository, mailSenderService);
+        if (response) {
+            res.status(httpStatus_1.HttpStatus.OK).json({
+                status: "success",
+                message: "Otp send to your mail",
             });
         }
-        catch (error) {
-            if (error instanceof Error) {
-                res.json({
-                    status: 'failed',
-                    message: error.message,
-                    user: null
-                });
-            }
-            console.error('Error in the Login user', error);
+    });
+    const verifyOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
+        const { otp, email } = req.body;
+        const verify = await (0, userAuth_1.handleOtpVerification)(email, otp, dbOtpRepository);
+        if (verify) {
+            res.status(httpStatus_1.HttpStatus.OK).json({
+                status: 'success',
+                message: 'Otp verified Successfully'
+            });
         }
     });
     return {
         registerUser,
         usernameAvailability,
         emailAvailability,
-        loginUser
+        loginUser,
+        sendOtpForEmailVerification,
+        verifyOtpForEmailVerification
     };
 };
 exports.default = authController;

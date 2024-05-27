@@ -4,6 +4,7 @@ import http from 'http';
 import serverConfig from './frameworks/webserver/server';
 import connectDB from './frameworks/database/monogDB/connection';
 import routes from './frameworks/webserver/routes';
+import errorHandlingMiddleware from './frameworks/webserver/middlewares/errorHandlingMiddleware';
 
 export const app:Application=express()
 export const server=http.createServer(app)
@@ -14,6 +15,7 @@ connectDB();
 expressConfig(app)
 
 routes(app)
-// app.post('/api/auth/signup',()=>{console.log('worked auth')})
+
+app.use(errorHandlingMiddleware)
 
 serverConfig(server).startServer()
