@@ -58,9 +58,8 @@ export const userLogin=async(
     name: user?.name,
     username: user?.username,
     email: user?.email,
-    dp: user?.dp,
     bio: user?.bio,
-    gender: user?.gender,
+    profilePic: user?.profilePic,
     isBlock: user.isBlock
   };
     
@@ -108,4 +107,31 @@ export const handleOtpVerification=async(
         }
           if(otpObj.otp==otp)return true
 
+}
+
+export const userLoginUsingGoogle=async(
+    user:{name:string;email:string},
+    dbUserRepository:ReturnType<UserDbInterface>,
+    authService:ReturnType<AuthServiceInterface>
+)=>{
+   const isExistingEmail=await dbUserRepository.getUserByEmail(user.email)
+   if(isExistingEmail){
+      if(isExistingEmail.isBlock){
+        throw new AppError('User is Blocked',HttpStatus.UNAUTHORIZED)
+      }
+      const userDetails={
+        name:isExistingEmail.name,
+        email:isExistingEmail.email,
+        username:isExistingEmail.username,
+        isBlock:isExistingEmail.isBlock
+      }
+      return userDetails
+   }
+   const newUser={
+    name:user.name,
+    email:user.email,
+    isGoogleSignin:true
+   }
+   const userDetails=await dbUserRepository.addUser(newUser)
+   return userDetails
 }

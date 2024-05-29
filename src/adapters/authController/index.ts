@@ -10,7 +10,7 @@ import { OtpDbInterface } from '../../application/repositories/otpDbRepository';
 import { OtpRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/otpRepositoryMongoDb';
 
 //use-case import 
-import { userLogin, userRegister, handleSendOtp, handleOtpVerification } from '../../application/user-cases/auth/userAuth';
+import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle } from '../../application/user-cases/auth/userAuth';
 
 //importing types
 import { UserInterface } from '../../types/userInterface';
@@ -129,6 +129,13 @@ const authController = (
             }
     })
 
+    const loginWithGoogle=asyncHandler(async(req:Request,res:Response)=>{
+        const user=req.body
+        const userDetails=await userLoginUsingGoogle(user,dbUserRepository,authService)
+        res.json(userDetails)
+
+    })
+
 
 
     return {
@@ -137,7 +144,8 @@ const authController = (
         emailAvailability,
         loginUser,
         sendOtpForEmailVerification,
-        verifyOtpForEmailVerification
+        verifyOtpForEmailVerification,
+        loginWithGoogle
     }
 }
 export default authController;

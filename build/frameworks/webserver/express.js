@@ -12,12 +12,11 @@ const expressConfig = (app) => {
     // CORS options
     const corsOptions = {
         origin: 'http://localhost:5173', // Frontend origin
-        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
         allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
         credentials: true // Allow credentials (cookies, authorization headers, etc.)
     };
-    // Use CORS middleware
+    // CORS middleware
     app.use((0, cors_1.default)(corsOptions));
-    //routes for each endpoint
 };
 exports.default = expressConfig;

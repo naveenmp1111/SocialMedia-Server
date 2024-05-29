@@ -1,9 +1,9 @@
 import User from '../models/userModel'
-import { UserInterface } from '../../../../types/userInterface'
+import { GoogleUserInterface, UserInterface } from '../../../../types/userInterface'
 import mongoose from 'mongoose'
 
 export const userRepositoryMongoDb=()=>{
-    const addUser= async(user:UserInterface)=>{
+    const addUser= async(user:UserInterface | GoogleUserInterface)=>{
         try {
             const newUser=new User(user)
             return await newUser.save()

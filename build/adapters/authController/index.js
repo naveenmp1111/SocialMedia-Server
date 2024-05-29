@@ -96,13 +96,19 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             });
         }
     });
+    const loginWithGoogle = (0, express_async_handler_1.default)(async (req, res) => {
+        const user = req.body;
+        const userDetails = await (0, userAuth_1.userLoginUsingGoogle)(user, dbUserRepository, authService);
+        res.json(userDetails);
+    });
     return {
         registerUser,
         usernameAvailability,
         emailAvailability,
         loginUser,
         sendOtpForEmailVerification,
-        verifyOtpForEmailVerification
+        verifyOtpForEmailVerification,
+        loginWithGoogle
     };
 };
 exports.default = authController;

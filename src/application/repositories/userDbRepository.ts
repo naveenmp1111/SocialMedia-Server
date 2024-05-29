@@ -1,10 +1,10 @@
 import { UserRepositoryMongoDb } from "../../frameworks/database/monogDB/repositories/userRepositoryMongoDb";
 
-import { UserInterface } from "../../types/userInterface";
+import { GoogleUserInterface, UserInterface } from "../../types/userInterface";
 
 export const userDbRepository = (repository:ReturnType<UserRepositoryMongoDb>)=>{
    
-     const addUser  = async (user:UserInterface)=>await repository.addUser(user)
+     const addUser  = async (user:UserInterface | GoogleUserInterface )=>await repository.addUser(user)
 
      const getUserByEmail = async (email:string)=>await repository.getUserByEmail(email)
 

@@ -17,16 +17,17 @@ const userSchema=new Schema({
         type:String,
         minlength:6
     },
-    dp:{
-        type:String
-    },
     bio:{
         type:String
     },
-    gender:{
+    profilePic:{
         type:String
     },
     isBlock:{
+        type:Boolean,
+        default:false
+    },
+    isGoogleSignin:{
         type:Boolean,
         default:false
     }

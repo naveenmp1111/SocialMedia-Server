@@ -22,6 +22,7 @@ const authRouter = () => {
     router.post('/login', controller.loginUser);
     router.post('/sendOtp', controller.sendOtpForEmailVerification);
     router.post('/verifyOtp', controller.verifyOtpForEmailVerification);
+    router.post('/google_auth', controller.loginWithGoogle);
     return router;
 };
 exports.default = authRouter;

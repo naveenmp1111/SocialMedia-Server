@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
+exports.userLoginUsingGoogle = exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const otp_generator_1 = __importDefault(require("otp-generator"));
@@ -37,9 +37,8 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
         name: user?.name,
         username: user?.username,
         email: user?.email,
-        dp: user?.dp,
         bio: user?.bio,
-        gender: user?.gender,
+        profilePic: user?.profilePic,
         isBlock: user.isBlock
     };
     return userDetails;
@@ -77,3 +76,26 @@ const handleOtpVerification = async (email, otp, dbOtpRepository) => {
         return true;
 };
 exports.handleOtpVerification = handleOtpVerification;
+const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
+    const isExistingEmail = await dbUserRepository.getUserByEmail(user.email);
+    if (isExistingEmail) {
+        if (isExistingEmail.isBlock) {
+            throw new appError_1.default('User is Blocked', httpStatus_1.HttpStatus.UNAUTHORIZED);
+        }
+        const userDetails = {
+            name: isExistingEmail.name,
+            email: isExistingEmail.email,
+            username: isExistingEmail.username,
+            isBlock: isExistingEmail.isBlock
+        };
+        return userDetails;
+    }
+    const newUser = {
+        name: user.name,
+        email: user.email,
+        isGoogleSignin: true
+    };
+    const userDetails = await dbUserRepository.addUser(newUser);
+    return userDetails;
+};
+exports.userLoginUsingGoogle = userLoginUsingGoogle;
