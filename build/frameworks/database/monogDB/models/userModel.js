@@ -31,7 +31,19 @@ const userSchema = new mongoose_1.Schema({
     isGoogleSignin: {
         type: Boolean,
         default: false
-    }
+    },
+    role: {
+        type: String,
+        default: 'client',
+    },
+    refreshToken: {
+        type: String,
+        default: null,
+    },
+    refreshTokenExpiresAt: {
+        type: Date,
+        default: null,
+    },
 });
 const User = (0, mongoose_1.model)('User', userSchema);
 exports.default = User;

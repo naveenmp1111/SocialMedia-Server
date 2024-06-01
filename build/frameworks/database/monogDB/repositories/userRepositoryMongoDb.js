@@ -40,10 +40,72 @@ const userRepositoryMongoDb = () => {
             throw new Error('Error finding user by username');
         }
     };
+    const checkUsernameForEdit = async (username, userId) => {
+        try {
+            const user = await userModel_1.default.findOne({ username, _id: { $ne: userId } });
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error('Error in checkUsenameForEdit');
+        }
+    };
+    const checkEmailForEdit = async (email, userId) => {
+        try {
+            const user = await userModel_1.default.findOne({ email, _id: { $ne: userId } });
+            return user;
+        }
+        catch (error) {
+            console.log('error in checkemail for edit', error);
+            throw new Error('error in checkemailfor edit');
+        }
+    };
+    const addRefreshTokenAndExpiry = async (email, refreshToken) => {
+        try {
+            const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            const user = await userModel_1.default.findOneAndUpdate({ email }, { refreshToken, refreshTokenExpiresAt }, { new: true });
+            console.log('user is ', user);
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error adding refresh token and expiry!");
+        }
+    };
+    const editProfile = async (profileInfo) => {
+        try {
+            let user;
+            if (profileInfo.profilePic) {
+                user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, profileInfo, {
+                    new: true,
+                });
+            }
+            else {
+                user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, {
+                    name: profileInfo.name,
+                    username: profileInfo.username,
+                    phoneNumber: profileInfo.phoneNumber,
+                    bio: profileInfo.bio,
+                    email: profileInfo.email,
+                }, {
+                    new: true,
+                });
+            }
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error updating profile!");
+        }
+    };
     return {
         addUser,
         getUserByEmail,
-        getUserByUsername
+        getUserByUsername,
+        addRefreshTokenAndExpiry,
+        editProfile,
+        checkUsernameForEdit,
+        checkEmailForEdit
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

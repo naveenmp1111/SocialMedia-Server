@@ -13,7 +13,7 @@ import { OtpRepositoryMongoDb } from '../../frameworks/database/monogDB/reposito
 import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle } from '../../application/user-cases/auth/userAuth';
 
 //importing types
-import { UserInterface } from '../../types/userInterface';
+import { UserInterface } from '../../types/LoginUserInterface';
 import { HttpStatus } from '../../types/httpStatus';
 import AppError from '../../utils/appError';
 
@@ -89,18 +89,42 @@ const authController = (
     const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
             const { email, password }: { email: string; password: string } = req.body
-            const userDetails = await userLogin(
+            const {userDetails,refreshToken,accessToken} = await userLogin(
                 email,
                 password,
                 dbUserRepository,
                 authService
             )
+            res.cookie('refreshToken',refreshToken,{
+                httpOnly:true,
+                secure:true,
+                sameSite:'none',
+                maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
+            })
             res.json({
                 status: 'success',
                 message: 'Login successfull',
-                user: userDetails
+                user: userDetails,
+                accessToken
             })
 
+    })
+
+    const loginWithGoogle=asyncHandler(async(req:Request,res:Response)=>{
+        const user=req.body
+        const {userDetails,accessToken,refreshToken}=await userLoginUsingGoogle(user,dbUserRepository,authService)
+        res.cookie('refreshToken',refreshToken,{
+            httpOnly:true,
+            secure:true,
+            sameSite:'none',
+            maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
+        })
+        res.json({
+            status:'success',
+            message:'user verified',
+            user:userDetails,
+            accessToken
+        })
     })
 
     const sendOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
@@ -129,13 +153,8 @@ const authController = (
             }
     })
 
-    const loginWithGoogle=asyncHandler(async(req:Request,res:Response)=>{
-        const user=req.body
-        const userDetails=await userLoginUsingGoogle(user,dbUserRepository,authService)
-        res.json(userDetails)
 
-    })
-
+ 
 
 
     return {

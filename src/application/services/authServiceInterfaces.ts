@@ -10,9 +10,30 @@ import { AuthServiceReturn } from "../../frameworks/services/authService";
         return await service.comparePassword(password,hashedPassword)
     }
 
+    const generateAccessToken=async(userId:string,role:string)=>{
+        return await service.generateAccessToken({userId,role})
+    }
+
+    const generateRefreshToken=async(userId:string,role:string)=>{
+        console.log('coing to authSeriveceinterfaces')
+        return await service.generateRefreshToken({userId,role})
+    }
+
+    const verifyAccessToken = (token: string) => {
+        return service.verifyAccessToken(token);
+    }
+
+    const verifyRefreshToken = (token: string) => {
+        return service.verifyRefreshToken(token);
+    }
+
     return {
         encryptPassword,
-        comparePassword
+        comparePassword,
+        generateAccessToken,
+        generateRefreshToken,
+        verifyAccessToken,
+        verifyRefreshToken
     }
 }
 

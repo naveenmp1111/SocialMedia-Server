@@ -67,11 +67,34 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
     });
     const loginUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { email, password } = req.body;
-        const userDetails = await (0, userAuth_1.userLogin)(email, password, dbUserRepository, authService);
+        const { userDetails, refreshToken, accessToken } = await (0, userAuth_1.userLogin)(email, password, dbUserRepository, authService);
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
         res.json({
             status: 'success',
             message: 'Login successfull',
-            user: userDetails
+            user: userDetails,
+            accessToken
+        });
+    });
+    const loginWithGoogle = (0, express_async_handler_1.default)(async (req, res) => {
+        const user = req.body;
+        const { userDetails, accessToken, refreshToken } = await (0, userAuth_1.userLoginUsingGoogle)(user, dbUserRepository, authService);
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+        res.json({
+            status: 'success',
+            message: 'user verified',
+            user: userDetails,
+            accessToken
         });
     });
     const sendOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
@@ -95,11 +118,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
                 message: 'Otp verified Successfully'
             });
         }
-    });
-    const loginWithGoogle = (0, express_async_handler_1.default)(async (req, res) => {
-        const user = req.body;
-        const userDetails = await (0, userAuth_1.userLoginUsingGoogle)(user, dbUserRepository, authService);
-        res.json(userDetails);
     });
     return {
         registerUser,

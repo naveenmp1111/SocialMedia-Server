@@ -6,7 +6,7 @@ import otpGenerator from 'otp-generator'
 
 //importing from types
 
-import { UserInterface } from "../../../types/userInterface";
+import { UserInterface } from "../../../types/LoginUserInterface";
 import { MailSenderServiceInterface } from "../../services/mailSenderService";
 import { OtpDbInterface } from "../../repositories/otpDbRepository";
 
@@ -62,8 +62,10 @@ export const userLogin=async(
     profilePic: user?.profilePic,
     isBlock: user.isBlock
   };
+        const refreshToken=await authService.generateRefreshToken(user._id.toString(),user.role)
+      const accessToken=await authService.generateAccessToken(user._id.toString(),user.role)
     
-  return userDetails
+  return {userDetails,refreshToken,accessToken}
 }
 
 export const handleSendOtp=async(
@@ -119,19 +121,38 @@ export const userLoginUsingGoogle=async(
       if(isExistingEmail.isBlock){
         throw new AppError('User is Blocked',HttpStatus.UNAUTHORIZED)
       }
+
+      const refreshToken=await authService.generateRefreshToken(isExistingEmail._id.toString(),isExistingEmail.role)
+      const accessToken=await authService.generateAccessToken(isExistingEmail._id.toString(),isExistingEmail.role)
       const userDetails={
         name:isExistingEmail.name,
         email:isExistingEmail.email,
         username:isExistingEmail.username,
-        isBlock:isExistingEmail.isBlock
+        isBlock:isExistingEmail.isBlock,
+        bio: isExistingEmail?.bio,
+        profilePic: isExistingEmail?.profilePic,
       }
-      return userDetails
+
+      await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
+      return {userDetails,accessToken,refreshToken}
    }
+
+   const otpString =otpGenerator.generate(4, {
+    lowerCaseAlphabets: true,
+    upperCaseAlphabets: false,
+    specialChars: false,
+});
+   const username=user.email.slice(0,user.email.indexOf('@')) + otpString
+
    const newUser={
     name:user.name,
     email:user.email,
-    isGoogleSignin:true
+    isGoogleSignin:true,
+    username:username
    }
    const userDetails=await dbUserRepository.addUser(newUser)
-   return userDetails
+   const accessToken=await authService.generateAccessToken(userDetails._id.toString(),userDetails.role)
+   const refreshToken=await authService.generateRefreshToken(userDetails._id.toString(),userDetails.role)
+   await dbUserRepository.addRefreshTokenAndExpiry(newUser.email, refreshToken);
+   return {userDetails,accessToken,refreshToken}
 }

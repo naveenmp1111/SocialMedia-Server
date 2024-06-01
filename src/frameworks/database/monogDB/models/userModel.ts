@@ -30,7 +30,19 @@ const userSchema=new Schema({
     isGoogleSignin:{
         type:Boolean,
         default:false
-    }
+    },
+    role:{
+        type:String,
+        default:'client',
+    },
+    refreshToken: {
+        type: String,
+        default: null,
+    },
+    refreshTokenExpiresAt: {
+        type: Date,
+        default: null,
+    },
 })
 
 const User=model('User',userSchema);
