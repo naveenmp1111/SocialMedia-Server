@@ -19,6 +19,12 @@ export const userDbRepository = (repository:ReturnType<UserRepositoryMongoDb>)=>
 
      const checkEmailForEdit=async(email:string,userId:string)=>await repository.checkEmailForEdit(email,userId)
 
+     const getAllUsersForAdmin=async()=>await repository.getAllUsersForAdmin()
+
+     const blockUser=async(userId:string)=>await repository.blockUser(userId)
+
+     const unblockUser=async(userId:string)=>await repository.unBlockUser(userId)
+
      return{
         addUser,
         getUserByEmail,
@@ -26,7 +32,10 @@ export const userDbRepository = (repository:ReturnType<UserRepositoryMongoDb>)=>
         addRefreshTokenAndExpiry,
         editProfile,
         checkUsernameForEdit,
-        checkEmailForEdit
+        checkEmailForEdit,
+        getAllUsersForAdmin,
+        blockUser,
+        unblockUser
      }
 }
 

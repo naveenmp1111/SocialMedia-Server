@@ -106,6 +106,48 @@ export const userRepositoryMongoDb=()=>{
         }
       };
 
+      const getAllUsersForAdmin=async()=>{
+        try {
+          const users=await User.find({role:'client'},
+          {
+            _id:1,
+            username: 1,
+            profilePic: 1,
+            name: 1,
+            email: 1,
+            bio: 1,
+            isBlock: 1,
+            isGoogleSignedIn: 1
+          })
+          console.log('users ',users)
+          return users
+        } catch (error) {
+          console.log(error);
+          throw new Error('Error in finding the users for admin')
+        }
+      }
+
+      const blockUser=async(userId:string)=>{
+        try {
+          console.log('userid is ',userId)
+          const userData=  await User.findByIdAndUpdate(userId,{$set:{isBlock:true}},{new:true})
+          console.log('userData',userData)
+          return userData
+        } catch (error) {
+          console.log(error)
+          throw new Error('Erron in blocking the user')
+        }
+      }
+
+      const unBlockUser=async(userId:string)=>{
+        try {
+           return await User.findByIdAndUpdate(userId,{$set:{isBlock:false}})
+        } catch (error) {
+          console.log(error)
+          throw new Error('Erron in unblocking the user')
+        }
+      }
+
 
     return {
         addUser,
@@ -114,7 +156,10 @@ export const userRepositoryMongoDb=()=>{
         addRefreshTokenAndExpiry,
         editProfile,
         checkUsernameForEdit,
-        checkEmailForEdit
+        checkEmailForEdit,
+        getAllUsersForAdmin,
+        blockUser,
+        unBlockUser
     }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

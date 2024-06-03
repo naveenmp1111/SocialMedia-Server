@@ -9,6 +9,9 @@ const userDbRepository = (repository) => {
     const editProfile = async (profileInfo) => await repository.editProfile(profileInfo);
     const checkUsernameForEdit = async (username, userId) => await repository.checkUsernameForEdit(username, userId);
     const checkEmailForEdit = async (email, userId) => await repository.checkEmailForEdit(email, userId);
+    const getAllUsersForAdmin = async () => await repository.getAllUsersForAdmin();
+    const blockUser = async (userId) => await repository.blockUser(userId);
+    const unblockUser = async (userId) => await repository.unBlockUser(userId);
     return {
         addUser,
         getUserByEmail,
@@ -16,7 +19,10 @@ const userDbRepository = (repository) => {
         addRefreshTokenAndExpiry,
         editProfile,
         checkUsernameForEdit,
-        checkEmailForEdit
+        checkEmailForEdit,
+        getAllUsersForAdmin,
+        blockUser,
+        unblockUser
     };
 };
 exports.userDbRepository = userDbRepository;
