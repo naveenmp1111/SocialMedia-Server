@@ -1,4 +1,4 @@
-import { Request, Response, response } from 'express';
+import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler'
 import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
@@ -10,13 +10,11 @@ import { OtpDbInterface } from '../../application/repositories/otpDbRepository';
 import { OtpRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/otpRepositoryMongoDb';
 
 //use-case import 
-import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle } from '../../application/user-cases/auth/userAuth';
+import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle, handleRefreshAccessToken } from '../../application/user-cases/auth/userAuth';
 
 //importing types
 import { UserInterface } from '../../types/LoginUserInterface';
 import { HttpStatus } from '../../types/httpStatus';
-import AppError from '../../utils/appError';
-
 
 const authController = (
     authServiceImpl: AuthService,
@@ -88,73 +86,82 @@ const authController = (
 
     const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
-            const { email, password }: { email: string; password: string } = req.body
-            const {userDetails,refreshToken,accessToken} = await userLogin(
-                email,
-                password,
-                dbUserRepository,
-                authService
-            )
-            res.cookie('refreshToken',refreshToken,{
-                httpOnly:true,
-                secure:true,
-                sameSite:'none',
-                maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
-            })
-            res.json({
-                status: 'success',
-                message: 'Login successfull',
-                user: userDetails,
-                accessToken
-            })
+        const { email, password }: { email: string; password: string } = req.body
+        const { userDetails, refreshToken, accessToken } = await userLogin(
+            email,
+            password,
+            dbUserRepository,
+            authService
+        )
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        })
+        console.log('userDetails :',userDetails,'accessToken :',accessToken)
+        res.json({
+            status: 'success',
+            message: 'Login successfull',
+            user: userDetails,
+            accessToken
+        })
 
     })
 
-    const loginWithGoogle=asyncHandler(async(req:Request,res:Response)=>{
-        const user=req.body
-        const {userDetails,accessToken,refreshToken}=await userLoginUsingGoogle(user,dbUserRepository,authService)
-        res.cookie('refreshToken',refreshToken,{
-            httpOnly:true,
-            secure:true,
-            sameSite:'none',
-            maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
+    const loginWithGoogle = asyncHandler(async (req: Request, res: Response) => {
+        const user = req.body
+        const { userDetails, accessToken, refreshToken } = await userLoginUsingGoogle(user, dbUserRepository, authService)
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
+        console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
-            status:'success',
-            message:'user verified',
-            user:userDetails,
+            status: 'success',
+            message: 'user verified',
+            user: userDetails,
             accessToken
         })
     })
 
     const sendOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
 
-            // console.log('body data', req.body)
-            const { email }: { email: string } = req.body
-            // console.log('email is', email)
-            const response = await handleSendOtp(email, dbOtpRepository, mailSenderService)
-            if (response) {
-                res.status(HttpStatus.OK).json({
-                    status: "success",
-                    message: "Otp send to your mail",
-                })
-            }
+        const { email }: { email: string } = req.body
+        const response = await handleSendOtp(email, dbOtpRepository, mailSenderService)
+        if (response) {
+            res.status(HttpStatus.OK).json({
+                status: "success",
+                message: "Otp send to your mail",
+            })
+        }
     })
 
     const verifyOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
 
-            const { otp, email } = req.body
-            const verify = await handleOtpVerification(email, otp, dbOtpRepository)
-            if (verify) {
-                res.status(HttpStatus.OK).json({
-                    status: 'success',
-                    message: 'Otp verified Successfully'
-                })
-            }
+        const { otp, email } = req.body
+        const verify = await handleOtpVerification(email, otp, dbOtpRepository)
+        if (verify) {
+            res.status(HttpStatus.OK).json({
+                status: 'success',
+                message: 'Otp verified Successfully'
+            })
+        }
+    })
+
+    const refreshAccessToken=asyncHandler(async(req:Request,res:Response)=>{
+        // console.log('cookies jjj',req.cookies)
+        const {refreshToken}=req.cookies;
+        const accessToken=await handleRefreshAccessToken({refreshToken},dbUserRepository,authService)
+        res.status(HttpStatus.OK).json({
+            accessToken
+        })
     })
 
 
- 
+
 
 
     return {
@@ -164,7 +171,8 @@ const authController = (
         loginUser,
         sendOtpForEmailVerification,
         verifyOtpForEmailVerification,
-        loginWithGoogle
+        loginWithGoogle,
+        refreshAccessToken
     }
 }
 export default authController;

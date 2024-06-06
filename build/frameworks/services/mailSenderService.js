@@ -8,7 +8,6 @@ const sendMail_1 = __importDefault(require("../../utils/sendMail"));
 const mailSenderService = () => {
     const sendVerificationMail = async (email, otp) => {
         const mailResponse = await (0, sendMail_1.default)(email, 'SOCIAL-MEDIA - Email verification', `Otp for email verification is ${otp}`);
-        // console.log('mail response',mailResponse)
         return mailResponse;
     };
     return {

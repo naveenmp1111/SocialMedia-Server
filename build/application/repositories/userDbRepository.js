@@ -12,6 +12,8 @@ const userDbRepository = (repository) => {
     const getAllUsersForAdmin = async () => await repository.getAllUsersForAdmin();
     const blockUser = async (userId) => await repository.blockUser(userId);
     const unblockUser = async (userId) => await repository.unBlockUser(userId);
+    const getUserById = async (userId) => await repository.getUserById(userId);
+    const updatePost = async (userId, postId) => await repository.updatePosts(userId, postId);
     return {
         addUser,
         getUserByEmail,
@@ -22,7 +24,9 @@ const userDbRepository = (repository) => {
         checkEmailForEdit,
         getAllUsersForAdmin,
         blockUser,
-        unblockUser
+        unblockUser,
+        getUserById,
+        updatePost
     };
 };
 exports.userDbRepository = userDbRepository;

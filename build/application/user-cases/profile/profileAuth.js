@@ -7,7 +7,7 @@ exports.handleEditProfile = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const handleEditProfile = async (profileInfo, dbUserRepository) => {
-    console.log("profileInfo...", profileInfo);
+    // console.log("profileInfo...", profileInfo);
     const usernameExists = await dbUserRepository.checkUsernameForEdit(profileInfo.username, profileInfo.userId);
     if (usernameExists) {
         throw new appError_1.default('Username already exists', httpStatus_1.HttpStatus.UNAUTHORIZED);

@@ -27,6 +27,7 @@ const authMiddleware=async(
             res.status(HttpStatus.UNAUTHORIZED).json({success:false,message:'Token not found'})
         }
     } catch (error:any) {
+        console.log(error.mesage)
         res.status(HttpStatus.UNAUTHORIZED).json({ success: false, message: error.message });
     }
 }

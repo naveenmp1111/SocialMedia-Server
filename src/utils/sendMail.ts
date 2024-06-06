@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import AppError from './appError';
 import { HttpStatus } from '../types/httpStatus';
 
-const sendMail=async(email:string,title:string,body:string)=>{
+const sendMail = async (email: string, title: string, body: string) => {
     try {
         console.log(`Sending mail to: ${email}`);
         console.log(`Title: ${title}`);
@@ -16,7 +16,7 @@ const sendMail=async(email:string,title:string,body:string)=>{
             }
         });
 
-        
+
         const mailOptions = {
             from: configKeys.MAIL_USERNAME,
             to: email,
@@ -30,9 +30,9 @@ const sendMail=async(email:string,title:string,body:string)=>{
 
     } catch (error) {
         console.error('Error sending email: ', error);
-        
-            throw new AppError('Unauthorized', HttpStatus.UNAUTHORIZED);
-        
+
+        throw new AppError('Unauthorized', HttpStatus.UNAUTHORIZED);
+
     }
 }
 

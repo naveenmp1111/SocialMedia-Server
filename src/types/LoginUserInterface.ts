@@ -1,9 +1,9 @@
-export interface UserInterface{
+export interface UserInterface {
     _id?: string;
     name: string;
     username: string;
     email: string;
-    password:string;
+    password: string;
 }
 
 export interface GoogleUserInterface {

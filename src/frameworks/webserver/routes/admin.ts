@@ -6,19 +6,19 @@ import { userDbRepository } from '../../../application/repositories/userDbReposi
 import adminController from '../../../adapters/adminController';
 
 
-const adminRouter=()=>{
-    const router=express()
+const adminRouter = () => {
+    const router = express()
 
-    const controller=adminController(
+    const controller = adminController(
         authService,
         authServiceInterface,
         userRepositoryMongoDb,
         userDbRepository,
     )
 
-    router.get('/getAllUsersForAdmin',controller.getAllUsersForAdmin)
-    router.patch('/blockUser/:userId',controller.blockUser)
-    router.patch('/unblockUser/:userId',controller.unblockUser)
+    router.get('/getAllUsersForAdmin', controller.getAllUsersForAdmin)
+    router.patch('/blockUser/:userId', controller.blockUser)
+    router.patch('/unblockUser/:userId', controller.unblockUser)
 
     return router
 }

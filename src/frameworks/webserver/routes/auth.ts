@@ -9,10 +9,10 @@ import { otpRepositoryMongoDb } from '../../database/monogDB/repositories/otpRep
 import { mailSenderService } from '../../services/mailSenderService';
 import { mailSenderServiceInterface } from '../../../application/services/mailSenderService';
 
-const authRouter=()=>{
-    const router=express()
+const authRouter = () => {
+    const router = express()
 
-    const controller=authController(
+    const controller = authController(
         authService,
         authServiceInterface,
         userRepositoryMongoDb,
@@ -24,12 +24,13 @@ const authRouter=()=>{
     )
 
     router.post('/signup', controller.registerUser)
-    router.get('/usernameAvailability/:username',controller.usernameAvailability)
-    router.get('/emailAvailability/:email',controller.emailAvailability)
-    router.post('/login',controller.loginUser)
-    router.post('/sendOtp',controller.sendOtpForEmailVerification)
-    router.post('/verifyOtp',controller.verifyOtpForEmailVerification)
-    router.post('/google_auth',controller.loginWithGoogle)
+    router.get('/usernameAvailability/:username', controller.usernameAvailability)
+    router.get('/emailAvailability/:email', controller.emailAvailability)
+    router.post('/login', controller.loginUser)
+    router.post('/sendOtp', controller.sendOtpForEmailVerification)
+    router.post('/verifyOtp', controller.verifyOtpForEmailVerification)
+    router.post('/google_auth', controller.loginWithGoogle)
+    router.get('/refresh-access-token',controller.refreshAccessToken)
 
     return router
 }

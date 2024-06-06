@@ -7,7 +7,6 @@ const handleGetAllUsersForAdmin = async (dbUserRepository) => {
 };
 exports.handleGetAllUsersForAdmin = handleGetAllUsersForAdmin;
 const handleBlockUser = async (userId, dbUserRepository) => {
-    console.log('useridddd ', userId);
     const userData = dbUserRepository.blockUser(userId);
     return userData;
 };

@@ -70,10 +70,11 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         const { userDetails, refreshToken, accessToken } = await (0, userAuth_1.userLogin)(email, password, dbUserRepository, authService);
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
+        console.log('userDetails :', userDetails, 'accessToken :', accessToken);
         res.json({
             status: 'success',
             message: 'Login successfull',
@@ -86,10 +87,11 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         const { userDetails, accessToken, refreshToken } = await (0, userAuth_1.userLoginUsingGoogle)(user, dbUserRepository, authService);
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
+        console.log('userDetails :', userDetails, 'accessToken :', accessToken);
         res.json({
             status: 'success',
             message: 'user verified',
@@ -98,9 +100,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         });
     });
     const sendOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
-        // console.log('body data', req.body)
         const { email } = req.body;
-        // console.log('email is', email)
         const response = await (0, userAuth_1.handleSendOtp)(email, dbOtpRepository, mailSenderService);
         if (response) {
             res.status(httpStatus_1.HttpStatus.OK).json({
@@ -119,6 +119,14 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             });
         }
     });
+    const refreshAccessToken = (0, express_async_handler_1.default)(async (req, res) => {
+        // console.log('cookies jjj',req.cookies)
+        const { refreshToken } = req.cookies;
+        const accessToken = await (0, userAuth_1.handleRefreshAccessToken)({ refreshToken }, dbUserRepository, authService);
+        res.status(httpStatus_1.HttpStatus.OK).json({
+            accessToken
+        });
+    });
     return {
         registerUser,
         usernameAvailability,
@@ -126,7 +134,8 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         loginUser,
         sendOtpForEmailVerification,
         verifyOtpForEmailVerification,
-        loginWithGoogle
+        loginWithGoogle,
+        refreshAccessToken
     };
 };
 exports.default = authController;

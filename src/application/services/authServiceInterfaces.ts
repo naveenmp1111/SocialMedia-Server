@@ -1,22 +1,23 @@
 import { AuthServiceReturn } from "../../frameworks/services/authService";
 
- export const authServiceInterface=(service:AuthServiceReturn)=>{
+export const authServiceInterface = (service: AuthServiceReturn) => {
 
-    const encryptPassword=async (password:string)=>{
+    const encryptPassword = async (password: string) => {
         return await service.encryptPassword(password)
     }
 
-    const comparePassword=async(password:string,hashedPassword:string)=>{
-        return await service.comparePassword(password,hashedPassword)
+    const comparePassword = async (password: string, hashedPassword: string) => {
+        return await service.comparePassword(password, hashedPassword)
     }
 
-    const generateAccessToken=async(userId:string,role:string)=>{
-        return await service.generateAccessToken({userId,role})
+    const generateAccessToken = async (userId: string, role: string) => {
+        // console.log('coming to generate accesstoken')
+        return await service.generateAccessToken({ userId, role })
     }
 
-    const generateRefreshToken=async(userId:string,role:string)=>{
-        console.log('coing to authSeriveceinterfaces')
-        return await service.generateRefreshToken({userId,role})
+    const generateRefreshToken = async (userId: string, role: string) => {
+        // console.log('coing to authSeriveceinterfaces')
+        return await service.generateRefreshToken({ userId, role })
     }
 
     const verifyAccessToken = (token: string) => {
@@ -37,4 +38,4 @@ import { AuthServiceReturn } from "../../frameworks/services/authService";
     }
 }
 
-export type AuthServiceInterface= typeof authServiceInterface
+export type AuthServiceInterface = typeof authServiceInterface

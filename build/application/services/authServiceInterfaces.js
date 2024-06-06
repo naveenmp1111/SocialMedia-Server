@@ -9,10 +9,11 @@ const authServiceInterface = (service) => {
         return await service.comparePassword(password, hashedPassword);
     };
     const generateAccessToken = async (userId, role) => {
+        // console.log('coming to generate accesstoken')
         return await service.generateAccessToken({ userId, role });
     };
     const generateRefreshToken = async (userId, role) => {
-        console.log('coing to authSeriveceinterfaces');
+        // console.log('coing to authSeriveceinterfaces')
         return await service.generateRefreshToken({ userId, role });
     };
     const verifyAccessToken = (token) => {

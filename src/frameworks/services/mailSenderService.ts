@@ -1,17 +1,16 @@
 import sendMail from "../../utils/sendMail";
 
-export const mailSenderService=()=>{
+export const mailSenderService = () => {
 
-    const sendVerificationMail=async(email:string,otp:number)=>{
-        const mailResponse=await sendMail(email,'SOCIAL-MEDIA - Email verification',`Otp for email verification is ${otp}`)
-        // console.log('mail response',mailResponse)
+    const sendVerificationMail = async (email: string, otp: number) => {
+        const mailResponse = await sendMail(email, 'SOCIAL-MEDIA - Email verification', `Otp for email verification is ${otp}`)
         return mailResponse
     }
 
-    return{
+    return {
         sendVerificationMail
     }
 }
 
-export type MailSenderServie=typeof mailSenderService
-export type MailSenderServieReturn=ReturnType<MailSenderServie>
+export type MailSenderServie = typeof mailSenderService
+export type MailSenderServieReturn = ReturnType<MailSenderServie>

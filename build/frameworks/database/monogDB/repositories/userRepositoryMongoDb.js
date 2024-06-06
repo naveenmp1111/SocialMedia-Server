@@ -64,7 +64,7 @@ const userRepositoryMongoDb = () => {
         try {
             const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             const user = await userModel_1.default.findOneAndUpdate({ email }, { refreshToken, refreshTokenExpiresAt }, { new: true });
-            console.log('user is ', user);
+            // console.log('user is ', user)
             return user;
         }
         catch (error) {
@@ -75,6 +75,7 @@ const userRepositoryMongoDb = () => {
     const editProfile = async (profileInfo) => {
         try {
             let user;
+            // console.log('profile link is ',profileInfo.profilePic)
             if (profileInfo.profilePic) {
                 user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, profileInfo, {
                     new: true,
@@ -91,6 +92,7 @@ const userRepositoryMongoDb = () => {
                     new: true,
                 });
             }
+            // console.log('updated user is ',user)
             return user;
         }
         catch (error) {
@@ -110,7 +112,6 @@ const userRepositoryMongoDb = () => {
                 isBlock: 1,
                 isGoogleSignedIn: 1
             });
-            console.log('users ', users);
             return users;
         }
         catch (error) {
@@ -120,9 +121,7 @@ const userRepositoryMongoDb = () => {
     };
     const blockUser = async (userId) => {
         try {
-            console.log('userid is ', userId);
             const userData = await userModel_1.default.findByIdAndUpdate(userId, { $set: { isBlock: true } }, { new: true });
-            console.log('userData', userData);
             return userData;
         }
         catch (error) {
@@ -139,6 +138,25 @@ const userRepositoryMongoDb = () => {
             throw new Error('Erron in unblocking the user');
         }
     };
+    const getUserById = async (userId) => {
+        try {
+            return await userModel_1.default.findById(userId);
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error('error in get User by Id');
+        }
+    };
+    const updatePosts = async (userId, postId) => {
+        try {
+            const data = await userModel_1.default.updateOne({ _id: userId }, { $push: { posts: postId } });
+            console.log(data);
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error("Error updating posts!");
+        }
+    };
     return {
         addUser,
         getUserByEmail,
@@ -149,7 +167,9 @@ const userRepositoryMongoDb = () => {
         checkEmailForEdit,
         getAllUsersForAdmin,
         blockUser,
-        unBlockUser
+        unBlockUser,
+        getUserById,
+        updatePosts
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userLoginUsingGoogle = exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
+exports.handleRefreshAccessToken = exports.userLoginUsingGoogle = exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const otp_generator_1 = __importDefault(require("otp-generator"));
@@ -39,10 +39,12 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
         email: user?.email,
         bio: user?.bio,
         profilePic: user?.profilePic,
-        isBlock: user.isBlock
+        isBlock: user.isBlock,
+        role: user.role
     };
     const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role);
     const accessToken = await authService.generateAccessToken(user._id.toString(), user.role);
+    await dbUserRepository.addRefreshTokenAndExpiry(user.email, refreshToken);
     return { userDetails, refreshToken, accessToken };
 };
 exports.userLogin = userLogin;
@@ -54,10 +56,8 @@ const handleSendOtp = async (email, dbOtpRepository, mailSenderService) => {
     });
     const otp = parseInt(otpString);
     console.log('Otp is ', otp);
-    //   console.log('type is ',typeof otp)
     await dbOtpRepository.saveNewOtp({ email, otp });
     const response = await mailSenderService.sendVerificationMail(email, otp);
-    //   console.log('response in userAuth in user case',response)
     return response;
 };
 exports.handleSendOtp = handleSendOtp;
@@ -93,6 +93,7 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
             isBlock: isExistingEmail.isBlock,
             bio: isExistingEmail?.bio,
             profilePic: isExistingEmail?.profilePic,
+            role: isExistingEmail.role
         };
         await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
         return { userDetails, accessToken, refreshToken };
@@ -116,3 +117,27 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
     return { userDetails, accessToken, refreshToken };
 };
 exports.userLoginUsingGoogle = userLoginUsingGoogle;
+const handleRefreshAccessToken = async (cookies, dbUserRepository, authService) => {
+    console.log('cookies ', cookies);
+    if (!cookies?.refreshToken) {
+        throw new appError_1.default("Invalid token!", httpStatus_1.HttpStatus.UNAUTHORIZED);
+    }
+    const refreshToken = cookies.refreshToken;
+    const { userId, role } = authService.verifyRefreshToken(refreshToken.toString());
+    if (!userId || role !== "client") {
+        throw new appError_1.default("Invalid token!2", httpStatus_1.HttpStatus.UNAUTHORIZED);
+    }
+    const user = await dbUserRepository.getUserById(userId);
+    if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
+        throw new appError_1.default("Invalid token!3", httpStatus_1.HttpStatus.UNAUTHORIZED);
+    }
+    if (user) {
+        const expiresAt = user.refreshTokenExpiresAt.getTime();
+        if (Date.now() > expiresAt) {
+            throw new appError_1.default("Invalid token!4", httpStatus_1.HttpStatus.UNAUTHORIZED);
+        }
+    }
+    const newAccessToken = authService.generateAccessToken(userId, "client");
+    return newAccessToken;
+};
+exports.handleRefreshAccessToken = handleRefreshAccessToken;

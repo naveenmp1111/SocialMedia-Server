@@ -17,25 +17,27 @@ const authService = () => {
         return bcryptjs_1.default.compare(password, hashedPassword);
     };
     const generateAccessToken = (payload) => {
-        console.log('coimg to accesstken generation');
+        // console.log('coimg to accesstken generation')
         const accessToken = jsonwebtoken_1.default.sign(payload, config_1.default.JWT_ACCESS_SECRET, {
-            expiresIn: '15m'
+            expiresIn: '2m'
         });
         return accessToken;
     };
     const generateRefreshToken = (payload) => {
-        console.log('coming to refresh token generations');
+        // console.log('coming to refresh token generations')
         const refreshToken = jsonwebtoken_1.default.sign(payload, config_1.default.JWT_REFRESH_SECRET, {
             expiresIn: '7d'
         });
-        console.log('refreshtoken', refreshToken);
+        // console.log('refreshtoken', refreshToken)
         return refreshToken;
     };
     const verifyAccessToken = (token) => {
         const payload = jsonwebtoken_1.default.verify(token, config_1.default.JWT_ACCESS_SECRET);
+        return payload;
     };
     const verifyRefreshToken = (token) => {
         const payload = jsonwebtoken_1.default.verify(token, config_1.default.JWT_REFRESH_SECRET);
+        return payload;
     };
     return {
         encryptPassword,

@@ -1,19 +1,19 @@
 import Otp from "../models/otpModel"
 
-export const otpRepositoryMongoDb=()=>{
-    const saveNewOtp=async({email,otp}:{email:string,otp:number})=>{
+export const otpRepositoryMongoDb = () => {
+    const saveNewOtp = async ({ email, otp }: { email: string, otp: number }) => {
         try {
-            const otpObj=new Otp({email,otp});
-            const savedOtp=await otpObj.save();
+            const otpObj = new Otp({ email, otp });
+            const savedOtp = await otpObj.save();
             return savedOtp
         } catch (error) {
             console.log(error)
         }
     }
 
-    const getLatestOtp=async(email:string)=>{
+    const getLatestOtp = async (email: string) => {
         try {
-            const otpObj=await Otp.findOne({email}).sort({createdAt:-1});
+            const otpObj = await Otp.findOne({ email }).sort({ createdAt: -1 });
             return otpObj
         } catch (error) {
             console.log(error)
@@ -26,4 +26,4 @@ export const otpRepositoryMongoDb=()=>{
     }
 }
 
-export type OtpRepositoryMongoDb=typeof otpRepositoryMongoDb
+export type OtpRepositoryMongoDb = typeof otpRepositoryMongoDb
