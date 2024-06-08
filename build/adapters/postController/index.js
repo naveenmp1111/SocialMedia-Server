@@ -46,11 +46,20 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
             posts
         });
     });
+    const deletePost = (0, express_async_handler_1.default)(async (req, res) => {
+        const { postId } = req.params;
+        const post = await (0, postAuth_1.handleDeletePost)(postId, dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'Post deleted successfully'
+        });
+    });
     return {
         createPost,
         getMyPosts,
         updatePostById,
         getAllPosts,
+        deletePost
     };
 };
 exports.default = postController;

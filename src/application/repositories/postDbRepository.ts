@@ -12,11 +12,14 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     const getAllPosts=async(userId:string)=>await repository.getAllPosts(userId)
 
+    const deletePost=async(postId:string)=>await repository.deletePost(postId)
+
     return {
         createPost,
         getMyPosts,
         updatePostById,
-        getAllPosts
+        getAllPosts,
+        deletePost
     }
 
 }

@@ -75,7 +75,7 @@ const userRepositoryMongoDb = () => {
     const editProfile = async (profileInfo) => {
         try {
             let user;
-            // console.log('profile link is ',profileInfo.profilePic)
+            console.log('profile link is ', profileInfo);
             if (profileInfo.profilePic) {
                 user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, profileInfo, {
                     new: true,

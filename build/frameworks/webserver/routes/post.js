@@ -17,8 +17,9 @@ const postRouter = () => {
     const controller = (0, postController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository);
     router.post('/createPost', authMiddleware_1.default, controller.createPost);
     router.get('/getMyPosts', authMiddleware_1.default, controller.getMyPosts);
-    // router.post('/editPost',controller.updatePostById)
+    router.post('/editPost', controller.updatePostById);
     router.get('/getAllPosts', authMiddleware_1.default, controller.getAllPosts);
+    router.get('/deletePost/:postId', controller.deletePost);
     return router;
 };
 exports.default = postRouter;

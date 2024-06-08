@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetMyPosts = exports.handleCreatePost = void 0;
+exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetMyPosts = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const handleCreatePost = async (postData, postDbRepository, userDbRepository) => {
@@ -54,3 +54,13 @@ const handleGetAllPosts = async (userId, postDbRepository) => {
     }
 };
 exports.handleGetAllPosts = handleGetAllPosts;
+const handleDeletePost = async (postId, postDbRepository) => {
+    try {
+        const post = await postDbRepository.deletePost(postId);
+        return post;
+    }
+    catch (error) {
+        console.log('errror in handleDeletePost ', error);
+    }
+};
+exports.handleDeletePost = handleDeletePost;

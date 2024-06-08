@@ -24,6 +24,9 @@ const userSchema = new Schema({
     profilePic: {
         type: String
     },
+    phoneNumber:{
+        type:Number
+    },
     isBlock: {
         type: Boolean,
         default: false

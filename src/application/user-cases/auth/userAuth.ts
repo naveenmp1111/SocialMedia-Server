@@ -62,6 +62,7 @@ export const userLogin = async (
     email: user?.email,
     bio: user?.bio,
     profilePic: user?.profilePic,
+    phoneNumber:user?.phoneNumber,
     isBlock: user.isBlock,
     role:user.role
   };
@@ -134,6 +135,7 @@ export const userLoginUsingGoogle = async (
       isBlock: isExistingEmail.isBlock,
       bio: isExistingEmail?.bio,
       profilePic: isExistingEmail?.profilePic,
+      phoneNumber:isExistingEmail?.phoneNumber,
       role:isExistingEmail.role
     }
 

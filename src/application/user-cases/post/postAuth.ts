@@ -66,3 +66,15 @@ export const handleGetAllPosts=async(
         console.log('errror in getting all posts',error)
     }
 }
+
+export const handleDeletePost=async(
+    postId:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+        const post=await postDbRepository.deletePost(postId)
+        return post
+    } catch (error) {
+        console.log('errror in handleDeletePost ',error)
+    }
+}

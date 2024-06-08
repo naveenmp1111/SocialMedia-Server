@@ -39,6 +39,7 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
         email: user?.email,
         bio: user?.bio,
         profilePic: user?.profilePic,
+        phoneNumber: user?.phoneNumber,
         isBlock: user.isBlock,
         role: user.role
     };
@@ -93,6 +94,7 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
             isBlock: isExistingEmail.isBlock,
             bio: isExistingEmail?.bio,
             profilePic: isExistingEmail?.profilePic,
+            phoneNumber: isExistingEmail?.phoneNumber,
             role: isExistingEmail.role
         };
         await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);

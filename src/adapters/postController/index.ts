@@ -4,7 +4,7 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleCreatePost, handleEditPostbyId, handleGetAllPosts, handleGetMyPosts } from '../../application/user-cases/post/postAuth';
+import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetMyPosts } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 import { PostDataInterface } from '../../types/PostInterface';
@@ -62,12 +62,22 @@ const postController = (
         posts
       })
     })
+
+    const deletePost=asyncHandler(async(req:Request,res:Response)=>{
+      const {postId}=req.params
+      const post=await handleDeletePost(postId,dbPostRepository)
+      res.json({
+        status:'success',
+        message:'Post deleted successfully'
+      })
+    })
   
     return {
         createPost,
         getMyPosts,
         updatePostById,
         getAllPosts,
+        deletePost
     }
   }
   

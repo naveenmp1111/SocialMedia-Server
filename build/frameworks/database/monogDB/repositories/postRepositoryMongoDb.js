@@ -82,6 +82,15 @@ const postRepositoryMongoDb = () => {
             console.log(err);
         }
     };
+    const deletePost = async (postId) => {
+        try {
+            const post = await postModel_1.default.findByIdAndDelete(postId);
+            return post;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
     const getAllPosts = async (userId) => {
         try {
             // const posts = await Post.find({ userId: { $ne: userId } });
@@ -139,7 +148,8 @@ const postRepositoryMongoDb = () => {
         createPost,
         getMyPosts,
         updatePostById,
-        getAllPosts
+        getAllPosts,
+        deletePost
     };
 };
 exports.postRepositoryMongoDb = postRepositoryMongoDb;

@@ -12,7 +12,7 @@ const profileController = (userDbRepositoryImpl, userDbRepositoryInterface, auth
         const profileInfo = req.body;
         // console.log('body data',req.body)
         const user = await (0, profileAuth_1.handleEditProfile)(profileInfo, dbUserRepository);
-        console.log('edited user profile ', user);
+        // console.log('edited user profile ',user)
         res.json({
             status: "success",
             message: "user info fetched",
