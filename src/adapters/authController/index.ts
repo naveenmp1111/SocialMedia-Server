@@ -10,7 +10,7 @@ import { OtpDbInterface } from '../../application/repositories/otpDbRepository';
 import { OtpRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/otpRepositoryMongoDb';
 
 //use-case import 
-import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle, handleRefreshAccessToken } from '../../application/user-cases/auth/userAuth';
+import { userLogin, userRegister, handleSendOtp, handleOtpVerification, userLoginUsingGoogle, handleRefreshAccessToken, handleResetPassword } from '../../application/user-cases/auth/userAuth';
 
 //importing types
 import { UserInterface } from '../../types/LoginUserInterface';
@@ -129,8 +129,9 @@ const authController = (
 
     const sendOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
 
-        const { email }: { email: string } = req.body
-        const response = await handleSendOtp(email, dbOtpRepository, mailSenderService)
+        const { email ,message }: { email: string, message:string } = req.body
+        console.log('email is ',email)
+        const response = await handleSendOtp({email,message}, dbOtpRepository, mailSenderService,dbUserRepository)
         if (response) {
             res.status(HttpStatus.OK).json({
                 status: "success",
@@ -161,6 +162,14 @@ const authController = (
     })
 
 
+    const resetPassword=asyncHandler(async(req:Request,res:Response)=>{
+        const {email,password}=req.body
+        await handleResetPassword({email,password},dbUserRepository,authService)
+        res.status(HttpStatus.OK).json({
+            status:'success',
+            message:'Password reset successfull'
+        })
+    })
 
 
 
@@ -172,7 +181,8 @@ const authController = (
         sendOtpForEmailVerification,
         verifyOtpForEmailVerification,
         loginWithGoogle,
-        refreshAccessToken
+        refreshAccessToken,
+        resetPassword
     }
 }
 export default authController;

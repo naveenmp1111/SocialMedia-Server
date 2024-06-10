@@ -157,6 +157,16 @@ const userRepositoryMongoDb = () => {
             throw new Error("Error updating posts!");
         }
     };
+    const resetPassword = async (email, password) => {
+        try {
+            const data = await userModel_1.default.updateOne({ email }, { password });
+            return data;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error('Error in changing password');
+        }
+    };
     return {
         addUser,
         getUserByEmail,
@@ -169,7 +179,8 @@ const userRepositoryMongoDb = () => {
         blockUser,
         unBlockUser,
         getUserById,
-        updatePosts
+        updatePosts,
+        resetPassword
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

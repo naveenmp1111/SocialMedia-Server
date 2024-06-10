@@ -100,8 +100,9 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         });
     });
     const sendOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
-        const { email } = req.body;
-        const response = await (0, userAuth_1.handleSendOtp)(email, dbOtpRepository, mailSenderService);
+        const { email, message } = req.body;
+        console.log('email is ', email);
+        const response = await (0, userAuth_1.handleSendOtp)({ email, message }, dbOtpRepository, mailSenderService, dbUserRepository);
         if (response) {
             res.status(httpStatus_1.HttpStatus.OK).json({
                 status: "success",
@@ -127,6 +128,14 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             accessToken
         });
     });
+    const resetPassword = (0, express_async_handler_1.default)(async (req, res) => {
+        const { email, password } = req.body;
+        await (0, userAuth_1.handleResetPassword)({ email, password }, dbUserRepository, authService);
+        res.status(httpStatus_1.HttpStatus.OK).json({
+            status: 'success',
+            message: 'Password reset successfull'
+        });
+    });
     return {
         registerUser,
         usernameAvailability,
@@ -135,7 +144,8 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         sendOtpForEmailVerification,
         verifyOtpForEmailVerification,
         loginWithGoogle,
-        refreshAccessToken
+        refreshAccessToken,
+        resetPassword
     };
 };
 exports.default = authController;

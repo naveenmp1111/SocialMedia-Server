@@ -82,7 +82,7 @@ export const userRepositoryMongoDb = () => {
   const editProfile = async (profileInfo: ProfileInterface) => {
     try {
       let user
-      console.log('profile link is ',profileInfo)
+      console.log('profile link is ', profileInfo)
       if (profileInfo.profilePic) {
         user = await User.findByIdAndUpdate(profileInfo.userId, profileInfo, {
           new: true,
@@ -146,7 +146,7 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
-  const getUserById=async(userId:string)=>{
+  const getUserById = async (userId: string) => {
     try {
       return await User.findById(userId)
     } catch (error) {
@@ -157,13 +157,24 @@ export const userRepositoryMongoDb = () => {
 
   const updatePosts = async (userId: string, postId: string) => {
     try {
-     const data= await User.updateOne({ _id: userId }, { $push: { posts: postId } });
-     console.log(data)
+      const data = await User.updateOne({ _id: userId }, { $push: { posts: postId } });
+      console.log(data)
     } catch (error) {
       console.log(error);
-      throw new Error ("Error updating posts!")
+      throw new Error("Error updating posts!")
     }
   };
+
+  
+  const resetPassword = async (email: string, password: string) => {
+    try {
+      const data = await User.updateOne({ email }, { password })
+      return data
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error in changing password')
+    }
+  }
 
 
   return {
@@ -178,7 +189,8 @@ export const userRepositoryMongoDb = () => {
     blockUser,
     unBlockUser,
     getUserById,
-    updatePosts
+    updatePosts,
+    resetPassword
   }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

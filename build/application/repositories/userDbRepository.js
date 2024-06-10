@@ -14,6 +14,7 @@ const userDbRepository = (repository) => {
     const unblockUser = async (userId) => await repository.unBlockUser(userId);
     const getUserById = async (userId) => await repository.getUserById(userId);
     const updatePost = async (userId, postId) => await repository.updatePosts(userId, postId);
+    const resetPassword = async (email, password) => await repository.resetPassword(email, password);
     return {
         addUser,
         getUserByEmail,
@@ -26,7 +27,8 @@ const userDbRepository = (repository) => {
         blockUser,
         unblockUser,
         getUserById,
-        updatePost
+        updatePost,
+        resetPassword
     };
 };
 exports.userDbRepository = userDbRepository;

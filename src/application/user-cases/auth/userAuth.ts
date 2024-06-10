@@ -9,6 +9,7 @@ import otpGenerator from 'otp-generator'
 import { UserInterface } from "../../../types/LoginUserInterface";
 import { MailSenderServiceInterface } from "../../services/mailSenderService";
 import { OtpDbInterface } from "../../repositories/otpDbRepository";
+import { authService } from "../../../frameworks/services/authService";
 
 
 
@@ -75,9 +76,10 @@ export const userLogin = async (
 
 
 export const handleSendOtp = async (
-  email: string,
+  data:{email:string,message:string},
   dbOtpRepository: ReturnType<OtpDbInterface>,
   mailSenderService: ReturnType<MailSenderServiceInterface>,
+  dbUserRepository: ReturnType<UserDbInterface>,
 ) => {
   const otpString = otpGenerator.generate(6, {
     lowerCaseAlphabets: false,
@@ -86,8 +88,14 @@ export const handleSendOtp = async (
   });
   const otp = parseInt(otpString)
   console.log('Otp is ', otp)
-  await dbOtpRepository.saveNewOtp({ email, otp })
-  const response = await mailSenderService.sendVerificationMail(email, otp)
+  if(data.message=='passwordRecovery'){
+    const isExistingEmail = await dbUserRepository.getUserByEmail(data.email)
+    if(!isExistingEmail){
+      throw new AppError('No user found',HttpStatus.UNAUTHORIZED)
+    }
+  }
+  await dbOtpRepository.saveNewOtp({ email:data.email, otp })
+  const response = await mailSenderService.sendVerificationMail(data.email, otp)
   return response
 }
 
@@ -190,4 +198,14 @@ export const handleRefreshAccessToken=async(
   const newAccessToken = authService.generateAccessToken(userId,"client");
   return newAccessToken;
 
+}
+
+export const handleResetPassword=async(
+  data:{email:string,password:string},
+  dbUserRepository:ReturnType<UserDbInterface>,
+  authService:ReturnType<AuthServiceInterface>
+)=>{
+  const password= await authService.encryptPassword(data.password)
+  const user= await dbUserRepository.resetPassword(data.email,password )
+  return user
 }

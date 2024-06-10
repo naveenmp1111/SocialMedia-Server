@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleRefreshAccessToken = exports.userLoginUsingGoogle = exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
+exports.handleResetPassword = exports.handleRefreshAccessToken = exports.userLoginUsingGoogle = exports.handleOtpVerification = exports.handleSendOtp = exports.userLogin = exports.userRegister = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const otp_generator_1 = __importDefault(require("otp-generator"));
@@ -49,7 +49,7 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
     return { userDetails, refreshToken, accessToken };
 };
 exports.userLogin = userLogin;
-const handleSendOtp = async (email, dbOtpRepository, mailSenderService) => {
+const handleSendOtp = async (data, dbOtpRepository, mailSenderService, dbUserRepository) => {
     const otpString = otp_generator_1.default.generate(6, {
         lowerCaseAlphabets: false,
         upperCaseAlphabets: false,
@@ -57,8 +57,14 @@ const handleSendOtp = async (email, dbOtpRepository, mailSenderService) => {
     });
     const otp = parseInt(otpString);
     console.log('Otp is ', otp);
-    await dbOtpRepository.saveNewOtp({ email, otp });
-    const response = await mailSenderService.sendVerificationMail(email, otp);
+    if (data.message == 'passwordRecovery') {
+        const isExistingEmail = await dbUserRepository.getUserByEmail(data.email);
+        if (!isExistingEmail) {
+            throw new appError_1.default('No user found', httpStatus_1.HttpStatus.UNAUTHORIZED);
+        }
+    }
+    await dbOtpRepository.saveNewOtp({ email: data.email, otp });
+    const response = await mailSenderService.sendVerificationMail(data.email, otp);
     return response;
 };
 exports.handleSendOtp = handleSendOtp;
@@ -143,3 +149,9 @@ const handleRefreshAccessToken = async (cookies, dbUserRepository, authService) 
     return newAccessToken;
 };
 exports.handleRefreshAccessToken = handleRefreshAccessToken;
+const handleResetPassword = async (data, dbUserRepository, authService) => {
+    const password = await authService.encryptPassword(data.password);
+    const user = await dbUserRepository.resetPassword(data.email, password);
+    return user;
+};
+exports.handleResetPassword = handleResetPassword;

@@ -28,6 +28,8 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
    const getUserById=async(userId:string)=> await repository.getUserById(userId)
 
    const updatePost=async(userId:string,postId:string)=>await repository.updatePosts(userId,postId)
+   
+   const resetPassword=async(email:string,password:string)=>await repository.resetPassword(email,password)
 
    return {
       addUser,
@@ -41,7 +43,8 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       blockUser,
       unblockUser,
       getUserById,
-      updatePost
+      updatePost,
+      resetPassword
    }
 }
 
