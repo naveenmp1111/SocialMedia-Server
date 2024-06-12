@@ -45,13 +45,13 @@ const handleEditPostbyId = async (postId, description, postDbRepository) => {
 };
 exports.handleEditPostbyId = handleEditPostbyId;
 const handleGetAllPosts = async (userId, postDbRepository) => {
-    try {
-        const allPosts = await postDbRepository.getAllPosts(userId);
-        return allPosts;
-    }
-    catch (error) {
-        console.log('errror in getting all posts', error);
-    }
+    // try {
+    // throw new AppError('error created', HttpStatus.UNAUTHORIZED)
+    const allPosts = await postDbRepository.getAllPosts(userId);
+    return allPosts;
+    // } catch (error) {
+    //     console.log('errror in getting all posts',error)
+    // }
 };
 exports.handleGetAllPosts = handleGetAllPosts;
 const handleDeletePost = async (postId, postDbRepository) => {

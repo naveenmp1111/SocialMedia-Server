@@ -60,7 +60,6 @@ const authController = (
         } catch (error) {
             console.error('Error checking username availability: ', error)
         }
-
     })
 
     const emailAvailability = asyncHandler(async (req: Request, res: Response) => {
@@ -99,7 +98,7 @@ const authController = (
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
-        console.log('userDetails :',userDetails,'accessToken :',accessToken)
+        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'Login successfull',
@@ -154,6 +153,7 @@ const authController = (
 
     const refreshAccessToken=asyncHandler(async(req:Request,res:Response)=>{
         // console.log('cookies jjj',req.cookies)
+        console.log('coming to refresh acesstoken')
         const {refreshToken}=req.cookies;
         const accessToken=await handleRefreshAccessToken({refreshToken},dbUserRepository,authService)
         res.status(HttpStatus.OK).json({

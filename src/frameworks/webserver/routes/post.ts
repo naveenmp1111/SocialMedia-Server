@@ -22,9 +22,9 @@ const postRouter = () => {
 
     router.post('/createPost', authMiddleware, controller.createPost)
     router.get('/getMyPosts',authMiddleware,controller.getMyPosts)
-    router.post('/editPost',controller.updatePostById)
+    router.post('/editPost',authMiddleware,controller.updatePostById)
     router.get('/getAllPosts',authMiddleware,controller.getAllPosts)
-    router.get('/deletePost/:postId',controller.deletePost)
+    router.get('/deletePost/:postId',authMiddleware,controller.deletePost)
     return router
 }
 export default postRouter

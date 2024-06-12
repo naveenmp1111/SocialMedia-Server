@@ -40,7 +40,7 @@ export const userLogin = async (
   password: string,
   dbUserRepository: ReturnType<UserDbInterface>,
   authService: ReturnType<AuthServiceInterface>
-) => {
+) => { 
   const user = await dbUserRepository.getUserByEmail(email)
   if (!user) {
     throw new AppError('Invalid email', HttpStatus.UNAUTHORIZED)

@@ -19,7 +19,7 @@ const authService = () => {
     const generateAccessToken = (payload) => {
         // console.log('coimg to accesstken generation')
         const accessToken = jsonwebtoken_1.default.sign(payload, config_1.default.JWT_ACCESS_SECRET, {
-            expiresIn: '2m'
+            expiresIn: '15m'
         });
         return accessToken;
     };

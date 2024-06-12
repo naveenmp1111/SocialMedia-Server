@@ -74,7 +74,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
-        console.log('userDetails :', userDetails, 'accessToken :', accessToken);
+        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'Login successfull',
@@ -122,6 +122,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
     });
     const refreshAccessToken = (0, express_async_handler_1.default)(async (req, res) => {
         // console.log('cookies jjj',req.cookies)
+        console.log('coming to refresh acesstoken');
         const { refreshToken } = req.cookies;
         const accessToken = await (0, userAuth_1.handleRefreshAccessToken)({ refreshToken }, dbUserRepository, authService);
         res.status(httpStatus_1.HttpStatus.OK).json({

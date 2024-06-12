@@ -16,7 +16,7 @@ export const authService = () => {
     const generateAccessToken = (payload: { userId: string; role: string }) => {
         // console.log('coimg to accesstken generation')
         const accessToken = jwt.sign(payload, configKeys.JWT_ACCESS_SECRET, {
-            expiresIn: '2m'
+            expiresIn: '15m'
         })
         return accessToken
     }
@@ -37,6 +37,8 @@ export const authService = () => {
 
     const verifyRefreshToken = (token: string) => {
         const payload: { userId: string, role: string } = jwt.verify(token, configKeys.JWT_REFRESH_SECRET) as { userId: string, role: string }
+
+
         return payload
     }
 

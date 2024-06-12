@@ -30,8 +30,8 @@ const authRouter = () => {
     router.post('/sendOtp', controller.sendOtpForEmailVerification)
     router.post('/verifyOtp', controller.verifyOtpForEmailVerification)
     router.post('/google_auth', controller.loginWithGoogle)
-    router.get('/refresh-access-token',controller.refreshAccessToken)
-    router.post('/resetPassword',controller.resetPassword)
+    router.get('/refresh-access-token', controller.refreshAccessToken)
+    router.post('/resetPassword', controller.resetPassword)
 
     return router
 }

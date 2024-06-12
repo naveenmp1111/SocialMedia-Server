@@ -59,12 +59,13 @@ export const handleGetAllPosts=async(
     userId:string,
     postDbRepository:ReturnType<PostDbInterface>
 )=>{
-    try {
+    // try {
+        // throw new AppError('error created', HttpStatus.UNAUTHORIZED)
         const allPosts=await postDbRepository.getAllPosts(userId)
         return allPosts
-    } catch (error) {
-        console.log('errror in getting all posts',error)
-    }
+    // } catch (error) {
+    //     console.log('errror in getting all posts',error)
+    // }
 }
 
 export const handleDeletePost=async(
