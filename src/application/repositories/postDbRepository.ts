@@ -6,7 +6,7 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     const createPost = async (postData: PostDataInterface) => await repository.createPost(postData)
 
-    const getMyPosts =async(userId:string)=>await repository.getMyPosts(userId)
+    const getPostsByUser =async(userId:string)=>await repository.getPostsByUser(userId)
 
     const updatePostById=async(postId:string,description:string)=>await repository.updatePostById(postId,description)
 
@@ -16,7 +16,7 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     return {
         createPost,
-        getMyPosts,
+        getPostsByUser,
         updatePostById,
         getAllPosts,
         deletePost

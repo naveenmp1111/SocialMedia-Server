@@ -21,7 +21,7 @@ const postRouter = () => {
     )
 
     router.post('/createPost', authMiddleware, controller.createPost)
-    router.get('/getMyPosts',authMiddleware,controller.getMyPosts)
+    router.get('/getPostsByUser/:userId',authMiddleware,controller.getPostsByUser)
     router.post('/editPost',authMiddleware,controller.updatePostById)
     router.get('/getAllPosts',authMiddleware,controller.getAllPosts)
     router.get('/deletePost/:postId',authMiddleware,controller.deletePost)

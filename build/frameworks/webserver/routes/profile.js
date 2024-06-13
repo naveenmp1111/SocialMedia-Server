@@ -14,6 +14,7 @@ const profileRouter = () => {
     const router = (0, express_1.default)();
     const controller = (0, profileController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface);
     router.post('/editProfile', authMiddleware_1.default, controller.editProfile);
+    router.get('/getUserById/:userId', authMiddleware_1.default, controller.getUserById);
     return router;
 };
 exports.default = profileRouter;

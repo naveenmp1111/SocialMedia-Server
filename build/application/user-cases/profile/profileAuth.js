@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleEditProfile = void 0;
+exports.handleGetUserById = exports.handleEditProfile = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const handleEditProfile = async (profileInfo, dbUserRepository) => {
@@ -20,3 +20,8 @@ const handleEditProfile = async (profileInfo, dbUserRepository) => {
     return userDetails;
 };
 exports.handleEditProfile = handleEditProfile;
+const handleGetUserById = async (userId, dbUserRepository) => {
+    const userData = await dbUserRepository.getUserById(userId);
+    return userData;
+};
+exports.handleGetUserById = handleGetUserById;

@@ -8,7 +8,7 @@ const userSchema = new Schema({
     },
     username: {
         type: String,
-        required:true
+        required: true
     },
     email: {
         type: String,
@@ -24,8 +24,8 @@ const userSchema = new Schema({
     profilePic: {
         type: String
     },
-    phoneNumber:{
-        type:Number
+    phoneNumber: {
+        type: Number
     },
     isBlock: {
         type: Boolean,
@@ -47,7 +47,18 @@ const userSchema = new Schema({
         type: Date,
         default: null,
     },
-    posts:[]
+    following: [
+        {
+            type: mongoose.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
+    followers: [
+        {
+            type: mongoose.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
 })
 
 const User = model('User', userSchema);

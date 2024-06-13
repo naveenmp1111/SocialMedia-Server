@@ -1,6 +1,7 @@
 import User from '../models/userModel'
 import { GoogleUserInterface, UserInterface } from '../../../../types/LoginUserInterface'
 import mongoose from 'mongoose'
+const {ObjectId}=mongoose.Types
 import { ProfileInterface } from '../../../../types/ProfileInterface'
 
 export const userRepositoryMongoDb = () => {
@@ -176,6 +177,33 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
+  const getRestOfAllUsers=async(userId:string)=>{
+    try {
+      const data = await User.find({
+        isBlock: false,
+        role:'client',
+        _id: { $ne: userId },
+      });
+      
+       return data
+
+    } catch (error) {
+      throw new Error('Error in getRestOfAllUsers')
+    }
+  }
+
+  const followUser=async(userId:string,friendId:string)=>{
+    try {
+      const userObjectId = new ObjectId(userId);
+      const followObjectId = new ObjectId(friendId);
+       await User.findByIdAndUpdate(userObjectId,{$addToSet:{following:followObjectId}})
+       await User.findByIdAndUpdate(followObjectId,{$addToSet:{followers:userObjectId}})
+    } catch (error) {
+      console.log('Errron in following user',error)
+      throw new Error('Error in followUser')
+    }
+  }
+
 
   return {
     addUser,
@@ -190,7 +218,9 @@ export const userRepositoryMongoDb = () => {
     unBlockUser,
     getUserById,
     updatePosts,
-    resetPassword
+    resetPassword,
+    getRestOfAllUsers,
+    followUser
   }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

@@ -31,6 +31,10 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
    
    const resetPassword=async(email:string,password:string)=>await repository.resetPassword(email,password)
 
+   const getRestOfAllUsers=async(userId:string)=>await repository.getRestOfAllUsers(userId)
+
+   const followUser=async(userId:string,friendId:string)=>await repository.followUser(userId,friendId)
+
    return {
       addUser,
       getUserByEmail,
@@ -44,7 +48,9 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       unblockUser,
       getUserById,
       updatePost,
-      resetPassword
+      resetPassword,
+      getRestOfAllUsers,
+      followUser
    }
 }
 

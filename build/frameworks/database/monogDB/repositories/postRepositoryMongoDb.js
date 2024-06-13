@@ -16,10 +16,10 @@ const postRepositoryMongoDb = () => {
             console.log(error);
         }
     };
-    const getMyPosts = async (userId) => {
+    const getPostsByUser = async (userId) => {
         try {
             // const myPosts=await Post.find({userId}).sort({createdAt:-1})
-            const myPosts = await postModel_1.default.aggregate([
+            const UserPosts = await postModel_1.default.aggregate([
                 {
                     $addFields: {
                         userIdObject: { $toObjectId: userId }
@@ -64,8 +64,8 @@ const postRepositoryMongoDb = () => {
                     }
                 }
             ]);
-            console.log('myposts', myPosts);
-            return myPosts;
+            console.log('myposts', UserPosts);
+            return UserPosts;
         }
         catch (error) {
             console.log(error);
@@ -146,7 +146,7 @@ const postRepositoryMongoDb = () => {
     };
     return {
         createPost,
-        getMyPosts,
+        getPostsByUser,
         updatePostById,
         getAllPosts,
         deletePost

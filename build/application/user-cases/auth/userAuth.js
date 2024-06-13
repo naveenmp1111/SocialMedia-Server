@@ -136,15 +136,15 @@ const handleRefreshAccessToken = async (cookies, dbUserRepository, authService) 
         throw new appError_1.default("Invalid token!2", httpStatus_1.HttpStatus.UNAUTHORIZED);
     }
     const user = await dbUserRepository.getUserById(userId);
-    if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
-        throw new appError_1.default("Invalid token!3", httpStatus_1.HttpStatus.UNAUTHORIZED);
-    }
-    if (user) {
-        const expiresAt = user.refreshTokenExpiresAt.getTime();
-        if (Date.now() > expiresAt) {
-            throw new appError_1.default("Invalid token!4", httpStatus_1.HttpStatus.UNAUTHORIZED);
-        }
-    }
+    // if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
+    //   throw new AppError("Invalid token!3", HttpStatus.UNAUTHORIZED);
+    // }
+    // if (user) {
+    //   const expiresAt = user.refreshTokenExpiresAt.getTime();
+    //   if (Date.now() > expiresAt) {
+    //     throw new AppError("Invalid token!4", HttpStatus.UNAUTHORIZED);
+    //   }
+    // }
     const newAccessToken = authService.generateAccessToken(userId, "client");
     return newAccessToken;
 };

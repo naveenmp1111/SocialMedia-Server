@@ -15,11 +15,11 @@ export const postRepositoryMongoDb=()=>{
         }
     }
 
-    const getMyPosts=async(userId:string)=>{
+    const getPostsByUser=async(userId:string)=>{
         try {
             // const myPosts=await Post.find({userId}).sort({createdAt:-1})
 
-            const myPosts = await Post.aggregate([
+            const UserPosts = await Post.aggregate([
                 {
                     $addFields: {
                         userIdObject: { $toObjectId: userId }
@@ -66,8 +66,8 @@ export const postRepositoryMongoDb=()=>{
             ]);
             
             
-            console.log('myposts',myPosts)
-            return myPosts
+            console.log('myposts',UserPosts)
+            return UserPosts
         } catch (error) {
             console.log(error)
         }
@@ -149,7 +149,7 @@ export const postRepositoryMongoDb=()=>{
 
     return{
         createPost,
-        getMyPosts,
+        getPostsByUser,
         updatePostById,
         getAllPosts,
         deletePost

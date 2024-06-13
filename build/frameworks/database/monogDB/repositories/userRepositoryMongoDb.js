@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRepositoryMongoDb = void 0;
 const userModel_1 = __importDefault(require("../models/userModel"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const { ObjectId } = mongoose_1.default.Types;
 const userRepositoryMongoDb = () => {
     const addUser = async (user) => {
         try {
@@ -167,6 +169,31 @@ const userRepositoryMongoDb = () => {
             throw new Error('Error in changing password');
         }
     };
+    const getRestOfAllUsers = async (userId) => {
+        try {
+            const data = await userModel_1.default.find({
+                isBlock: false,
+                role: 'client',
+                _id: { $ne: userId },
+            });
+            return data;
+        }
+        catch (error) {
+            throw new Error('Error in getRestOfAllUsers');
+        }
+    };
+    const followUser = async (userId, friendId) => {
+        try {
+            const userObjectId = new ObjectId(userId);
+            const followObjectId = new ObjectId(friendId);
+            await userModel_1.default.findByIdAndUpdate(userObjectId, { $addToSet: { following: followObjectId } });
+            await userModel_1.default.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+        }
+        catch (error) {
+            console.log('Errron in following user', error);
+            throw new Error('Error in followUser');
+        }
+    };
     return {
         addUser,
         getUserByEmail,
@@ -180,7 +207,9 @@ const userRepositoryMongoDb = () => {
         unBlockUser,
         getUserById,
         updatePosts,
-        resetPassword
+        resetPassword,
+        getRestOfAllUsers,
+        followUser
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

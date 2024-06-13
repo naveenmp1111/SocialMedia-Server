@@ -19,8 +19,18 @@ const profileController = (userDbRepositoryImpl, userDbRepositoryInterface, auth
             user,
         });
     });
+    const getUserById = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.params;
+        const userData = await (0, profileAuth_1.handleGetUserById)(userId, dbUserRepository);
+        res.json({
+            status: 'success',
+            message: 'userdata fetched successfully',
+            user: userData
+        });
+    });
     return {
-        editProfile
+        editProfile,
+        getUserById
     };
 };
 exports.default = profileController;

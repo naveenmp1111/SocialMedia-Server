@@ -50,7 +50,7 @@ export const userLogin = async (
   }
   const isPasswordCorrect = await authService.comparePassword(
     password,
-    user?.password || ''
+    user?.password as string || ''
   )
   if (!isPasswordCorrect) {
     throw new AppError('Incorrect Password', HttpStatus.UNAUTHORIZED)
@@ -67,9 +67,9 @@ export const userLogin = async (
     isBlock: user.isBlock,
     role:user.role
   };
-  const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role)
-  const accessToken = await authService.generateAccessToken(user._id.toString(), user.role)
-  await dbUserRepository.addRefreshTokenAndExpiry(user.email, refreshToken);
+  const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role as string)
+  const accessToken = await authService.generateAccessToken(user._id.toString(), user.role as string)
+  await dbUserRepository.addRefreshTokenAndExpiry(user.email as string, refreshToken);
 
   return { userDetails, refreshToken, accessToken }
 }
@@ -134,8 +134,8 @@ export const userLoginUsingGoogle = async (
       throw new AppError('User is Blocked', HttpStatus.UNAUTHORIZED)
     }
 
-    const refreshToken = await authService.generateRefreshToken(isExistingEmail._id.toString(), isExistingEmail.role)
-    const accessToken = await authService.generateAccessToken(isExistingEmail._id.toString(), isExistingEmail.role)
+    const refreshToken = await authService.generateRefreshToken(isExistingEmail._id.toString(), isExistingEmail.role as string)
+    const accessToken = await authService.generateAccessToken(isExistingEmail._id.toString(), isExistingEmail.role as string)
     const userDetails = {
       name: isExistingEmail.name,
       email: isExistingEmail.email,
@@ -147,7 +147,7 @@ export const userLoginUsingGoogle = async (
       role:isExistingEmail.role
     }
 
-    await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
+    await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email as string, refreshToken);
     return { userDetails, accessToken, refreshToken }
   }
 
@@ -165,8 +165,8 @@ export const userLoginUsingGoogle = async (
     username: username
   }
   const userDetails = await dbUserRepository.addUser(newUser)
-  const accessToken = await authService.generateAccessToken(userDetails._id.toString(), userDetails.role)
-  const refreshToken = await authService.generateRefreshToken(userDetails._id.toString(), userDetails.role)
+  const accessToken = await authService.generateAccessToken(userDetails._id.toString(), userDetails.role as string)
+  const refreshToken = await authService.generateRefreshToken(userDetails._id.toString(), userDetails.role as string)
   await dbUserRepository.addRefreshTokenAndExpiry(newUser.email, refreshToken);
   return { userDetails, accessToken, refreshToken }
 }
@@ -186,15 +186,15 @@ export const handleRefreshAccessToken=async(
     throw new AppError("Invalid token!2", HttpStatus.UNAUTHORIZED);
   }
   const user = await dbUserRepository.getUserById(userId);
-  if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
-    throw new AppError("Invalid token!3", HttpStatus.UNAUTHORIZED);
-  }
-  if (user) {
-    const expiresAt = user.refreshTokenExpiresAt.getTime();
-    if (Date.now() > expiresAt) {
-      throw new AppError("Invalid token!4", HttpStatus.UNAUTHORIZED);
-    }
-  }
+  // if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
+  //   throw new AppError("Invalid token!3", HttpStatus.UNAUTHORIZED);
+  // }
+  // if (user) {
+  //   const expiresAt = user.refreshTokenExpiresAt.getTime();
+  //   if (Date.now() > expiresAt) {
+  //     throw new AppError("Invalid token!4", HttpStatus.UNAUTHORIZED);
+  //   }
+  // }
   const newAccessToken = authService.generateAccessToken(userId,"client");
   return newAccessToken;
 

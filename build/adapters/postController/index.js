@@ -12,20 +12,20 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const createPost = (0, express_async_handler_1.default)(async (req, res) => {
         const postData = req.body;
         // console.log('body data',req.body)
-        const post = await (0, postAuth_1.handleCreatePost)(postData, dbPostRepository, dbUserRepository);
+        const post = await (0, postAuth_1.handleCreatePost)(postData, dbPostRepository);
         res.json({
             status: "success",
             message: "Post created successfully",
             post
         });
     });
-    const getMyPosts = (0, express_async_handler_1.default)(async (req, res) => {
-        const { userId } = req.body;
-        const myPosts = await (0, postAuth_1.handleGetMyPosts)(userId, dbPostRepository);
+    const getPostsByUser = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.params;
+        const UserPosts = await (0, postAuth_1.handleGetPostsByUser)(userId, dbPostRepository);
         res.json({
             status: 'success',
             message: 'My posts fetched successfully',
-            posts: myPosts
+            posts: UserPosts
         });
     });
     const updatePostById = (0, express_async_handler_1.default)(async (req, res) => {
@@ -56,7 +56,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     });
     return {
         createPost,
-        getMyPosts,
+        getPostsByUser,
         updatePostById,
         getAllPosts,
         deletePost

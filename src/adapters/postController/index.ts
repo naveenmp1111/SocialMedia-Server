@@ -4,7 +4,7 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetMyPosts } from '../../application/user-cases/post/postAuth';
+import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetPostsByUser } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 import { PostDataInterface } from '../../types/PostInterface';
@@ -25,7 +25,7 @@ const postController = (
     const createPost = asyncHandler(async (req: Request, res: Response) => {
       const postData: PostDataInterface = req.body;
       // console.log('body data',req.body)
-      const post = await handleCreatePost(postData,dbPostRepository, dbUserRepository);
+      const post = await handleCreatePost(postData,dbPostRepository);
       res.json({
         status: "success",
         message: "Post created successfully",
@@ -33,13 +33,13 @@ const postController = (
       });
     });
 
-    const getMyPosts=asyncHandler(async(req:Request,res:Response)=>{
-      const {userId}=req.body
-      const myPosts=await handleGetMyPosts(userId,dbPostRepository)
+    const getPostsByUser=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.params
+      const UserPosts=await handleGetPostsByUser(userId,dbPostRepository)
       res.json({
         status:'success',
         message:'My posts fetched successfully',
-        posts:myPosts
+        posts:UserPosts
       })
     })
 
@@ -74,7 +74,7 @@ const postController = (
   
     return {
         createPost,
-        getMyPosts,
+        getPostsByUser,
         updatePostById,
         getAllPosts,
         deletePost

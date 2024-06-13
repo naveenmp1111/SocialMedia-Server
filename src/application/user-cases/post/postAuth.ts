@@ -9,18 +9,19 @@ import { UserDbInterface } from "../../repositories/userDbRepository"
 export const handleCreatePost=async(
     postData:PostDataInterface,
     postDbRepository:ReturnType<PostDbInterface>,
-    userDbRepository:ReturnType<UserDbInterface>
+    // userDbRepository:ReturnType<UserDbInterface>
 )=>{
     try {
         const createdPost=await postDbRepository.createPost(postData)
-        if(createdPost){
-            console.log('post created successfully')
-            const updatedUserdata=await userDbRepository.updatePost(
-                postData.userId as string,
-                createdPost._id as string
-              );
-              console.log('updated user ',updatedUserdata)
-        }
+        // console.log('checking created post id ',createdPost?._id)
+        // if(createdPost){
+        //     // console.log('post created successfully')
+        //     const updatedUserdata=await userDbRepository.updatePost(
+        //         postData.userId as string,
+        //         createdPost._id as string
+        //       );
+        //     //   console.log('updated user ',updatedUserdata)
+        // }
         return createdPost
     } catch (error) {
         console.log('Error creating in post',error)
@@ -28,13 +29,13 @@ export const handleCreatePost=async(
     }
 }
 
-export const handleGetMyPosts=async(
+export const handleGetPostsByUser=async(
     userId:string,
     postDbRepository:ReturnType<PostDbInterface>,
 )=>{
     try {
-        const myPosts=await postDbRepository.getMyPosts(userId)
-        return myPosts
+        const UserPosts=await postDbRepository.getPostsByUser(userId)
+        return UserPosts
     } catch (error) {
         console.log('error in fetching my posts',error)
         throw new AppError('Error in fetching my posts ',HttpStatus.INTERNAL_SERVER_ERROR)

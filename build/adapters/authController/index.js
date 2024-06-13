@@ -122,7 +122,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
     });
     const refreshAccessToken = (0, express_async_handler_1.default)(async (req, res) => {
         // console.log('cookies jjj',req.cookies)
-        console.log('coming to refresh acesstoken');
+        // console.log('coming to refresh acesstoken')
         const { refreshToken } = req.cookies;
         const accessToken = await (0, userAuth_1.handleRefreshAccessToken)({ refreshToken }, dbUserRepository, authService);
         res.status(httpStatus_1.HttpStatus.OK).json({

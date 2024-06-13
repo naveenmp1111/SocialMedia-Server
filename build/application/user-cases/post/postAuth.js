@@ -3,17 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetMyPosts = exports.handleCreatePost = void 0;
+exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
-const handleCreatePost = async (postData, postDbRepository, userDbRepository) => {
+const handleCreatePost = async (postData, postDbRepository) => {
     try {
         const createdPost = await postDbRepository.createPost(postData);
-        if (createdPost) {
-            console.log('post created successfully');
-            const updatedUserdata = await userDbRepository.updatePost(postData.userId, createdPost._id);
-            console.log('updated user ', updatedUserdata);
-        }
+        // console.log('checking created post id ',createdPost?._id)
+        // if(createdPost){
+        //     // console.log('post created successfully')
+        //     const updatedUserdata=await userDbRepository.updatePost(
+        //         postData.userId as string,
+        //         createdPost._id as string
+        //       );
+        //     //   console.log('updated user ',updatedUserdata)
+        // }
         return createdPost;
     }
     catch (error) {
@@ -22,17 +26,17 @@ const handleCreatePost = async (postData, postDbRepository, userDbRepository) =>
     }
 };
 exports.handleCreatePost = handleCreatePost;
-const handleGetMyPosts = async (userId, postDbRepository) => {
+const handleGetPostsByUser = async (userId, postDbRepository) => {
     try {
-        const myPosts = await postDbRepository.getMyPosts(userId);
-        return myPosts;
+        const UserPosts = await postDbRepository.getPostsByUser(userId);
+        return UserPosts;
     }
     catch (error) {
         console.log('error in fetching my posts', error);
         throw new appError_1.default('Error in fetching my posts ', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
     }
 };
-exports.handleGetMyPosts = handleGetMyPosts;
+exports.handleGetPostsByUser = handleGetPostsByUser;
 const handleEditPostbyId = async (postId, description, postDbRepository) => {
     try {
         const updatedPost = await postDbRepository.updatePostById(postId, description);

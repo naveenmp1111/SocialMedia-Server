@@ -7,6 +7,7 @@ import authMiddleware from '../middlewares/authMiddleware';
 import profileController from '../../../adapters/profileController';
 
 const profileRouter = () => {
+
     const router = express();
 
     const controller = profileController(
@@ -17,6 +18,8 @@ const profileRouter = () => {
     )
 
     router.post('/editProfile', authMiddleware, controller.editProfile)
+    router.get('/getUserById/:userId',authMiddleware,controller.getUserById)
+
     return router
 }
 export default profileRouter

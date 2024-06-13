@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { handleEditProfile } from "../../application/user-cases/profile/profileAuth";
+import { handleEditProfile, handleGetUserById } from "../../application/user-cases/profile/profileAuth";
 
 //importing types
 import { UserDbInterface } from "../../application/repositories/userDbRepository";
@@ -32,8 +32,21 @@ const profileController = (
     });
   });
 
+  const getUserById=asyncHandler(async(req:Request,res:Response)=>{
+    const {userId}=req.params
+    const userData=await handleGetUserById(userId,dbUserRepository)
+    res.json({
+      status:'success',
+      message:'userdata fetched successfully',
+      user:userData
+    })
+  })
+
+
+
   return {
-    editProfile
+    editProfile,
+    getUserById
   }
 }
 

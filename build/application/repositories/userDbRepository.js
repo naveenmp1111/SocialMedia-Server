@@ -15,6 +15,8 @@ const userDbRepository = (repository) => {
     const getUserById = async (userId) => await repository.getUserById(userId);
     const updatePost = async (userId, postId) => await repository.updatePosts(userId, postId);
     const resetPassword = async (email, password) => await repository.resetPassword(email, password);
+    const getRestOfAllUsers = async (userId) => await repository.getRestOfAllUsers(userId);
+    const followUser = async (userId, friendId) => await repository.followUser(userId, friendId);
     return {
         addUser,
         getUserByEmail,
@@ -28,7 +30,9 @@ const userDbRepository = (repository) => {
         unblockUser,
         getUserById,
         updatePost,
-        resetPassword
+        resetPassword,
+        getRestOfAllUsers,
+        followUser
     };
 };
 exports.userDbRepository = userDbRepository;
