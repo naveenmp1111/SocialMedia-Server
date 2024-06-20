@@ -4,7 +4,10 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleBlockUser, handleGetAllUsersForAdmin, handleUnblockUser } from '../../application/user-cases/admin/adminAuth';
+import { handleBlockPost, handleBlockUser, handleGetAllUsersForAdmin, handleUnblockPost, handleUnblockUser } from '../../application/user-cases/admin/adminAuth';
+import { handleGetPostReports } from '../../application/user-cases/post/postAuth';
+import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
+import { PostDbInterface } from '../../application/repositories/postDbRepository';
 
 
 const adminController=(
@@ -12,9 +15,12 @@ const adminController=(
     authServieInterface: AuthServiceInterface,
     userDbRepositoryImpl: UserRepositoryMongoDb,
     userDbRepositoryInterface: UserDbInterface,
+    postDbRepositoryImpl:PostRepositoryMongoDb,
+    postDbRepositoryInterface:PostDbInterface
 )=>{
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl())
     const authService = authServieInterface(authServiceImpl())
+    const dbPostRepository =postDbRepositoryInterface(postDbRepositoryImpl())
 
 
     const getAllUsersForAdmin=asyncHandler(async(req:Request,res:Response)=>{
@@ -44,10 +50,41 @@ const adminController=(
         })
     })
 
+    const blockPost=asyncHandler(async(req:Request,res:Response)=>{
+        const {postId}=req.params
+        console.log('userdddddd ',postId)
+        await handleBlockPost(postId,dbPostRepository)
+        res.json({
+            status:'success',
+            message:'Post blocked successfully'
+        })
+    })
+
+    const unblockPost=asyncHandler(async(req:Request,res:Response)=>{
+        const {postId}=req.params
+        await handleUnblockPost(postId,dbPostRepository)
+        res.json({
+            status:'success',
+            message:'Post unblocked successfully'
+        })
+    })
+
+    const getPostReports=asyncHandler(async(req:Request,res:Response)=>{
+        const reports=await handleGetPostReports(dbPostRepository)
+        res.json({
+          status:'success',
+          message:'Reports fetched successfully',
+          reports
+        })
+      })
+
     return {
         getAllUsersForAdmin,
         blockUser,
-        unblockUser
+        unblockUser,
+        getPostReports,
+        blockPost,
+        unblockPost
     }
 }
 

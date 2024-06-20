@@ -33,7 +33,23 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const getRestOfAllUsers=async(userId:string)=>await repository.getRestOfAllUsers(userId)
 
-   const followUser=async(userId:string,friendId:string)=>await repository.followUser(userId,friendId)
+   const followUser=async(userId:string,friendusername:string)=>await repository.followUser(userId,friendusername)
+
+   const unfollowUser=async(userId:string,friendusername:string)=>await repository.unfollowUser(userId,friendusername)
+
+   const getFollowers=async(username:string)=>await repository.getFollowers(username)
+
+   const getFollowing=async(username:string)=>await repository.getFollowing(username)
+
+   const getRequests=async(username:string)=>await repository.getRequests(username)
+   
+   const acceptRequest=async(userId:string,friendUsername:string)=>await repository.acceptRequest(userId,friendUsername)
+
+   const removeFollower=async(userId:string,friendUsername:string)=>await repository.removeFollower(userId,friendUsername)
+
+   const savePost=async(userId:string,postId:string)=>await repository.savePost(postId,userId)
+
+   const unsavePost=async(userId:string,postId:string)=>await repository.unsavePost(postId,userId)
 
    return {
       addUser,
@@ -50,7 +66,15 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       updatePost,
       resetPassword,
       getRestOfAllUsers,
-      followUser
+      followUser,
+      unfollowUser,
+      getFollowing,
+      getFollowers,
+      getRequests,
+      acceptRequest,
+      removeFollower,
+      savePost,
+      unsavePost
    }
 }
 

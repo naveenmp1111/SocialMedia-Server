@@ -21,10 +21,14 @@ const postRouter = () => {
     )
 
     router.post('/createPost', authMiddleware, controller.createPost)
-    router.get('/getPostsByUser/:userId',authMiddleware,controller.getPostsByUser)
+    router.get('/getPostsByUser/:username',authMiddleware,controller.getPostsByUser)
     router.post('/editPost',authMiddleware,controller.updatePostById)
     router.get('/getAllPosts',authMiddleware,controller.getAllPosts)
     router.get('/deletePost/:postId',authMiddleware,controller.deletePost)
+    router.post('/reportPost',authMiddleware,controller.reportPost)
+    router.patch('/likePost/:postId',authMiddleware,controller.likePost)
+    router.patch('/unlikePost/:postId',authMiddleware,controller.unlikePost)
+  
     return router
 }
 export default postRouter

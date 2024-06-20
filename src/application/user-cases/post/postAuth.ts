@@ -1,7 +1,7 @@
 import { PostDataInterface } from "../../../types/PostInterface"
 import { HttpStatus } from "../../../types/httpStatus"
 import AppError from "../../../utils/appError"
-import { PostDbInterface } from "../../repositories/postDbRepository"
+import { PostDbInterface, postDbRepository } from "../../repositories/postDbRepository"
 import { UserDbInterface } from "../../repositories/userDbRepository"
 
 
@@ -30,11 +30,11 @@ export const handleCreatePost=async(
 }
 
 export const handleGetPostsByUser=async(
-    userId:string,
+    username:string,
     postDbRepository:ReturnType<PostDbInterface>,
 )=>{
     try {
-        const UserPosts=await postDbRepository.getPostsByUser(userId)
+        const UserPosts=await postDbRepository.getPostsByUser(username)
         return UserPosts
     } catch (error) {
         console.log('error in fetching my posts',error)
@@ -80,3 +80,52 @@ export const handleDeletePost=async(
         console.log('errror in handleDeletePost ',error)
     }
 }
+
+export const handleReportPost=async(
+    postId:string,
+    reason:string,
+    userId:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+        await postDbRepository.reportPost(postId,reason,userId)
+    } catch (error) {
+        console.log('error in report Post',error)
+    }
+}
+
+export const handleGetPostReports=async(
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+       const reports= await postDbRepository.getPostReports()
+       return reports
+    } catch (error) {
+        console.log('error in getting post reports')
+    }
+}
+
+export const handleLikePost=async(
+    postId:string,
+    userId:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+        await postDbRepository.likePost(postId,userId)
+    } catch (error) {
+        console.log('error in liking the post')
+    }
+}
+
+export const handleUnlikePost=async(
+    postId:string,
+    userId:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+        await postDbRepository.unlikePost(postId,userId)
+    } catch (error) {
+        console.log('error in liking the post')
+    }
+}
+

@@ -12,7 +12,15 @@ const userRouter = () => {
     const router = (0, express_1.default)();
     const controller = (0, userController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository);
     router.get('/getRestOfAllUsers', authMiddleware_1.default, controller.getRestOfAllUsers);
-    router.post('/followUser', controller.followUser);
+    router.post('/followUser', authMiddleware_1.default, controller.followUser);
+    router.post('/unfollowUser', authMiddleware_1.default, controller.unfollowUser);
+    router.get('/getFollowing/:userId', controller.getFollowing);
+    router.get('/getFollowers/:userId', controller.getFollowers);
+    router.get('/getRequests/:username', controller.getRequests);
+    router.post('/acceptRequest', authMiddleware_1.default, controller.acceptRequest);
+    router.patch('/removeFollower/:followerUsername', authMiddleware_1.default, controller.removeFollower);
+    router.patch('/savePost/:postId', authMiddleware_1.default, controller.savePost);
+    router.patch('/unsavePost/:postId', authMiddleware_1.default, controller.unsavePost);
     return router;
 };
 exports.default = userRouter;

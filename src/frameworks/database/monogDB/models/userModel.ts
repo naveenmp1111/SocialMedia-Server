@@ -58,7 +58,18 @@ const userSchema = new Schema({
             type: mongoose.Types.ObjectId,
             ref: 'User'
         }
-    ]
+    ],
+    isPrivate:{
+        type:Boolean,
+        default:false
+    },
+    requests:[
+        {
+            type:mongoose.Types.ObjectId,
+            ref:'User'
+        }
+    ],
+    savedPosts:[]
 })
 
 const User = model('User', userSchema);

@@ -6,6 +6,7 @@ export interface ProfileInterface {
     phoneNumber?: number,
     bio?: string,
     profilePic?: string,
+    isPrivate?:boolean
     // savedPosts?: string[],
 }
 

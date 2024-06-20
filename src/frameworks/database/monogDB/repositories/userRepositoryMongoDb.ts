@@ -1,7 +1,7 @@
 import User from '../models/userModel'
 import { GoogleUserInterface, UserInterface } from '../../../../types/LoginUserInterface'
 import mongoose from 'mongoose'
-const {ObjectId}=mongoose.Types
+const { ObjectId } = mongoose.Types
 import { ProfileInterface } from '../../../../types/ProfileInterface'
 
 export const userRepositoryMongoDb = () => {
@@ -21,6 +21,7 @@ export const userRepositoryMongoDb = () => {
       const user = await User.findOne({ email });
       // console.log('user',user)
       return user;
+
     } catch (error) {
       console.log(error)
       throw new Error('Error finding user by email')
@@ -29,9 +30,7 @@ export const userRepositoryMongoDb = () => {
 
   const getUserByUsername = async (username: string) => {
     try {
-      // console.log(username)
       const user = await User.findOne({ username })
-      // console.log('user',user)
       return user
     } catch (error) {
       console.log(error)
@@ -95,6 +94,7 @@ export const userRepositoryMongoDb = () => {
           phoneNumber: profileInfo.phoneNumber,
           bio: profileInfo.bio,
           email: profileInfo.email,
+          isPrivate:profileInfo.isPrivate
         },
           {
             new: true,
@@ -166,7 +166,7 @@ export const userRepositoryMongoDb = () => {
     }
   };
 
-  
+
   const resetPassword = async (email: string, password: string) => {
     try {
       const data = await User.updateOne({ email }, { password })
@@ -177,32 +177,173 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
-  const getRestOfAllUsers=async(userId:string)=>{
+  const getRestOfAllUsers = async (userId: string) => {
     try {
       const data = await User.find({
         isBlock: false,
-        role:'client',
+        role: 'client',
         _id: { $ne: userId },
       });
-      
-       return data
+
+      return data
 
     } catch (error) {
       throw new Error('Error in getRestOfAllUsers')
     }
   }
 
-  const followUser=async(userId:string,friendId:string)=>{
+  const followUser = async (userId: string, friendUsername: string) => {
     try {
+      if (!userId || !friendUsername) {
+        throw new Error('User ID or Friends username is not provided');
+      }
+
+      // Validate ObjectId
+      if (!ObjectId.isValid(userId)) {
+        throw new Error('Invalid User ID or Friend ID');
+      }
+
+      const friend = await User.findOne({ username: friendUsername })
+
       const userObjectId = new ObjectId(userId);
-      const followObjectId = new ObjectId(friendId);
-       await User.findByIdAndUpdate(userObjectId,{$addToSet:{following:followObjectId}})
-       await User.findByIdAndUpdate(followObjectId,{$addToSet:{followers:userObjectId}})
+      const followObjectId = friend?._id;
+
+      if (friend?.isPrivate) {
+        await User.findByIdAndUpdate(followObjectId, { $addToSet: { requests: userObjectId } })
+      } else {
+        await User.findByIdAndUpdate(userObjectId, { $addToSet: { following: followObjectId } });
+        await User.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+      }
     } catch (error) {
-      console.log('Errron in following user',error)
-      throw new Error('Error in followUser')
+      console.log('Error in following user', error);
+      throw new Error('Error in followUser');
+    }
+  };
+
+  const acceptRequest=async(userId:string,friendUsername:string)=>{
+    try {
+      if (!userId || !friendUsername) {
+        throw new Error('User ID or Friends username is not provided');
+      }
+
+      // Validate ObjectId
+      if (!ObjectId.isValid(userId)) {
+        throw new Error('Invalid User ID or Friend ID');
+      }
+        const friend=await User.findOne({username:friendUsername})
+
+        const userObjectId=new ObjectId(userId)
+        const followerObjectId=friend?._id
+
+      
+        await User.findByIdAndUpdate(userObjectId,{$addToSet:{followers:followerObjectId},$pull: { requests: followerObjectId }})
+        await User.findByIdAndUpdate(followerObjectId, { $addToSet: { following: userObjectId } })
+
+    } catch (error) {
+      console.log('error in accepting request ',error)
+      throw new Error('Erron in accepting request')
     }
   }
+
+
+  const unfollowUser = async (userId: string, friendUsername: string) => {
+    try {
+
+      if ((!userId || !friendUsername)) {
+        throw new Error('Userid or friend Username is missing')
+      }
+
+      const friend = await User.findOne({ username: friendUsername })
+
+      const userObjectId = new ObjectId(userId);
+      const unfollowObject = friend?._id
+      await User.findByIdAndUpdate(userObjectId, { $pull: { following: unfollowObject } }, { new: true })
+      await User.findByIdAndUpdate(unfollowObject, { $pull: { followers: userObjectId } })
+    } catch (error) {
+      console.log('Error in unfolloeing user', error)
+      throw new Error('Error in unfollowUser')
+    }
+  }
+
+  const removeFollower=async(userId:string,friendUsername:string)=>{
+    try {
+      if ((!userId || !friendUsername)) {
+        throw new Error('Userid or friend Username is missing')
+      }
+
+      const friend = await User.findOne({ username: friendUsername })
+
+      const userObjectId = new ObjectId(userId);
+      const removeObject = friend?._id
+      await User.findByIdAndUpdate(userObjectId, { $pull: { followers: removeObject } }, { new: true })
+      await User.findByIdAndUpdate(removeObject, { $pull: { following: userObjectId } })
+    } catch (error) {
+      
+    }
+  }
+
+  const getFollowers = async (username: string) => {
+    try {
+      const users = await User.findOne({ username }).populate({
+        path: 'followers',
+        select: 'name username profilePic ' // Include only name and email fields
+      });
+      console.log('followers data is ', users)
+      return users?.followers
+    } catch (error) {
+      console.log('Error in Fetching followers')
+      throw new Error('Error in fetching followers')
+    }
+  }
+
+  const getFollowing = async (username: string) => {
+    try {
+      const users = await User.findOne({ username }).populate({
+        path: 'following',
+        select: 'name username profilePic ' // Include only name and email fields
+      });
+      console.log('following data is ', users)
+      return users?.following
+    } catch (error) {
+      console.log('Error in Fetching following')
+      throw new Error('Error in fetching following')
+    }
+  }
+
+  const getRequests=async(username:string)=>{
+    try {
+       const user=await User.findOne({username}).populate({
+        path:'requests',
+        select:'name username profilePic -_id'
+       })
+       return user?.requests
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error in fetching requests')
+    }
+  }
+
+  const savePost=async(postId:string,userId:string)=>{
+    try {
+       await User.findByIdAndUpdate(userId,{$addToSet:{savedPosts:postId}})
+    } catch (error) {
+      console.log('error in saving the post')
+    }
+  }
+
+  const unsavePost=async(postId:string,userId:string)=>{
+    try {
+      // console.log('coming to unsave part')
+      const unsaveData= await User.findByIdAndUpdate(userId,{$pull:{savedPosts:postId}})
+      // console.log('unlikeData is ',unsaveData)
+    } catch (error) {
+      console.log('error in unliking the post')
+    }
+  }
+
+  // const getSavedPosts=async(userId:string)=>{
+  //   try
+  // }
 
 
   return {
@@ -220,7 +361,15 @@ export const userRepositoryMongoDb = () => {
     updatePosts,
     resetPassword,
     getRestOfAllUsers,
-    followUser
+    followUser,
+    unfollowUser,
+    getFollowers,
+    getFollowing,
+    getRequests,
+    acceptRequest,
+    removeFollower,
+    savePost,
+    unsavePost
   }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

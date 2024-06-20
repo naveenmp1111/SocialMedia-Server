@@ -41,7 +41,7 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
         profilePic: user?.profilePic,
         phoneNumber: user?.phoneNumber,
         isBlock: user.isBlock,
-        role: user.role
+        role: user.role,
     };
     const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role);
     const accessToken = await authService.generateAccessToken(user._id.toString(), user.role);
@@ -101,7 +101,8 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
             bio: isExistingEmail?.bio,
             profilePic: isExistingEmail?.profilePic,
             phoneNumber: isExistingEmail?.phoneNumber,
-            role: isExistingEmail.role
+            role: isExistingEmail.role,
+            _id: isExistingEmail._id
         };
         await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
         return { userDetails, accessToken, refreshToken };

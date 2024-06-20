@@ -65,7 +65,7 @@ export const userLogin = async (
     profilePic: user?.profilePic,
     phoneNumber:user?.phoneNumber,
     isBlock: user.isBlock,
-    role:user.role
+    role:user.role,
   };
   const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role as string)
   const accessToken = await authService.generateAccessToken(user._id.toString(), user.role as string)
@@ -144,7 +144,8 @@ export const userLoginUsingGoogle = async (
       bio: isExistingEmail?.bio,
       profilePic: isExistingEmail?.profilePic,
       phoneNumber:isExistingEmail?.phoneNumber,
-      role:isExistingEmail.role
+      role:isExistingEmail.role,
+      _id:isExistingEmail._id
     }
 
     await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email as string, refreshToken);

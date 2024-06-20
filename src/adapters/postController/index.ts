@@ -4,7 +4,7 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetPostsByUser } from '../../application/user-cases/post/postAuth';
+import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 import { PostDataInterface } from '../../types/PostInterface';
@@ -34,8 +34,8 @@ const postController = (
     });
 
     const getPostsByUser=asyncHandler(async(req:Request,res:Response)=>{
-      const {userId}=req.params
-      const UserPosts=await handleGetPostsByUser(userId,dbPostRepository)
+      const {username}=req.params
+      const UserPosts=await handleGetPostsByUser(username,dbPostRepository)
       res.json({
         status:'success',
         message:'My posts fetched successfully',
@@ -71,13 +71,48 @@ const postController = (
         message:'Post deleted successfully'
       })
     })
+
+    const reportPost=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId,postId,reason}=req.body
+      await handleReportPost(postId,reason,userId,dbPostRepository)
+      res.json({
+        status:'success',
+        message:'Report submitted successfully'
+      })
+    })
+
+    const likePost=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {postId}=req.params
+      console.log('coming in like controller')
+      await handleLikePost(postId,userId,dbPostRepository)
+      res.json({
+        status:'success',
+        message:'Post liked successfully'
+      })
+    })
+
+    const unlikePost=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {postId}=req.params
+      console.log('wooo',userId,postId)
+      await handleUnlikePost(postId,userId,dbPostRepository)
+      res.json({
+        status:'success',
+        message:'Post unliked successfully'
+      })
+    })
+
   
     return {
         createPost,
         getPostsByUser,
         updatePostById,
         getAllPosts,
-        deletePost
+        deletePost,
+        reportPost,
+        likePost,
+        unlikePost
     }
   }
   

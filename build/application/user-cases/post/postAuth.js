@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
+exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const handleCreatePost = async (postData, postDbRepository) => {
@@ -26,9 +26,9 @@ const handleCreatePost = async (postData, postDbRepository) => {
     }
 };
 exports.handleCreatePost = handleCreatePost;
-const handleGetPostsByUser = async (userId, postDbRepository) => {
+const handleGetPostsByUser = async (username, postDbRepository) => {
     try {
-        const UserPosts = await postDbRepository.getPostsByUser(userId);
+        const UserPosts = await postDbRepository.getPostsByUser(username);
         return UserPosts;
     }
     catch (error) {
@@ -68,3 +68,40 @@ const handleDeletePost = async (postId, postDbRepository) => {
     }
 };
 exports.handleDeletePost = handleDeletePost;
+const handleReportPost = async (postId, reason, userId, postDbRepository) => {
+    try {
+        await postDbRepository.reportPost(postId, reason, userId);
+    }
+    catch (error) {
+        console.log('error in report Post', error);
+    }
+};
+exports.handleReportPost = handleReportPost;
+const handleGetPostReports = async (postDbRepository) => {
+    try {
+        const reports = await postDbRepository.getPostReports();
+        return reports;
+    }
+    catch (error) {
+        console.log('error in getting post reports');
+    }
+};
+exports.handleGetPostReports = handleGetPostReports;
+const handleLikePost = async (postId, userId, postDbRepository) => {
+    try {
+        await postDbRepository.likePost(postId, userId);
+    }
+    catch (error) {
+        console.log('error in liking the post');
+    }
+};
+exports.handleLikePost = handleLikePost;
+const handleUnlikePost = async (postId, userId, postDbRepository) => {
+    try {
+        await postDbRepository.unlikePost(postId, userId);
+    }
+    catch (error) {
+        console.log('error in liking the post');
+    }
+};
+exports.handleUnlikePost = handleUnlikePost;

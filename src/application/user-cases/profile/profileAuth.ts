@@ -26,11 +26,11 @@ export const handleEditProfile = async (
 
 };
 
-export const handleGetUserById=async(
-  userId:string,
+export const handleGetUserByUsername=async(
+  username:string,
   dbUserRepository:ReturnType<UserDbInterface>
 )=>{
-  const userData=await dbUserRepository.getUserById(userId)
+  const userData=await dbUserRepository.getUserByUsername(username)
   return userData
 }
 

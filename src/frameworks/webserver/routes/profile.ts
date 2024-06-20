@@ -18,7 +18,7 @@ const profileRouter = () => {
     )
 
     router.post('/editProfile', authMiddleware, controller.editProfile)
-    router.get('/getUserById/:userId',authMiddleware,controller.getUserById)
+    router.get('/getUserByUsername/:username',authMiddleware,controller.getUserByUsername)
 
     return router
 }

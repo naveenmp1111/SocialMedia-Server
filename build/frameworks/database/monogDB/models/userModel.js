@@ -82,7 +82,18 @@ const userSchema = new mongoose_1.Schema({
             type: mongoose_1.default.Types.ObjectId,
             ref: 'User'
         }
-    ]
+    ],
+    isPrivate: {
+        type: Boolean,
+        default: false
+    },
+    requests: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
+    savedPosts: []
 });
 const User = (0, mongoose_1.model)('User', userSchema);
 exports.default = User;

@@ -16,7 +16,15 @@ const userDbRepository = (repository) => {
     const updatePost = async (userId, postId) => await repository.updatePosts(userId, postId);
     const resetPassword = async (email, password) => await repository.resetPassword(email, password);
     const getRestOfAllUsers = async (userId) => await repository.getRestOfAllUsers(userId);
-    const followUser = async (userId, friendId) => await repository.followUser(userId, friendId);
+    const followUser = async (userId, friendusername) => await repository.followUser(userId, friendusername);
+    const unfollowUser = async (userId, friendusername) => await repository.unfollowUser(userId, friendusername);
+    const getFollowers = async (username) => await repository.getFollowers(username);
+    const getFollowing = async (username) => await repository.getFollowing(username);
+    const getRequests = async (username) => await repository.getRequests(username);
+    const acceptRequest = async (userId, friendUsername) => await repository.acceptRequest(userId, friendUsername);
+    const removeFollower = async (userId, friendUsername) => await repository.removeFollower(userId, friendUsername);
+    const savePost = async (userId, postId) => await repository.savePost(postId, userId);
+    const unsavePost = async (userId, postId) => await repository.unsavePost(postId, userId);
     return {
         addUser,
         getUserByEmail,
@@ -32,7 +40,15 @@ const userDbRepository = (repository) => {
         updatePost,
         resetPassword,
         getRestOfAllUsers,
-        followUser
+        followUser,
+        unfollowUser,
+        getFollowing,
+        getFollowers,
+        getRequests,
+        acceptRequest,
+        removeFollower,
+        savePost,
+        unsavePost
     };
 };
 exports.userDbRepository = userDbRepository;
