@@ -76,6 +76,7 @@ const userRepositoryMongoDb = () => {
         try {
             let user;
             console.log('profile link is ', profileInfo);
+            // Update user profile based on the presence of profilePic
             if (profileInfo.profilePic) {
                 user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, profileInfo, {
                     new: true,
@@ -93,7 +94,21 @@ const userRepositoryMongoDb = () => {
                     new: true,
                 });
             }
-            // console.log('updated user is ',user)
+            if (!user) {
+                throw new Error('User not found');
+            }
+            // If profile is set to public, move users from request to followers and clear request field
+            if (profileInfo.isPrivate === false && user.requests.length > 0) {
+                // Get the list of users to update their following list
+                const requestedUserIds = user.requests.map(id => id);
+                // Update the current user's followers and clear requests
+                user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, {
+                    $addToSet: { followers: { $each: user.requests } }, // Add users in request to followers
+                    $set: { requests: [] } // Clear the request field
+                }, { new: true });
+                // Add the current user's ID to the following list of the requested users
+                await userModel_1.default.updateMany({ _id: { $in: requestedUserIds } }, { $addToSet: { following: new ObjectId(profileInfo.userId) } });
+            }
             return user;
         }
         catch (error) {
@@ -315,9 +330,53 @@ const userRepositoryMongoDb = () => {
             console.log('error in unliking the post');
         }
     };
-    // const getSavedPosts=async(userId:string)=>{
-    //   try
-    // }
+    const getSavedPosts = async (userId) => {
+        try {
+            const savedPosts = await userModel_1.default.aggregate([
+                {
+                    $match: { _id: new ObjectId(userId) }
+                },
+                {
+                    $project: {
+                        savedPosts: {
+                            $map: {
+                                input: "$savedPosts",
+                                as: "postId",
+                                in: { $toObjectId: "$$postId" }
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'posts', // The collection name in the database
+                        localField: 'savedPosts',
+                        foreignField: '_id',
+                        as: 'savedPostsDetails'
+                    }
+                },
+                {
+                    $project: {
+                        savedPostsDetails: {
+                            $filter: {
+                                input: "$savedPostsDetails",
+                                as: "post",
+                                cond: { $eq: ["$$post.isBlock", false] }
+                            }
+                        },
+                        _id: 0 // Optional: Exclude the userId from the result if not needed
+                    }
+                }
+            ]);
+            console.log('savedposts ', savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : []);
+            console.log('full response is ', savedPosts);
+            // return savedPosts[0].savedPostDetails
+            return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
+        }
+        catch (error) {
+            console.log('error in fetching saved posts');
+        }
+    };
     return {
         addUser,
         getUserByEmail,
@@ -341,7 +400,8 @@ const userRepositoryMongoDb = () => {
         acceptRequest,
         removeFollower,
         savePost,
-        unsavePost
+        unsavePost,
+        getSavedPosts
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

@@ -4,7 +4,7 @@ import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/reposit
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
 
 import asyncHandler from 'express-async-handler';
-import { handleAcceptRequest, handleFollowUser, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleRemoveFollower, handleSavePost, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
+import { handleAcceptRequest, handleFollowUser, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
 
 
 
@@ -113,6 +113,17 @@ const userController = (
       })
     })
 
+    const getSavedPosts=asyncHandler(async(req:Request,res:Response)=>{
+      console.log('coming')
+      const {userId}=req.body
+      const savedPosts=await handleGetSavedPosts(userId,dbUserRepository)
+      res.json({
+        status:'success',
+        message:'Saved Posts fetched successfully',
+        posts:savedPosts
+      })
+    })
+
     return{ 
         getRestOfAllUsers,
         followUser,
@@ -123,7 +134,8 @@ const userController = (
         acceptRequest,
         removeFollower,
         savePost,
-        unsavePost
+        unsavePost,
+        getSavedPosts
     }
   }
 

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleUnsavePost = exports.handleSavePost = exports.handleAcceptRequest = exports.handleGetRequests = exports.handleGetFollowers = exports.handleGetFollowing = exports.handleRemoveFollower = exports.handleUnfollowUser = exports.handleFollowUser = exports.handleGetRestOfAllUsers = void 0;
+exports.handleGetSavedPosts = exports.handleUnsavePost = exports.handleSavePost = exports.handleAcceptRequest = exports.handleGetRequests = exports.handleGetFollowers = exports.handleGetFollowing = exports.handleRemoveFollower = exports.handleUnfollowUser = exports.handleFollowUser = exports.handleGetRestOfAllUsers = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const handleGetRestOfAllUsers = async (userId, dbUserRepository) => {
@@ -57,3 +57,7 @@ const handleUnsavePost = async (userId, postId, dbUserRepository) => {
     await dbUserRepository.unsavePost(userId, postId);
 };
 exports.handleUnsavePost = handleUnsavePost;
+const handleGetSavedPosts = async (userId, dbUserRepository) => {
+    return await dbUserRepository.getSavedPosts(userId);
+};
+exports.handleGetSavedPosts = handleGetSavedPosts;

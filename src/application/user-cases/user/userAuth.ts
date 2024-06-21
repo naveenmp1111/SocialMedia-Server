@@ -91,3 +91,10 @@ export const handleUnsavePost=async(
 )=>{
   await dbUserRepository.unsavePost(userId,postId)
 }
+
+export const handleGetSavedPosts=async(
+  userId:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+ return await dbUserRepository.getSavedPosts(userId)
+}

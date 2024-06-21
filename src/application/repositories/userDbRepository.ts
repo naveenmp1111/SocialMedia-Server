@@ -51,6 +51,8 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const unsavePost=async(userId:string,postId:string)=>await repository.unsavePost(postId,userId)
 
+   const getSavedPosts=async(userId:string)=>await repository.getSavedPosts(userId)
+
    return {
       addUser,
       getUserByEmail,
@@ -74,7 +76,8 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       acceptRequest,
       removeFollower,
       savePost,
-      unsavePost
+      unsavePost,
+      getSavedPosts
    }
 }
 

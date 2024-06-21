@@ -23,6 +23,7 @@ const userRouter = () => {
     router.patch('/removeFollower/:followerUsername',authMiddleware,controller.removeFollower)
     router.patch('/savePost/:postId',authMiddleware,controller.savePost)
     router.patch('/unsavePost/:postId',authMiddleware,controller.unsavePost)
+    router.get('/getSavedPosts',authMiddleware,controller.getSavedPosts)
     return router
 }
 export default userRouter

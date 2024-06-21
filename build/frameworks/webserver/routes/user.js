@@ -21,6 +21,7 @@ const userRouter = () => {
     router.patch('/removeFollower/:followerUsername', authMiddleware_1.default, controller.removeFollower);
     router.patch('/savePost/:postId', authMiddleware_1.default, controller.savePost);
     router.patch('/unsavePost/:postId', authMiddleware_1.default, controller.unsavePost);
+    router.get('/getSavedPosts', authMiddleware_1.default, controller.getSavedPosts);
     return router;
 };
 exports.default = userRouter;

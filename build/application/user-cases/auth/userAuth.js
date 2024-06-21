@@ -42,6 +42,7 @@ const userLogin = async (email, password, dbUserRepository, authService) => {
         phoneNumber: user?.phoneNumber,
         isBlock: user.isBlock,
         role: user.role,
+        isPrivate: user.isPrivate
     };
     const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role);
     const accessToken = await authService.generateAccessToken(user._id.toString(), user.role);
@@ -102,7 +103,8 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
             profilePic: isExistingEmail?.profilePic,
             phoneNumber: isExistingEmail?.phoneNumber,
             role: isExistingEmail.role,
-            _id: isExistingEmail._id
+            _id: isExistingEmail._id,
+            isPrivate: isExistingEmail.isPrivate
         };
         await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
         return { userDetails, accessToken, refreshToken };

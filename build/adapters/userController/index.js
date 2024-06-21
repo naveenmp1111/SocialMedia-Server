@@ -95,6 +95,16 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
             message: 'Post unsaved successfully'
         });
     });
+    const getSavedPosts = (0, express_async_handler_1.default)(async (req, res) => {
+        console.log('coming');
+        const { userId } = req.body;
+        const savedPosts = await (0, userAuth_1.handleGetSavedPosts)(userId, dbUserRepository);
+        res.json({
+            status: 'success',
+            message: 'Saved Posts fetched successfully',
+            posts: savedPosts
+        });
+    });
     return {
         getRestOfAllUsers,
         followUser,
@@ -105,7 +115,8 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
         acceptRequest,
         removeFollower,
         savePost,
-        unsavePost
+        unsavePost,
+        getSavedPosts
     };
 };
 exports.default = userController;
