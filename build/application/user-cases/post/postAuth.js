@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
+exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const handleCreatePost = async (postData, postDbRepository) => {
@@ -105,3 +105,43 @@ const handleUnlikePost = async (postId, userId, postDbRepository) => {
     }
 };
 exports.handleUnlikePost = handleUnlikePost;
+const handleAddComment = async (userId, postId, comment, commentDbRepository) => {
+    try {
+        const commentObj = {
+            postId,
+            commenterId: userId,
+            comment
+        };
+        const commentResponse = await commentDbRepository.addComment(commentObj);
+        return commentResponse;
+    }
+    catch (error) {
+        console.log('error in adding comment ', error);
+    }
+};
+exports.handleAddComment = handleAddComment;
+const handleAddReply = async (userId, postId, parentId, comment, commentDbRepository) => {
+    try {
+        const replyObj = {
+            postId,
+            commenterId: userId,
+            comment,
+            parentId
+        };
+        const commentResponse = await commentDbRepository.addReply(replyObj);
+        return commentResponse;
+    }
+    catch (error) {
+        console.log('error in adding reply comment ', error);
+    }
+};
+exports.handleAddReply = handleAddReply;
+const handleGetComments = async (postId, commentDbRepository) => {
+    try {
+        return await commentDbRepository.getComments(postId);
+    }
+    catch (error) {
+        console.log('error in handling get comments ', error);
+    }
+};
+exports.handleGetComments = handleGetComments;

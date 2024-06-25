@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const postAuth_1 = require("../../application/user-cases/post/postAuth");
-const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authServiceImpl, authServiceInterface, postDbRepositoryImpl, postDbRepositoryInterface) => {
+const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authServiceImpl, authServiceInterface, postDbRepositoryImpl, postDbRepositoryInterface, commentDbRepositoryImpl, commentDbrepositoryInterface) => {
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
     const dbPostRepository = postDbRepositoryInterface(postDbRepositoryImpl());
+    const dbCommentRepository = commentDbrepositoryInterface(commentDbRepositoryImpl());
     const createPost = (0, express_async_handler_1.default)(async (req, res) => {
         const postData = req.body;
         // console.log('body data',req.body)
@@ -82,6 +83,35 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
             message: 'Post unliked successfully'
         });
     });
+    const addComment = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId, postId, comment } = req.body;
+        // console.log('comment data is ',userId ,postId ,comment)
+        const response = await (0, postAuth_1.handleAddComment)(userId, postId, comment, dbCommentRepository);
+        res.json({
+            status: 'success',
+            message: 'Comment added successfully',
+            comment: response
+        });
+    });
+    const addReply = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId, postId, comment, parentId } = req.body;
+        // console.log('comment data is ',userId ,postId ,comment)
+        const response = await (0, postAuth_1.handleAddReply)(userId, postId, parentId, comment, dbCommentRepository);
+        res.json({
+            status: 'success',
+            message: 'Comment added successfully',
+            comment: response
+        });
+    });
+    const getComments = (0, express_async_handler_1.default)(async (req, res) => {
+        const { postId } = req.params;
+        const comments = await (0, postAuth_1.handleGetComments)(postId, dbCommentRepository);
+        res.json({
+            status: 'success',
+            message: 'Comments fetched successfuly',
+            comments
+        });
+    });
     return {
         createPost,
         getPostsByUser,
@@ -90,7 +120,10 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
         deletePost,
         reportPost,
         likePost,
-        unlikePost
+        unlikePost,
+        addComment,
+        getComments,
+        addReply
     };
 };
 exports.default = postController;

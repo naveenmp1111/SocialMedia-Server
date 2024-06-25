@@ -4,10 +4,12 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
+import { handleAddComment, handleAddReply, handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetComments, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
+import {CommentDbInterface} from '../../application/repositories/commentDbRepository'
 import { PostDataInterface } from '../../types/PostInterface';
+import { CommentRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/commentRepostitoryMongoDb';
 
 
 const postController = (
@@ -16,11 +18,14 @@ const postController = (
     authServiceImpl: AuthService,
     authServiceInterface: AuthServiceInterface,
     postDbRepositoryImpl:PostRepositoryMongoDb,
-    postDbRepositoryInterface:PostDbInterface
+    postDbRepositoryInterface:PostDbInterface,
+    commentDbRepositoryImpl:CommentRepositoryMongoDb,
+    commentDbrepositoryInterface:CommentDbInterface
   ) => {
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
     const dbPostRepository =postDbRepositoryInterface(postDbRepositoryImpl())
+    const dbCommentRepository=commentDbrepositoryInterface(commentDbRepositoryImpl())
   
     const createPost = asyncHandler(async (req: Request, res: Response) => {
       const postData: PostDataInterface = req.body;
@@ -103,6 +108,38 @@ const postController = (
       })
     })
 
+    const addComment=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId,postId,comment}=req.body
+      // console.log('comment data is ',userId ,postId ,comment)
+     const response= await handleAddComment(userId,postId,comment,dbCommentRepository)
+      res.json({
+        status:'success',
+        message:'Comment added successfully',
+        comment:response
+      })
+    })
+
+    const addReply=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId,postId,comment,parentId}=req.body
+      // console.log('comment data is ',userId ,postId ,comment)
+     const response= await handleAddReply(userId,postId,parentId,comment,dbCommentRepository)
+      res.json({
+        status:'success',
+        message:'Comment added successfully',
+        comment:response
+      })
+    })
+
+    const getComments=asyncHandler(async(req:Request,res:Response)=>{
+      const {postId}=req.params
+      const comments=await handleGetComments(postId,dbCommentRepository)
+      res.json({
+        status:'success',
+        message:'Comments fetched successfuly',
+        comments
+      })
+    })
+
   
     return {
         createPost,
@@ -112,7 +149,10 @@ const postController = (
         deletePost,
         reportPost,
         likePost,
-        unlikePost
+        unlikePost,
+        addComment,
+        getComments,
+        addReply
     }
   }
   

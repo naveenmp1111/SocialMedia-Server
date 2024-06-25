@@ -22,6 +22,8 @@ const userRouter = () => {
     router.patch('/savePost/:postId', authMiddleware_1.default, controller.savePost);
     router.patch('/unsavePost/:postId', authMiddleware_1.default, controller.unsavePost);
     router.get('/getSavedPosts', authMiddleware_1.default, controller.getSavedPosts);
+    router.patch('/cancelRequest/:friendUsername', authMiddleware_1.default, controller.cancelRequest);
+    router.delete('/declineRequest/:friendUsername', authMiddleware_1.default, controller.declineRequest);
     return router;
 };
 exports.default = userRouter;

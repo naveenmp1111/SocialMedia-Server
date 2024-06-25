@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+    {
     name: {
         type: String,
         minlength: 3,
@@ -70,7 +71,11 @@ const userSchema = new Schema({
         }
     ],
     savedPosts:[]
-})
+},
+{
+    timestamps: true,
+}
+)
 
 const User = model('User', userSchema);
 export default User;

@@ -1,6 +1,7 @@
 import { PostDataInterface } from "../../../types/PostInterface"
 import { HttpStatus } from "../../../types/httpStatus"
 import AppError from "../../../utils/appError"
+import { CommentDbInterface } from "../../repositories/commentDbRepository"
 import { PostDbInterface, postDbRepository } from "../../repositories/postDbRepository"
 import { UserDbInterface } from "../../repositories/userDbRepository"
 
@@ -126,6 +127,57 @@ export const handleUnlikePost=async(
         await postDbRepository.unlikePost(postId,userId)
     } catch (error) {
         console.log('error in liking the post')
+    }
+}
+
+export const handleAddComment=async(
+    userId:string,
+    postId:string,
+    comment:string,
+    commentDbRepository:ReturnType<CommentDbInterface>
+)=>{
+    try {
+        const commentObj={
+            postId,
+            commenterId: userId,
+            comment
+        }
+       const commentResponse= await commentDbRepository.addComment(commentObj)
+       return commentResponse
+    } catch (error) {
+        console.log('error in adding comment ',error)
+    }
+}
+
+export const handleAddReply=async(
+    userId:string,
+    postId:string,
+    parentId:string,
+    comment:string,
+    commentDbRepository:ReturnType<CommentDbInterface>
+)=>{
+    try {
+        const replyObj={
+            postId,
+            commenterId: userId,
+            comment,
+            parentId
+        }
+       const commentResponse= await commentDbRepository.addReply(replyObj)
+       return commentResponse
+    } catch (error) {
+        console.log('error in adding reply comment ',error)
+    }
+}
+
+export const handleGetComments=async(
+    postId:string,
+    commentDbRepository:ReturnType<CommentDbInterface>
+)=>{
+    try {
+        return await commentDbRepository.getComments(postId)
+    } catch (error) {
+        console.log('error in handling get comments ',error)
     }
 }
 

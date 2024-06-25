@@ -17,9 +17,7 @@ export const userRepositoryMongoDb = () => {
 
   const getUserByEmail = async (email: string) => {
     try {
-      // console.log(email)
       const user = await User.findOne({ email });
-      // console.log('user',user)
       return user;
 
     } catch (error) {
@@ -71,7 +69,6 @@ export const userRepositoryMongoDb = () => {
         { refreshToken, refreshTokenExpiresAt },
         { new: true }
       );
-      // console.log('user is ', user)
       return user;
     } catch (error) {
       console.log(error);
@@ -82,8 +79,7 @@ export const userRepositoryMongoDb = () => {
   const editProfile = async (profileInfo: ProfileInterface) => {
     try {
         let user;
-        console.log('profile link is ', profileInfo);
-
+   
         // Update user profile based on the presence of profilePic
         if (profileInfo.profilePic) {
             user = await User.findByIdAndUpdate(profileInfo.userId, profileInfo, {
@@ -294,6 +290,24 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
+  const cancelRequest=async(userId:string,friendsUsername:string)=>{
+    try {
+       await User.findOneAndUpdate({username:friendsUsername},{$pull:{requests:userId}})
+
+    } catch (error) {
+      console.log('Error in cancelling the request',error)
+    }
+  }
+
+  const declineRequest=async(userId:string,friendUsername:string)=>{
+    try {
+      const friend=await User.findOne({username:friendUsername})
+       await User.findByIdAndUpdate(userId,{$pull:{requests:friend?._id}})
+    } catch (error) {
+      console.log('error in declining the reqeust',error)
+    }
+  }
+
   const removeFollower=async(userId:string,friendUsername:string)=>{
     try {
       if ((!userId || !friendUsername)) {
@@ -362,9 +376,7 @@ export const userRepositoryMongoDb = () => {
 
   const unsavePost=async(postId:string,userId:string)=>{
     try {
-      // console.log('coming to unsave part')
       const unsaveData= await User.findByIdAndUpdate(userId,{$pull:{savedPosts:postId}})
-      // console.log('unlikeData is ',unsaveData)
     } catch (error) {
       console.log('error in unliking the post')
     }
@@ -408,9 +420,7 @@ export const userRepositoryMongoDb = () => {
         }
         }
     ]);
-      console.log('savedposts ',savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [])
-      console.log('full response is ',savedPosts)
-      // return savedPosts[0].savedPostDetails
+
       return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
     } catch (error) {
       console.log('error in fetching saved posts')
@@ -442,7 +452,9 @@ export const userRepositoryMongoDb = () => {
     removeFollower,
     savePost,
     unsavePost,
-    getSavedPosts
+    getSavedPosts,
+    cancelRequest,
+    declineRequest
   }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

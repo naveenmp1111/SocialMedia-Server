@@ -4,7 +4,7 @@ import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/reposit
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
 
 import asyncHandler from 'express-async-handler';
-import { handleAcceptRequest, handleFollowUser, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
+import { handleAcceptRequest, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
 
 
 
@@ -25,8 +25,6 @@ const userController = (
 
     const followUser = asyncHandler(async(req:Request, res:Response)=>{
       const {userId,friendUsername}=req.body
-      console.log('userId is ',userId)
-      // console.log('friendId is ',friendId)
      const userData= await handleFollowUser(userId,friendUsername,dbUserRepository)
       res.json({
         status:'success',
@@ -114,13 +112,33 @@ const userController = (
     })
 
     const getSavedPosts=asyncHandler(async(req:Request,res:Response)=>{
-      console.log('coming')
       const {userId}=req.body
       const savedPosts=await handleGetSavedPosts(userId,dbUserRepository)
       res.json({
         status:'success',
         message:'Saved Posts fetched successfully',
         posts:savedPosts
+      })
+    })
+
+    const cancelRequest=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {friendUsername}=req.params
+      await handleCancelRequest(userId,friendUsername,dbUserRepository)
+      res.json({
+        status:'success',
+        message:'Request cancelled successfully'
+      })
+    })
+
+    const declineRequest=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {friendUsername}=req.params
+      console.log('decline request data ',userId,friendUsername)
+      await handleDeclineRequest(userId,friendUsername,dbUserRepository)
+      res.json({
+        status:'success',
+        message:'Request declined successfully'
       })
     })
 
@@ -135,7 +153,9 @@ const userController = (
         removeFollower,
         savePost,
         unsavePost,
-        getSavedPosts
+        getSavedPosts,
+        cancelRequest,
+        declineRequest
     }
   }
 

@@ -16,8 +16,6 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
     });
     const followUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
-        console.log('userId is ', userId);
-        // console.log('friendId is ',friendId)
         const userData = await (0, userAuth_1.handleFollowUser)(userId, friendUsername, dbUserRepository);
         res.json({
             status: 'success',
@@ -96,13 +94,31 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
         });
     });
     const getSavedPosts = (0, express_async_handler_1.default)(async (req, res) => {
-        console.log('coming');
         const { userId } = req.body;
         const savedPosts = await (0, userAuth_1.handleGetSavedPosts)(userId, dbUserRepository);
         res.json({
             status: 'success',
             message: 'Saved Posts fetched successfully',
             posts: savedPosts
+        });
+    });
+    const cancelRequest = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const { friendUsername } = req.params;
+        await (0, userAuth_1.handleCancelRequest)(userId, friendUsername, dbUserRepository);
+        res.json({
+            status: 'success',
+            message: 'Request cancelled successfully'
+        });
+    });
+    const declineRequest = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const { friendUsername } = req.params;
+        console.log('decline request data ', userId, friendUsername);
+        await (0, userAuth_1.handleDeclineRequest)(userId, friendUsername, dbUserRepository);
+        res.json({
+            status: 'success',
+            message: 'Request declined successfully'
         });
     });
     return {
@@ -116,7 +132,9 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
         removeFollower,
         savePost,
         unsavePost,
-        getSavedPosts
+        getSavedPosts,
+        cancelRequest,
+        declineRequest
     };
 };
 exports.default = userController;

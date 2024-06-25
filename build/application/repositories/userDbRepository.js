@@ -26,6 +26,8 @@ const userDbRepository = (repository) => {
     const savePost = async (userId, postId) => await repository.savePost(postId, userId);
     const unsavePost = async (userId, postId) => await repository.unsavePost(postId, userId);
     const getSavedPosts = async (userId) => await repository.getSavedPosts(userId);
+    const cancelRequest = async (userId, friendUsername) => await repository.cancelRequest(userId, friendUsername);
+    const declineRequest = async (userId, friendUsername) => await repository.declineRequest(userId, friendUsername);
     return {
         addUser,
         getUserByEmail,
@@ -50,7 +52,9 @@ const userDbRepository = (repository) => {
         removeFollower,
         savePost,
         unsavePost,
-        getSavedPosts
+        getSavedPosts,
+        cancelRequest,
+        declineRequest
     };
 };
 exports.userDbRepository = userDbRepository;

@@ -53,6 +53,10 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const getSavedPosts=async(userId:string)=>await repository.getSavedPosts(userId)
 
+   const cancelRequest=async(userId:string,friendUsername:string)=>await repository.cancelRequest(userId,friendUsername)
+
+   const declineRequest=async(userId:string,friendUsername:string)=>await repository.declineRequest(userId,friendUsername)
+
    return {
       addUser,
       getUserByEmail,
@@ -77,7 +81,9 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       removeFollower,
       savePost,
       unsavePost,
-      getSavedPosts
+      getSavedPosts,
+      cancelRequest,
+      declineRequest
    }
 }
 

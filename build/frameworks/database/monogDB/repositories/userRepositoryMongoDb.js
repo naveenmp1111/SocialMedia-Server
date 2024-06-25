@@ -20,9 +20,7 @@ const userRepositoryMongoDb = () => {
     };
     const getUserByEmail = async (email) => {
         try {
-            // console.log(email)
             const user = await userModel_1.default.findOne({ email });
-            // console.log('user',user)
             return user;
         }
         catch (error) {
@@ -64,7 +62,6 @@ const userRepositoryMongoDb = () => {
         try {
             const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             const user = await userModel_1.default.findOneAndUpdate({ email }, { refreshToken, refreshTokenExpiresAt }, { new: true });
-            // console.log('user is ', user)
             return user;
         }
         catch (error) {
@@ -75,7 +72,6 @@ const userRepositoryMongoDb = () => {
     const editProfile = async (profileInfo) => {
         try {
             let user;
-            console.log('profile link is ', profileInfo);
             // Update user profile based on the presence of profilePic
             if (profileInfo.profilePic) {
                 user = await userModel_1.default.findByIdAndUpdate(profileInfo.userId, profileInfo, {
@@ -257,6 +253,23 @@ const userRepositoryMongoDb = () => {
             throw new Error('Error in unfollowUser');
         }
     };
+    const cancelRequest = async (userId, friendsUsername) => {
+        try {
+            await userModel_1.default.findOneAndUpdate({ username: friendsUsername }, { $pull: { requests: userId } });
+        }
+        catch (error) {
+            console.log('Error in cancelling the request', error);
+        }
+    };
+    const declineRequest = async (userId, friendUsername) => {
+        try {
+            const friend = await userModel_1.default.findOne({ username: friendUsername });
+            await userModel_1.default.findByIdAndUpdate(userId, { $pull: { requests: friend?._id } });
+        }
+        catch (error) {
+            console.log('error in declining the reqeust', error);
+        }
+    };
     const removeFollower = async (userId, friendUsername) => {
         try {
             if ((!userId || !friendUsername)) {
@@ -322,9 +335,7 @@ const userRepositoryMongoDb = () => {
     };
     const unsavePost = async (postId, userId) => {
         try {
-            // console.log('coming to unsave part')
             const unsaveData = await userModel_1.default.findByIdAndUpdate(userId, { $pull: { savedPosts: postId } });
-            // console.log('unlikeData is ',unsaveData)
         }
         catch (error) {
             console.log('error in unliking the post');
@@ -368,9 +379,6 @@ const userRepositoryMongoDb = () => {
                     }
                 }
             ]);
-            console.log('savedposts ', savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : []);
-            console.log('full response is ', savedPosts);
-            // return savedPosts[0].savedPostDetails
             return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
         }
         catch (error) {
@@ -401,7 +409,9 @@ const userRepositoryMongoDb = () => {
         removeFollower,
         savePost,
         unsavePost,
-        getSavedPosts
+        getSavedPosts,
+        cancelRequest,
+        declineRequest
     };
 };
 exports.userRepositoryMongoDb = userRepositoryMongoDb;

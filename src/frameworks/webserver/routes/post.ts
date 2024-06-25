@@ -7,6 +7,8 @@ import authMiddleware from '../middlewares/authMiddleware';
 import postController from '../../../adapters/postController';
 import { postRepositoryMongoDb } from '../../database/monogDB/repositories/postRepositoryMongoDb';
 import { postDbRepository } from '../../../application/repositories/postDbRepository';
+import { commentRepositoryMongoDb } from '../../database/monogDB/repositories/commentRepostitoryMongoDb';
+import { commentDbRepository } from '../../../application/repositories/commentDbRepository';
 
 const postRouter = () => {
     const router = express();
@@ -17,7 +19,9 @@ const postRouter = () => {
         authService,
         authServiceInterface,
         postRepositoryMongoDb,
-        postDbRepository
+        postDbRepository,
+        commentRepositoryMongoDb,
+        commentDbRepository
     )
 
     router.post('/createPost', authMiddleware, controller.createPost)
@@ -28,6 +32,9 @@ const postRouter = () => {
     router.post('/reportPost',authMiddleware,controller.reportPost)
     router.patch('/likePost/:postId',authMiddleware,controller.likePost)
     router.patch('/unlikePost/:postId',authMiddleware,controller.unlikePost)
+    router.post('/addComment',authMiddleware,controller.addComment)
+    router.get('/getComments/:postId',authMiddleware,controller.getComments)
+    router.post('/addReply',authMiddleware,controller.addReply)
   
     return router
 }

@@ -12,9 +12,11 @@ const authMiddleware_1 = __importDefault(require("../middlewares/authMiddleware"
 const postController_1 = __importDefault(require("../../../adapters/postController"));
 const postRepositoryMongoDb_1 = require("../../database/monogDB/repositories/postRepositoryMongoDb");
 const postDbRepository_1 = require("../../../application/repositories/postDbRepository");
+const commentRepostitoryMongoDb_1 = require("../../database/monogDB/repositories/commentRepostitoryMongoDb");
+const commentDbRepository_1 = require("../../../application/repositories/commentDbRepository");
 const postRouter = () => {
     const router = (0, express_1.default)();
-    const controller = (0, postController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository);
+    const controller = (0, postController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository, commentRepostitoryMongoDb_1.commentRepositoryMongoDb, commentDbRepository_1.commentDbRepository);
     router.post('/createPost', authMiddleware_1.default, controller.createPost);
     router.get('/getPostsByUser/:username', authMiddleware_1.default, controller.getPostsByUser);
     router.post('/editPost', authMiddleware_1.default, controller.updatePostById);
@@ -23,6 +25,9 @@ const postRouter = () => {
     router.post('/reportPost', authMiddleware_1.default, controller.reportPost);
     router.patch('/likePost/:postId', authMiddleware_1.default, controller.likePost);
     router.patch('/unlikePost/:postId', authMiddleware_1.default, controller.unlikePost);
+    router.post('/addComment', authMiddleware_1.default, controller.addComment);
+    router.get('/getComments/:postId', authMiddleware_1.default, controller.getComments);
+    router.post('/addReply', authMiddleware_1.default, controller.addReply);
     return router;
 };
 exports.default = postRouter;

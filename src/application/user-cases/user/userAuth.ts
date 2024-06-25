@@ -98,3 +98,19 @@ export const handleGetSavedPosts=async(
 )=>{
  return await dbUserRepository.getSavedPosts(userId)
 }
+
+export const handleCancelRequest=async(
+  userId:string,
+  friendUsername:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+  return await dbUserRepository.cancelRequest(userId,friendUsername)
+}
+
+export const handleDeclineRequest=async(
+  userId:string,
+  friendsUsername:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+  return await dbUserRepository.declineRequest(userId,friendsUsername)
+}
