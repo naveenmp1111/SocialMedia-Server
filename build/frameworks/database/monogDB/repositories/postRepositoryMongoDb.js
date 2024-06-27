@@ -145,7 +145,7 @@ const postRepositoryMongoDb = () => {
                 },
                 {
                     $match: {
-                        "postUser._id": { $in: user?.following }
+                        "postUser._id": { $in: user?.following, $nin: user?.blocklist }
                     }
                 },
                 {

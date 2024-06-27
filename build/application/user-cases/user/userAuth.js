@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleDeclineRequest = exports.handleCancelRequest = exports.handleGetSavedPosts = exports.handleUnsavePost = exports.handleSavePost = exports.handleAcceptRequest = exports.handleGetRequests = exports.handleGetFollowers = exports.handleGetFollowing = exports.handleRemoveFollower = exports.handleUnfollowUser = exports.handleFollowUser = exports.handleGetRestOfAllUsers = void 0;
+exports.handleGetBlockedUsers = exports.handleUnblockUserByUsername = exports.handleBlockUserByUsername = exports.handleDeclineRequest = exports.handleCancelRequest = exports.handleGetSavedPosts = exports.handleUnsavePost = exports.handleSavePost = exports.handleAcceptRequest = exports.handleGetRequests = exports.handleGetFollowers = exports.handleGetFollowing = exports.handleRemoveFollower = exports.handleUnfollowUser = exports.handleFollowUser = exports.handleGetRestOfAllUsers = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
 const handleGetRestOfAllUsers = async (userId, dbUserRepository) => {
@@ -69,3 +69,15 @@ const handleDeclineRequest = async (userId, friendsUsername, dbUserRepository) =
     return await dbUserRepository.declineRequest(userId, friendsUsername);
 };
 exports.handleDeclineRequest = handleDeclineRequest;
+const handleBlockUserByUsername = async (userId, username, dbUserRepository) => {
+    return await dbUserRepository.blockUserByUsername(userId, username);
+};
+exports.handleBlockUserByUsername = handleBlockUserByUsername;
+const handleUnblockUserByUsername = async (userId, username, dbUserRepository) => {
+    return await dbUserRepository.unblockUserByUsername(userId, username);
+};
+exports.handleUnblockUserByUsername = handleUnblockUserByUsername;
+const handleGetBlockedUsers = async (userId, dbUserRepository) => {
+    return await dbUserRepository.getBlockedUsers(userId);
+};
+exports.handleGetBlockedUsers = handleGetBlockedUsers;

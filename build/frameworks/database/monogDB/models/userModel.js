@@ -93,7 +93,13 @@ const userSchema = new mongoose_1.Schema({
             ref: 'User'
         }
     ],
-    savedPosts: []
+    savedPosts: [],
+    blocklist: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
 }, {
     timestamps: true,
 });

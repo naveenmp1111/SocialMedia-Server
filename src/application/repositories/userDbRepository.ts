@@ -57,6 +57,13 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const declineRequest=async(userId:string,friendUsername:string)=>await repository.declineRequest(userId,friendUsername)
 
+   const blockUserByUsername=async(userId:string,username:string)=>await repository.blockUserByUsername(userId,username)
+
+   const unblockUserByUsername=async(userId:string,username:string)=>await repository.unblockUserByUsername(userId,username)
+
+   const getBlockedUsers=async(userId:string)=>await repository.getBlockedUsers(userId)
+
+
    return {
       addUser,
       getUserByEmail,
@@ -83,7 +90,10 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       unsavePost,
       getSavedPosts,
       cancelRequest,
-      declineRequest
+      declineRequest,
+      blockUserByUsername,
+      unblockUserByUsername,
+      getBlockedUsers
    }
 }
 

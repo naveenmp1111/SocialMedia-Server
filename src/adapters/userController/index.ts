@@ -4,7 +4,7 @@ import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/reposit
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
 
 import asyncHandler from 'express-async-handler';
-import { handleAcceptRequest, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
+import { handleAcceptRequest, handleBlockUserByUsername, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetBlockedUsers, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnblockUserByUsername, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
 
 
 
@@ -142,6 +142,37 @@ const userController = (
       })
     })
 
+    const blockUserByUsername=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {username}=req.params
+      await handleBlockUserByUsername(userId,username,dbUserRepository)
+      res.json({
+        status:'sucdess',
+        message:'User blocked successfully'
+      })
+    })
+
+    const unblockUserByUsername=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const {username}=req.params
+      await handleUnblockUserByUsername(userId,username,dbUserRepository)
+      res.json({
+        status:'sucdess',
+        message:'User unblocked successfully'
+      })
+    })
+
+    const getBlockedUsers=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      // console.log('userid is ',userId)
+      const blockedUsers=await handleGetBlockedUsers(userId,dbUserRepository)
+      res.json({
+        status:'success',
+        message:'Fetched blocked Users successfully',
+        users:blockedUsers
+      })
+    })
+
     return{ 
         getRestOfAllUsers,
         followUser,
@@ -155,7 +186,10 @@ const userController = (
         unsavePost,
         getSavedPosts,
         cancelRequest,
-        declineRequest
+        declineRequest,
+        blockUserByUsername,
+        unblockUserByUsername,
+        getBlockedUsers
     }
   }
 

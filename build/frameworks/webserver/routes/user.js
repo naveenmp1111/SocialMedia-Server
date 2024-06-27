@@ -24,6 +24,9 @@ const userRouter = () => {
     router.get('/getSavedPosts', authMiddleware_1.default, controller.getSavedPosts);
     router.patch('/cancelRequest/:friendUsername', authMiddleware_1.default, controller.cancelRequest);
     router.delete('/declineRequest/:friendUsername', authMiddleware_1.default, controller.declineRequest);
+    router.patch('/blockUserByUsername/:username', authMiddleware_1.default, controller.blockUserByUsername);
+    router.patch('/unblockUserByUsername/:username', authMiddleware_1.default, controller.unblockUserByUsername);
+    router.get('/getBlockedUsers', authMiddleware_1.default, controller.getBlockedUsers);
     return router;
 };
 exports.default = userRouter;

@@ -121,6 +121,34 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
             message: 'Request declined successfully'
         });
     });
+    const blockUserByUsername = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const { username } = req.params;
+        await (0, userAuth_1.handleBlockUserByUsername)(userId, username, dbUserRepository);
+        res.json({
+            status: 'sucdess',
+            message: 'User blocked successfully'
+        });
+    });
+    const unblockUserByUsername = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const { username } = req.params;
+        await (0, userAuth_1.handleUnblockUserByUsername)(userId, username, dbUserRepository);
+        res.json({
+            status: 'sucdess',
+            message: 'User unblocked successfully'
+        });
+    });
+    const getBlockedUsers = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        // console.log('userid is ',userId)
+        const blockedUsers = await (0, userAuth_1.handleGetBlockedUsers)(userId, dbUserRepository);
+        res.json({
+            status: 'success',
+            message: 'Fetched blocked Users successfully',
+            users: blockedUsers
+        });
+    });
     return {
         getRestOfAllUsers,
         followUser,
@@ -134,7 +162,10 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
         unsavePost,
         getSavedPosts,
         cancelRequest,
-        declineRequest
+        declineRequest,
+        blockUserByUsername,
+        unblockUserByUsername,
+        getBlockedUsers
     };
 };
 exports.default = userController;

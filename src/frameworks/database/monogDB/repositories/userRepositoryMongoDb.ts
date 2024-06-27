@@ -382,50 +382,251 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
-  const getSavedPosts=async(userId:string)=>{
+   const blockUserByUsername=async(userId:string,username:string)=>{
+    try {
+      const blockingUser=await User.findOne({username})
+      await User.findByIdAndUpdate(userId,{$addToSet:{blocklist:blockingUser?._id}})
+    } catch (error) {
+      console.log('error in blocking user by username')
+    }
+  }
+
+   const unblockUserByUsername=async(userId:string,username:string)=>{
+    try {
+      const blockingUser=await User.findOne({username})
+      console.log('unblocking user id is ',blockingUser?._id)
+      await User.findByIdAndUpdate(userId,{$pull:{blocklist:blockingUser?._id}})
+    } catch (error) {
+      console.log('error in blocking user by username')
+    }
+  }
+
+  // const getSavedPosts=async(userId:string)=>{
+  //   try {
+  //     const savedPosts = await User.aggregate([
+  //       {
+  //           $match: { _id: new ObjectId(userId) }
+  //       },
+  //       {
+  //           $project: {
+  //               savedPosts: {
+  //                   $map: {
+  //                       input: "$savedPosts",
+  //                       as: "postId",
+  //                       in: { $toObjectId: "$$postId" }
+  //                   }
+  //               }
+  //           }
+  //       },
+  //       {
+  //           $lookup: {
+  //               from: 'posts', // The collection name in the database
+  //               localField: 'savedPosts',
+  //               foreignField: '_id',
+  //               as: 'savedPostsDetails'
+  //           }
+  //       },
+  //       {
+  //         $project: {
+  //           savedPostsDetails: {
+  //               $filter: {
+  //                   input: "$savedPostsDetails",
+  //                   as: "post",
+  //                   cond: { $eq: ["$$post.isBlock", false] }
+  //               }
+  //           },
+  //           _id: 0 // Optional: Exclude the userId from the result if not needed
+  //       }
+  //       }
+  //   ]);
+
+  //     return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
+  //   } catch (error) {
+  //     console.log('error in fetching saved posts')
+  //   }
+  // }
+
+  // const getSavedPosts = async (userId:string) => {
+  //   try {
+  //     const savedPosts = await User.aggregate([
+  //       {
+  //         $match: { _id: new ObjectId(userId) }
+  //       },
+  //       {
+  //         $project: {
+  //           savedPosts: {
+  //             $map: {
+  //               input: "$savedPosts",
+  //               as: "postId",
+  //               in: { $toObjectId: "$$postId" }
+  //             }
+  //           },
+  //           blocklist: 1 // Include the blocklist in the projection
+  //         }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: 'posts', // The collection name in the database
+  //           localField: 'savedPosts',
+  //           foreignField: '_id',
+  //           as: 'savedPostsDetails'
+  //         }
+  //       },
+  //       {
+  //         $project: {
+  //           savedPostsDetails: {
+  //             $filter: {
+  //               input: "$savedPostsDetails",
+  //               as: "post",
+  //               cond: {
+  //                 $and: [
+  //                   { $eq: ["$$post.isBlock", false] },
+  //                   { $not: { $in: ["$$post.userId", "$blocklist"] } } // Exclude posts by users in the blocklist
+  //                 ]
+  //               }
+  //             }
+  //           },
+  //           _id: 0 // Optional: Exclude the userId from the result if not needed
+  //         }
+  //       }
+  //     ]);
+  //    console.log('saved posts is ',savedPosts)
+  //     return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
+  //   } catch (error) {
+  //     console.log('error in fetching saved posts', error);
+  //   }
+  // };
+
+  const getSavedPosts = async (userId:string) => {
     try {
       const savedPosts = await User.aggregate([
         {
-            $match: { _id: new ObjectId(userId) }
+          $match: { _id: new ObjectId(userId) }
         },
         {
-            $project: {
-                savedPosts: {
-                    $map: {
-                        input: "$savedPosts",
-                        as: "postId",
-                        in: { $toObjectId: "$$postId" }
-                    }
-                }
-            }
+          $project: {
+            savedPosts: {
+              $map: {
+                input: "$savedPosts",
+                as: "postId",
+                in: { $toObjectId: "$$postId" }
+              }
+            },
+            blocklist: 1 // Include the blocklist in the projection
+          }
         },
         {
-            $lookup: {
-                from: 'posts', // The collection name in the database
-                localField: 'savedPosts',
-                foreignField: '_id',
-                as: 'savedPostsDetails'
-            }
+          $lookup: {
+            from: 'posts', // The collection name in the database
+            localField: 'savedPosts',
+            foreignField: '_id',
+            as: 'savedPostsDetails'
+          }
         },
         {
           $project: {
             savedPostsDetails: {
-                $filter: {
-                    input: "$savedPostsDetails",
-                    as: "post",
-                    cond: { $eq: ["$$post.isBlock", false] }
+              $filter: {
+                input: "$savedPostsDetails",
+                as: "post",
+                cond: {
+                  $and: [
+                    { $eq: ["$$post.isBlock", false] },
+                    { $not: { $in: ["$$post.userId", "$blocklist"] } } // Exclude posts by users in the blocklist
+                  ]
                 }
+              }
             },
             _id: 0 // Optional: Exclude the userId from the result if not needed
+          }
+        },
+        {
+          $unwind: "$savedPostsDetails" // Unwind the saved posts array
+        },
+        {
+          $lookup: {
+            from: 'users', // The collection name for users
+            localField: 'savedPostsDetails.userId',
+            foreignField: '_id',
+            as: 'userDetails'
+          }
+        },
+        {
+          $unwind: "$userDetails" // Unwind the user details array
+        },
+        {
+          $addFields: {
+            'savedPostsDetails.user': {
+              name: "$userDetails.name",
+              username: "$userDetails.username",
+              profilePic: "$userDetails.profilePic",
+              email: "$userDetails.email"
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            savedPostsDetails: { $push: "$savedPostsDetails" }
+          }
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the _id field from the result
+            savedPostsDetails: 1
+          }
         }
-        }
-    ]);
-
+      ]);
+  
+      console.log('saved posts is', savedPosts);
       return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
     } catch (error) {
-      console.log('error in fetching saved posts')
+      console.log('error in fetching saved posts', error);
+    }
+  };
+
+  const getBlockedUsers=async(userId:string)=>{
+    try {
+      // First, find the user by userId to get their blocklist
+    const user = await User.findById(userId).select('blocklist');
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const blocklist = user.blocklist;
+
+    // Check if blocklist is empty
+    if (blocklist.length === 0) {
+      return []; // Return an empty array if there are no blocked users
+    }
+
+    // Now, perform the aggregation to get the details of blocked users
+    const blockedUsers = await User.aggregate([
+      {
+        $match: { _id: { $in: blocklist } } // Match users whose _id is in the blocklist
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          name: 1,
+          username: 1,
+          profilePic: 1
+        }
+      }
+    ]);
+
+    console.log('Blocked Users:', blockedUsers);
+
+    return blockedUsers;
+
+  
+    } catch (error) {
+      console.log('error in getting blocked users ',error)
     }
   }
+  
+  
 
 
   return {
@@ -454,7 +655,10 @@ export const userRepositoryMongoDb = () => {
     unsavePost,
     getSavedPosts,
     cancelRequest,
-    declineRequest
+    declineRequest,
+    blockUserByUsername,
+    unblockUserByUsername,
+    getBlockedUsers
   }
 }
 export type UserRepositoryMongoDb = typeof userRepositoryMongoDb;

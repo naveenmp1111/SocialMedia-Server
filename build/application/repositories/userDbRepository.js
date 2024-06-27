@@ -28,6 +28,9 @@ const userDbRepository = (repository) => {
     const getSavedPosts = async (userId) => await repository.getSavedPosts(userId);
     const cancelRequest = async (userId, friendUsername) => await repository.cancelRequest(userId, friendUsername);
     const declineRequest = async (userId, friendUsername) => await repository.declineRequest(userId, friendUsername);
+    const blockUserByUsername = async (userId, username) => await repository.blockUserByUsername(userId, username);
+    const unblockUserByUsername = async (userId, username) => await repository.unblockUserByUsername(userId, username);
+    const getBlockedUsers = async (userId) => await repository.getBlockedUsers(userId);
     return {
         addUser,
         getUserByEmail,
@@ -54,7 +57,10 @@ const userDbRepository = (repository) => {
         unsavePost,
         getSavedPosts,
         cancelRequest,
-        declineRequest
+        declineRequest,
+        blockUserByUsername,
+        unblockUserByUsername,
+        getBlockedUsers
     };
 };
 exports.userDbRepository = userDbRepository;

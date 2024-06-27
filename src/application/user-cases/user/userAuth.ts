@@ -114,3 +114,26 @@ export const handleDeclineRequest=async(
 )=>{
   return await dbUserRepository.declineRequest(userId,friendsUsername)
 }
+
+export const handleBlockUserByUsername=async(
+  userId:string,
+  username:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+  return await dbUserRepository.blockUserByUsername(userId,username)
+}
+
+export const handleUnblockUserByUsername=async(
+  userId:string,
+  username:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+  return await dbUserRepository.unblockUserByUsername(userId,username)
+}
+
+export const handleGetBlockedUsers=async(
+  userId:string,
+  dbUserRepository:ReturnType<UserDbInterface>
+)=>{
+  return await dbUserRepository.getBlockedUsers(userId)
+}
