@@ -1,7 +1,6 @@
 import { Router } from "express"
 import { chatRepositoryMongoDb } from "../../database/monogDB/repositories/chatRepositoryMongoDb"
 import { chatDbRepository } from "../../../application/repositories/chatDbRepository"
-import chatController from "../../../adapters/chatController"
 import authMiddleware from "../middlewares/authMiddleware"
 import { messageRepositoryMongoDb } from "../../database/monogDB/repositories/messageRepositoryMongoDb"
 import { messageDbRepository } from "../../../application/repositories/messageDbRepository"

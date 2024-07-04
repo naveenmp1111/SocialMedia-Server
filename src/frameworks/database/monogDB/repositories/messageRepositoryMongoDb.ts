@@ -7,7 +7,7 @@ export const messageRepositoryMongoDb = () => {
     const sendMessage = async (newMessage: MessageInterface) => {
         try {
             const message = await Message.create(newMessage)
-            console.log('new message created is ',message)
+            // console.log('new message created is ',message)
             return message
         } catch (error) {
             console.log('error in creating new message ', error)

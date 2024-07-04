@@ -12,7 +12,8 @@ const chatController = (chatDbRepositoryImpl, chatDbRepositoryInterface) => {
         const chat = await (0, chatAuth_1.handleCreateOrAccessChat)(userId, otherUserId, chatDbRepository);
         res.status(200).json({
             status: 'success',
-            message: 'chat accessed successfully'
+            message: 'chat accessed successfully',
+            chat
         });
     });
     const fetchChats = (0, express_async_handler_1.default)(async (req, res) => {

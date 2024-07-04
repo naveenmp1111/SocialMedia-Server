@@ -17,7 +17,8 @@ const chatController=(
 
         res.status(200).json({
             status:'success',
-            message:'chat accessed successfully'
+            message:'chat accessed successfully',
+            chat
         })
     })
 

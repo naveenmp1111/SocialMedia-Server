@@ -24,6 +24,7 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
     const getAllMessagesFromChat = (0, express_async_handler_1.default)(async (req, res) => {
         const { chatId } = req.body;
         const messages = await (0, message_1.handleGetAllMessagesFromChat)(chatId, messageDbRepository);
+        console.log('messages from chat is ', messages);
         res.status(200).json({
             status: "success",
             messages

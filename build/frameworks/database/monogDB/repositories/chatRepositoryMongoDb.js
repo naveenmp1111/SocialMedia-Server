@@ -56,8 +56,8 @@ const chatRepositoryMongoDb = () => {
             const chats = await chatModel_1.default.find({
                 members: { $in: [userObjectId] } // Check if userObjectId exists in the members array
             }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
-                .sort({ createdAt: -1 }); // Sort by createdAt timestamp
-            console.log('chats are ', chats);
+                .sort({ updatedAt: -1 }); // Sort by createdAt timestamp
+            // console.log('chats are ',chats)
             return chats;
         }
         catch (error) {
@@ -71,7 +71,7 @@ const chatRepositoryMongoDb = () => {
             const chatObjectId = new mongoose_1.default.Types.ObjectId(chatId);
             // Find the message by ID
             const message = await messageModel_1.default.findById(messageObjectId);
-            console.log('message is', message);
+            //   console.log('message is', message);
             // Ensure the message exists and has a message field
             if (!message || !message.message) {
                 throw new Error("Message not found or message content is empty");

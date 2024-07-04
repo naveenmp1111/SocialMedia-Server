@@ -41,6 +41,7 @@ const messageController = (
             chatId,
             messageDbRepository
         )
+        console.log('messages from chat is ',messages)
         res.status(200).json({
             status: "success",
             messages

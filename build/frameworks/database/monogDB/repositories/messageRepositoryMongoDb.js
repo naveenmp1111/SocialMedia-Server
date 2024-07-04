@@ -10,7 +10,7 @@ const messageRepositoryMongoDb = () => {
     const sendMessage = async (newMessage) => {
         try {
             const message = await messageModel_1.default.create(newMessage);
-            console.log('new message created is ', message);
+            // console.log('new message created is ',message)
             return message;
         }
         catch (error) {

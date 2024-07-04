@@ -55,8 +55,8 @@ export const chatRepositoryMongoDb = () => {
         const chats = await Chat.find({
             members: {$in:[userObjectId]} // Check if userObjectId exists in the members array
         }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
-          .sort({ createdAt: -1 }); // Sort by createdAt timestamp
-            console.log('chats are ',chats)
+          .sort({ updatedAt: -1 }); // Sort by createdAt timestamp
+            // console.log('chats are ',chats)
             return chats
             
         } catch (error) {
@@ -72,7 +72,7 @@ export const chatRepositoryMongoDb = () => {
       
           // Find the message by ID
           const message = await Message.findById(messageObjectId);
-          console.log('message is', message);
+        //   console.log('message is', message);
       
           // Ensure the message exists and has a message field
           if (!message || !message.message) {
