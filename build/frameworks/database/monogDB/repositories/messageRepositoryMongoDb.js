@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageRepositoryMongoDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const messageModel_1 = __importDefault(require("../models/messageModel"));
+const socketConfig_1 = require("../../../webSocket/socketConfig");
+const app_1 = require("../../../../app");
 const messageRepositoryMongoDb = () => {
     const sendMessage = async (newMessage) => {
         try {
@@ -25,10 +27,20 @@ const messageRepositoryMongoDb = () => {
                 .populate("chatId")
                 .populate("chatId.members", "-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt -followers -following");
             console.log('full message is ', fullMessage);
+            //@ts-ignore
+            // console.log('members in messageData is ',fullMessage?.chatId?.members)
+            const recieverId = fullMessage?.chatId?.members?.find(item => item.toString() !== fullMessage.senderId._id.toString());
+            console.log('recieverid is ', recieverId);
+            const receiverSocketId = (0, socketConfig_1.getReceiverSocketId)(recieverId);
+            if (receiverSocketId) {
+                console.log('Ready to emit event to ', receiverSocketId);
+                app_1.io.to(receiverSocketId).emit('newMessage', fullMessage);
+                console.log('here is the erro');
+            }
             return fullMessage;
         }
         catch (error) {
-            console.log('error in getting full message');
+            console.log('error in getting full message', error);
         }
     };
     const getAllMessagesFromChat = async (chatId) => {

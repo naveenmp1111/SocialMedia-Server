@@ -1,6 +1,9 @@
 import mongoose from "mongoose"
 import { MessageInterface } from "../../../../types/MessageInterface"
 import Message from "../models/messageModel"
+import { getReceiverSocketId } from "../../../webSocket/socketConfig"
+import { io } from "../../../../app"
+
 
 export const messageRepositoryMongoDb = () => {
 
@@ -28,10 +31,21 @@ export const messageRepositoryMongoDb = () => {
                 "-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt -followers -following"
               );
               console.log('full message is ',fullMessage)
+              //@ts-ignore
+              // console.log('members in messageData is ',fullMessage?.chatId?.members)
+              const recieverId = fullMessage?.chatId?.members?.find(item => item.toString() !== fullMessage.senderId._id.toString());
+
+              console.log('recieverid is ',recieverId)
+              const receiverSocketId=getReceiverSocketId(recieverId)
+              if(receiverSocketId){
+                console.log('Ready to emit event to ',receiverSocketId)
+                io.to(receiverSocketId).emit('newMessage',fullMessage)
+                console.log('here is the erro')
+              }
               return fullMessage
 
         } catch (error) {
-            console.log('error in getting full message')
+            console.log('error in getting full message',error)
         }
     }
 
