@@ -111,6 +111,13 @@ const postRepositoryMongoDb = () => {
     const getAllPosts = async (userId) => {
         try {
             const user = await userModel_1.default.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            const hasFollowing = user.following && user.following.length > 0;
+            const matchCondition = hasFollowing
+                ? { "postUser._id": { $in: user.following, $nin: user.blocklist } }
+                : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
             const posts = await postModel_1.default.aggregate([
                 {
                     $match: { isBlock: false }
@@ -144,9 +151,7 @@ const postRepositoryMongoDb = () => {
                     $unwind: "$postUser"
                 },
                 {
-                    $match: {
-                        "postUser._id": { $in: user?.following, $nin: user?.blocklist }
-                    }
+                    $match: matchCondition
                 },
                 {
                     $project: {
@@ -177,6 +182,84 @@ const postRepositoryMongoDb = () => {
         }
         catch (error) {
             console.log(error);
+            throw new Error('Failed to fetch posts');
+        }
+    };
+    const getAllPostsToExplore = async (userId) => {
+        try {
+            const user = await userModel_1.default.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            // const hasFollowing = user.following && user.following.length > 0;
+            // const matchCondition = hasFollowing
+            //   ? { "postUser._id": { $in: user.following, $nin: user.blocklist } }
+            //   : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
+            const posts = await postModel_1.default.aggregate([
+                {
+                    $match: { isBlock: false }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "user"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$user",
+                        // preserveNullAndEmptyArrays: true // Optional: Include posts without a user
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "postUser"
+                    }
+                },
+                {
+                    $unwind: "$postUser"
+                },
+                {
+                    $match: { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        userId: 1,
+                        hashtags: 1,
+                        hashtagsArray: 1,
+                        description: 1,
+                        likes: 1,
+                        comments: 1,
+                        saved: 1,
+                        reports: 1,
+                        image: 1,
+                        isBlock: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        user: {
+                            _id: "$user._id",
+                            name: "$user.name",
+                            username: "$user.username",
+                            email: "$user.email",
+                            profilePic: "$user.profilePic",
+                        },
+                    }
+                }
+            ]);
+            return posts;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error('Failed to fetch posts');
         }
     };
     const getPostReports = async () => {
@@ -290,6 +373,7 @@ const postRepositoryMongoDb = () => {
         unBlockPost,
         likePost,
         unlikePost,
+        getAllPostsToExplore
     };
 };
 exports.postRepositoryMongoDb = postRepositoryMongoDb;

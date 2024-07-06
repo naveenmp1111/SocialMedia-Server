@@ -12,6 +12,8 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     const getAllPosts=async(userId:string)=>await repository.getAllPosts(userId)
 
+    const getAllPostsToExplore=async(userId:string)=>await repository.getAllPostsToExplore(userId)
+
     const deletePost=async(postId:string)=>await repository.deletePost(postId)
 
     const reportPost=async(postId:string,reason:string,userId:string)=>await repository.reportPost(postId,reason,userId)
@@ -37,7 +39,8 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
         blockPost,
         unblockPost,
         likePost,
-        unlikePost
+        unlikePost,
+        getAllPostsToExplore
     }
 
 }

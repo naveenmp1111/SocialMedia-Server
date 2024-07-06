@@ -28,6 +28,7 @@ const postRouter = () => {
     router.get('/getPostsByUser/:username',authMiddleware,controller.getPostsByUser)
     router.post('/editPost',authMiddleware,controller.updatePostById)
     router.get('/getAllPosts',authMiddleware,controller.getAllPosts)
+    router.get('/getAllPostsToExplore',authMiddleware,controller.getAllPostsToExplore)
     router.get('/deletePost/:postId',authMiddleware,controller.deletePost)
     router.post('/reportPost',authMiddleware,controller.reportPost)
     router.patch('/likePost/:postId',authMiddleware,controller.likePost)

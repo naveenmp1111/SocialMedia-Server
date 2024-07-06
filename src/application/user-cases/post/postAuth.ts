@@ -70,6 +70,14 @@ export const handleGetAllPosts=async(
     // }
 }
 
+export const handleGetAllPostsToExplore=async(
+    userId:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    const allposts=await postDbRepository.getAllPostsToExplore(userId)
+    return allposts
+}
+
 export const handleDeletePost=async(
     postId:string,
     postDbRepository:ReturnType<PostDbInterface>

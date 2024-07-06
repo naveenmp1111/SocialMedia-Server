@@ -6,6 +6,7 @@ const postDbRepository = (repository) => {
     const getPostsByUser = async (username) => await repository.getPostsByUser(username);
     const updatePostById = async (postId, description) => await repository.updatePostById(postId, description);
     const getAllPosts = async (userId) => await repository.getAllPosts(userId);
+    const getAllPostsToExplore = async (userId) => await repository.getAllPostsToExplore(userId);
     const deletePost = async (postId) => await repository.deletePost(postId);
     const reportPost = async (postId, reason, userId) => await repository.reportPost(postId, reason, userId);
     const getPostReports = async () => await repository.getPostReports();
@@ -24,7 +25,8 @@ const postDbRepository = (repository) => {
         blockPost,
         unblockPost,
         likePost,
-        unlikePost
+        unlikePost,
+        getAllPostsToExplore
     };
 };
 exports.postDbRepository = postDbRepository;

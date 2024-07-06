@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
+exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPostsToExplore = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const handleCreatePost = async (postData, postDbRepository) => {
@@ -58,6 +58,11 @@ const handleGetAllPosts = async (userId, postDbRepository) => {
     // }
 };
 exports.handleGetAllPosts = handleGetAllPosts;
+const handleGetAllPostsToExplore = async (userId, postDbRepository) => {
+    const allposts = await postDbRepository.getAllPostsToExplore(userId);
+    return allposts;
+};
+exports.handleGetAllPostsToExplore = handleGetAllPostsToExplore;
 const handleDeletePost = async (postId, postDbRepository) => {
     try {
         const post = await postDbRepository.deletePost(postId);

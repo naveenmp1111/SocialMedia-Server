@@ -4,7 +4,7 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleAddComment, handleAddReply, handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetComments, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
+import { handleAddComment, handleAddReply, handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetAllPostsToExplore, handleGetComments, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 import {CommentDbInterface} from '../../application/repositories/commentDbRepository'
@@ -61,6 +61,16 @@ const postController = (
     const getAllPosts=asyncHandler(async(req:Request,res:Response)=>{
       const {userId}=req.body
       const posts=await handleGetAllPosts(userId,dbPostRepository)
+      res.json({
+        status:'success',
+        message:'Posts fetched successfully',
+        posts
+      })
+    })
+
+    const getAllPostsToExplore=asyncHandler(async(req:Request,res:Response)=>{
+      const {userId}=req.body
+      const posts=await handleGetAllPostsToExplore(userId,dbPostRepository)
       res.json({
         status:'success',
         message:'Posts fetched successfully',
@@ -152,7 +162,8 @@ const postController = (
         unlikePost,
         addComment,
         getComments,
-        addReply
+        addReply,
+        getAllPostsToExplore
     }
   }
   

@@ -47,6 +47,15 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
             posts
         });
     });
+    const getAllPostsToExplore = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const posts = await (0, postAuth_1.handleGetAllPostsToExplore)(userId, dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'Posts fetched successfully',
+            posts
+        });
+    });
     const deletePost = (0, express_async_handler_1.default)(async (req, res) => {
         const { postId } = req.params;
         const post = await (0, postAuth_1.handleDeletePost)(postId, dbPostRepository);
@@ -123,7 +132,8 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
         unlikePost,
         addComment,
         getComments,
-        addReply
+        addReply,
+        getAllPostsToExplore
     };
 };
 exports.default = postController;

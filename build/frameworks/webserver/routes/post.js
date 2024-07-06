@@ -21,6 +21,7 @@ const postRouter = () => {
     router.get('/getPostsByUser/:username', authMiddleware_1.default, controller.getPostsByUser);
     router.post('/editPost', authMiddleware_1.default, controller.updatePostById);
     router.get('/getAllPosts', authMiddleware_1.default, controller.getAllPosts);
+    router.get('/getAllPostsToExplore', authMiddleware_1.default, controller.getAllPostsToExplore);
     router.get('/deletePost/:postId', authMiddleware_1.default, controller.deletePost);
     router.post('/reportPost', authMiddleware_1.default, controller.reportPost);
     router.patch('/likePost/:postId', authMiddleware_1.default, controller.likePost);
