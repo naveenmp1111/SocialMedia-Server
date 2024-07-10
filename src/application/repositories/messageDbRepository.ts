@@ -7,12 +7,24 @@ export const messageDbRepository=(repository:ReturnType<MessageRepositoryMongoDb
 
     const getFullMessage=async(messageId:any)=>await repository.getFullMessage(messageId as string)
 
-    const getAllMessagesFromChat=async(chatId:string)=>await repository.getAllMessagesFromChat(chatId)
+    const getAllMessagesFromChat=async(chatId:string,userId:string)=>await repository.getAllMessagesFromChat(chatId,userId)
+
+    const getUnreadMessagesFromChat=async(chatId:string,userId:string)=>await repository.getUnreadMessagesFromChat(chatId,userId)
+
+    const setUnreadMessagesRead=async(chatId:string,userId:string)=>await repository.setUnreadMessagesRead(chatId,userId)
+
+    const deleteMessage=async(messageId:string)=>await repository.deleteMessage(messageId)
+
+    const deleteMessageForMe=async(messageId:string,userId:string)=>await repository.deleteMessageForMe(messageId,userId)
 
     return {
         sendMessage,
         getAllMessagesFromChat,
-        getFullMessage
+        getFullMessage,
+        getUnreadMessagesFromChat,
+        setUnreadMessagesRead,
+        deleteMessage,
+        deleteMessageForMe
     }
 
 }

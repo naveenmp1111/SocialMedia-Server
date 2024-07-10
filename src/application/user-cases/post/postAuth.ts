@@ -117,7 +117,8 @@ export const handleGetPostReports=async(
 export const handleLikePost=async(
     postId:string,
     userId:string,
-    postDbRepository:ReturnType<PostDbInterface>
+    postDbRepository:ReturnType<PostDbInterface>,
+    // nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
     try {
         await postDbRepository.likePost(postId,userId)

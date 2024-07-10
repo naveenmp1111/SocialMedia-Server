@@ -40,15 +40,78 @@ export const handleSendMessage=async(
 
 export const handleGetAllMessagesFromChat=async(
     chatId:string,
+    userId:string,
     messageDbRepository:ReturnType<MessageDbInterface>
 )=>{
     if(!chatId){
         throw new AppError('Invalid chatId',HttpStatus.UNAUTHORIZED)
     }
     try {
-        return await messageDbRepository.getAllMessagesFromChat(chatId)
+      await messageDbRepository.setUnreadMessagesRead(chatId,userId)
+        return await messageDbRepository.getAllMessagesFromChat(chatId,userId)
     } catch (error) {
         console.log('error in get full messages from chat ',error)
         throw new AppError('Error in getting full messages from chat ',HttpStatus.INTERNAL_SERVER_ERROR)
     }
+}
+
+export const handleGetUnreadMessagesFromChat=async(
+    chatId:string,
+    userId:string,
+    messageDbRepository:ReturnType<MessageDbInterface>
+)=>{
+    if(!chatId){
+        throw new AppError('Invalid chatId',HttpStatus.UNAUTHORIZED)
+    }
+    try {
+        return await messageDbRepository.getUnreadMessagesFromChat(chatId,userId)
+    } catch (error) {
+        console.log('error in get unread messages from chat ',error)
+        throw new AppError('Error in getting unread messages from chat ',HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+}
+
+export const handleSetUnreadMessagesRead=async(
+  chatId:string,
+  userId:string,
+  messageDbRepository:ReturnType<MessageDbInterface>
+)=>{
+  if(!chatId){
+    throw new AppError('Invalid chatId',HttpStatus.UNAUTHORIZED)
+}
+try {
+    return await messageDbRepository.setUnreadMessagesRead(chatId,userId)
+} catch (error) {
+    console.log('error in setting unread messages read ',error)
+    throw new AppError('Error in setting unread messages read ',HttpStatus.INTERNAL_SERVER_ERROR)
+}
+}
+
+export const handleDeleteMessage=async(
+  messageId:string,
+  messageDbRepository:ReturnType<MessageDbInterface>
+)=>{
+  if(!messageId){
+    throw new AppError('Invalid messageId',HttpStatus.UNAUTHORIZED)
+  }
+  try {
+    return await messageDbRepository.deleteMessage(messageId)
+  } catch (error) {
+    throw new AppError('Error in deleting message',HttpStatus.INTERNAL_SERVER_ERROR)
+  }
+}
+
+export const handleDeleteMessageForMe=async(
+  messageId:string,
+  userId:string,
+  messageDbRepository:ReturnType<MessageDbInterface>
+)=>{
+  if(!messageId){
+    throw new AppError('Invalid messageId',HttpStatus.UNAUTHORIZED)
+  }
+  try {
+    return await messageDbRepository.deleteMessageForMe(messageId,userId)
+  } catch (error) {
+    throw new AppError('Error in deleting message',HttpStatus.INTERNAL_SERVER_ERROR)
+  }
 }

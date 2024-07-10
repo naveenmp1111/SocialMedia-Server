@@ -15,6 +15,10 @@ const messageRouter = () => {
     const controller = (0, messageController_1.default)(chatRepositoryMongoDb_1.chatRepositoryMongoDb, chatDbRepository_1.chatDbRepository, messageRepositoryMongoDb_1.messageRepositoryMongoDb, messageDbRepository_1.messageDbRepository);
     router.post('/sendMessage', authMiddleware_1.default, controller.sendMessage);
     router.post('/getFullMessagesFromChat', authMiddleware_1.default, controller.getAllMessagesFromChat);
+    router.post('/getUnreadMessagesFromChat', authMiddleware_1.default, controller.getUnreadMessagesFromChat);
+    router.patch('/setUnreadMessagesRead', authMiddleware_1.default, controller.setUnreadMessagesRead);
+    router.patch('/deleteMessage', authMiddleware_1.default, controller.deleteMessage);
+    router.patch('/deleteMessageForMe', authMiddleware_1.default, controller.deleteMessageForMe);
     return router;
 };
 exports.default = messageRouter;

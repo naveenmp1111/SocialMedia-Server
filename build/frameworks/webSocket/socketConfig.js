@@ -23,11 +23,16 @@ const socketConfig = (io) => {
             io.emit('getOnlineUsers', Object.keys(userSocketMap));
             console.log('users online are ', userSocketMap);
         });
-        // socket.on("message", (message) => {
-        // console.log("Received message on socket is :", JSON.parse(message));
-        // Broadcast the message to all connected clients
-        // io.emit("message", 'hai');
-        // });
+        socket.on("Typing", (selectedfriendId, myId) => {
+            // console.log("Received message on socket is :", JSON.parse(message));
+            // Broadcast the message to all connected clients
+            let friendSocketId = (0, exports.getReceiverSocketId)(selectedfriendId);
+            io.to(friendSocketId).emit("TypingUsers", myId);
+        });
+        socket.on("Stop Typing", (selectedfriendId, myId) => {
+            let friendSocketId = (0, exports.getReceiverSocketId)(selectedfriendId);
+            io.to(friendSocketId).emit('RemoveTypingUser', myId);
+        });
     });
 };
 exports.default = socketConfig;

@@ -18,6 +18,10 @@ const messageRouter=()=>{
 
     router.post('/sendMessage',authMiddleware,controller.sendMessage)
     router.post('/getFullMessagesFromChat',authMiddleware,controller.getAllMessagesFromChat)
+    router.post('/getUnreadMessagesFromChat',authMiddleware,controller.getUnreadMessagesFromChat)
+    router.patch('/setUnreadMessagesRead',authMiddleware,controller.setUnreadMessagesRead)
+    router.patch('/deleteMessage',authMiddleware,controller.deleteMessage)
+    router.patch('/deleteMessageForMe',authMiddleware,controller.deleteMessageForMe)
 
     return router
 }

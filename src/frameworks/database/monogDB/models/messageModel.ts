@@ -11,7 +11,21 @@ const messageSchema=new Schema({
     },
     message:{
         type:String
-    }
+    },
+    isSeen:{
+        type:Boolean,
+        default:false
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    },
+    deletedBy:[
+        {
+            type:mongoose.Types.ObjectId,
+            ref:'User'
+        }
+    ]
 },
 {
     timestamps:true

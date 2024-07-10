@@ -24,34 +24,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const messageSchema = new mongoose_1.Schema({
-    chatId: {
-        type: mongoose_1.default.Types.ObjectId,
-        ref: 'Chat'
-    },
-    senderId: {
-        type: mongoose_1.default.Types.ObjectId,
-        ref: 'User'
-    },
-    message: {
-        type: String
-    },
-    isSeen: {
-        type: Boolean,
-        default: false
-    },
-    isDeleted: {
-        type: Boolean,
-        default: false
-    },
-    deletedBy: [
-        {
-            type: mongoose_1.default.Types.ObjectId,
-            ref: 'User'
-        }
-    ]
+// Define the schema
+const NotificationSchema = new mongoose_1.Schema({
+    receiverId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
+    senderId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
+    event: { type: String, required: true, enum: ['like', 'comment', 'message', 'follow'] },
+    isSeen: { type: Boolean, required: true, default: false }
 }, {
     timestamps: true
 });
-const Message = (0, mongoose_1.model)('Message', messageSchema);
-exports.default = Message;
+// Create the model
+const Notification = mongoose_1.default.model('Notification', NotificationSchema);
+exports.default = Notification;

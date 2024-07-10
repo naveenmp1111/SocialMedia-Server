@@ -26,11 +26,17 @@ const socketConfig = (io: Server) => {
       
     });
 
-    // socket.on("message", (message) => {
+    socket.on("Typing", (selectedfriendId,myId) => {
       // console.log("Received message on socket is :", JSON.parse(message));
       // Broadcast the message to all connected clients
-      // io.emit("message", 'hai');
-    // });
+      let friendSocketId=getReceiverSocketId(selectedfriendId)
+      io.to(friendSocketId).emit("TypingUsers",myId);
+    });
+
+    socket.on("Stop Typing",(selectedfriendId,myId)=>{
+      let friendSocketId=getReceiverSocketId(selectedfriendId)
+      io.to(friendSocketId).emit('RemoveTypingUser',myId)
+    })
   });
 };
 
