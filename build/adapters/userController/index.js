@@ -14,6 +14,13 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
             users
         });
     });
+    const getSuggestedUsers = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const users = await (0, userAuth_1.handleGetSuggestedUsers)(userId, dbUserRepository);
+        res.json({
+            users
+        });
+    });
     const followUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
         const userData = await (0, userAuth_1.handleFollowUser)(userId, friendUsername, dbUserRepository);
@@ -151,6 +158,7 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
     });
     return {
         getRestOfAllUsers,
+        getSuggestedUsers,
         followUser,
         unfollowUser,
         getFollowing,

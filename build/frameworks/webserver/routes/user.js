@@ -12,6 +12,7 @@ const userRouter = () => {
     const router = (0, express_1.default)();
     const controller = (0, userController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository);
     router.get('/getRestOfAllUsers', authMiddleware_1.default, controller.getRestOfAllUsers);
+    router.get('/getSuggestedUsers', authMiddleware_1.default, controller.getSuggestedUsers);
     router.post('/followUser', authMiddleware_1.default, controller.followUser);
     router.post('/unfollowUser', authMiddleware_1.default, controller.unfollowUser);
     router.get('/getFollowing/:userId', controller.getFollowing);

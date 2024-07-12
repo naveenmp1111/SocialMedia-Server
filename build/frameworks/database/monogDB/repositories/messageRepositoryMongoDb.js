@@ -76,12 +76,17 @@ const messageRepositoryMongoDb = () => {
     };
     const getAllUnreadMessages = async (userId) => {
         try {
-            const chatIds = await chatModel_1.default.find({ members: { $in: [userId] } }, { chatId: 1, _id: 0 } // Include chatId and exclude _id
+            const chatIds = await chatModel_1.default.find({ members: { $in: [userId] } }, { _id: 1 } // Include chatId and exclude _id
             );
+            // console.log('chatids of unread messsags are ',chatIds)
             // Extract chatId values from the array of objects
-            // const chatIdArray = chatIds.map(chat => chat.chatId);
+            //@ts-ignore
+            const chatIdArray = chatIds.map((chat) => chat?._id);
+            // console.log('array of chat id is ',chatIdArray)
             // // Use the extracted chatId values in the Message.find query
-            // const messages = await Message.find({ chatId: { $in: chatIdArray } });
+            const messages = await messageModel_1.default.find({ chatId: { $in: chatIdArray }, senderId: { $ne: userId }, isSeen: false });
+            // console.log('Unread messages are ',messages)
+            return messages;
             return;
         }
         catch (error) {
@@ -99,7 +104,7 @@ const messageRepositoryMongoDb = () => {
             throw new Error('Error in setting unread messages read.');
         }
     };
-    const deleteMessage = async (messageId, userId) => {
+    const deleteMessage = async (messageId) => {
         try {
             let messageIdObj = new mongoose_1.default.Types.ObjectId(messageId);
             const messageData = await messageModel_1.default.findByIdAndUpdate(messageIdObj, { isDeleted: true }).populate('chatId');
@@ -109,9 +114,7 @@ const messageRepositoryMongoDb = () => {
             // console.log('recieverid is ',recieverId)
             const receiverSocketId = (0, socketConfig_1.getReceiverSocketId)(recieverId);
             if (receiverSocketId) {
-                // console.log('Ready to emit event to ',receiverSocketId)
                 app_1.io.to(receiverSocketId).emit('deleteMessage', messageId);
-                // console.log('here is the erro')
             }
             const lastMessage = await messageModel_1.default.find({ chatId: messageData?.chatId, isDeleted: false }).sort({ createdAt: -1 }).limit(1);
             //   console.log('latestmessage inside chat is',lastMessage)
@@ -143,7 +146,8 @@ const messageRepositoryMongoDb = () => {
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     };
 };
 exports.messageRepositoryMongoDb = messageRepositoryMongoDb;

@@ -9,6 +9,7 @@ const messageDbRepository = (repository) => {
     const setUnreadMessagesRead = async (chatId, userId) => await repository.setUnreadMessagesRead(chatId, userId);
     const deleteMessage = async (messageId) => await repository.deleteMessage(messageId);
     const deleteMessageForMe = async (messageId, userId) => await repository.deleteMessageForMe(messageId, userId);
+    const getAllUnreadMessages = async (userId) => await repository.getAllUnreadMessages(userId);
     return {
         sendMessage,
         getAllMessagesFromChat,
@@ -16,7 +17,8 @@ const messageDbRepository = (repository) => {
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     };
 };
 exports.messageDbRepository = messageDbRepository;

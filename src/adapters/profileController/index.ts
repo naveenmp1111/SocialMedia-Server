@@ -34,7 +34,9 @@ const profileController = (
 
   const getUserByUsername=asyncHandler(async(req:Request,res:Response)=>{
     const {username}=req.params
+    console.log('username for finding user by usrname is ',username)
     const userData=await handleGetUserByUsername(username,dbUserRepository)
+    console.log('userData is ',userData)
     res.json({
       status:'success',
       message:'userdata fetched successfully',

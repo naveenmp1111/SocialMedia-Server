@@ -115,3 +115,15 @@ export const handleDeleteMessageForMe=async(
     throw new AppError('Error in deleting message',HttpStatus.INTERNAL_SERVER_ERROR)
   }
 }
+
+export const handleGetAllUnreadMessages=async(
+  userId:string,
+  messageDbRepository:ReturnType<MessageDbInterface>
+)=>{
+  try {
+    return await messageDbRepository.getAllUnreadMessages(userId)
+  } catch (error) {
+    console.log(error)
+    throw new AppError('Error in fetching all unread messages',HttpStatus.INTERNAL_SERVER_ERROR)
+  }
+}

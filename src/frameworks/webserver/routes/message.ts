@@ -21,7 +21,8 @@ const messageRouter=()=>{
     router.post('/getUnreadMessagesFromChat',authMiddleware,controller.getUnreadMessagesFromChat)
     router.patch('/setUnreadMessagesRead',authMiddleware,controller.setUnreadMessagesRead)
     router.patch('/deleteMessage',authMiddleware,controller.deleteMessage)
-    router.patch('/deleteMessageForMe',authMiddleware,controller.deleteMessageForMe)
+    router.patch('/deleteMessageForMe',authMiddleware,controller.deleteMessageForMe),
+    router.get('/getAllUnreadMessages',authMiddleware,controller.getAllUnreadMessages)
 
     return router
 }

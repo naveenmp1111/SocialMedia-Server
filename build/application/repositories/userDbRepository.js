@@ -16,6 +16,7 @@ const userDbRepository = (repository) => {
     const updatePost = async (userId, postId) => await repository.updatePosts(userId, postId);
     const resetPassword = async (email, password) => await repository.resetPassword(email, password);
     const getRestOfAllUsers = async (userId) => await repository.getRestOfAllUsers(userId);
+    const getSuggestedUsers = async (userId) => await repository.getSuggestedUsers(userId);
     const followUser = async (userId, friendusername) => await repository.followUser(userId, friendusername);
     const unfollowUser = async (userId, friendusername) => await repository.unfollowUser(userId, friendusername);
     const getFollowers = async (username) => await repository.getFollowers(username);
@@ -46,6 +47,7 @@ const userDbRepository = (repository) => {
         updatePost,
         resetPassword,
         getRestOfAllUsers,
+        getSuggestedUsers,
         followUser,
         unfollowUser,
         getFollowing,

@@ -181,11 +181,26 @@ const userRepositoryMongoDb = () => {
     };
     const getRestOfAllUsers = async (userId) => {
         try {
+            const myData = await userModel_1.default.findById(new mongoose_1.default.Types.ObjectId(userId));
             const data = await userModel_1.default.find({
                 isBlock: false,
                 role: 'client',
-                _id: { $ne: userId },
+                _id: { $ne: userId, $nin: myData?.blocklist },
             });
+            return data;
+        }
+        catch (error) {
+            throw new Error('Error in getRestOfAllUsers');
+        }
+    };
+    const getSuggestedUsers = async (userId) => {
+        try {
+            const myData = await userModel_1.default.findById(new mongoose_1.default.Types.ObjectId(userId));
+            const data = await userModel_1.default.find({
+                isBlock: false,
+                role: 'client',
+                _id: { $ne: userId, $nin: [...myData?.blocklist || [], ...myData?.following || []] },
+            }).sort({ createdAt: -1 }).limit(10);
             return data;
         }
         catch (error) {
@@ -588,6 +603,7 @@ const userRepositoryMongoDb = () => {
         updatePosts,
         resetPassword,
         getRestOfAllUsers,
+        getSuggestedUsers,
         followUser,
         unfollowUser,
         getFollowers,

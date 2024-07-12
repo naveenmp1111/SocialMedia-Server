@@ -17,6 +17,8 @@ export const messageDbRepository=(repository:ReturnType<MessageRepositoryMongoDb
 
     const deleteMessageForMe=async(messageId:string,userId:string)=>await repository.deleteMessageForMe(messageId,userId)
 
+    const getAllUnreadMessages=async(userId:string)=>await repository.getAllUnreadMessages(userId)
+
     return {
         sendMessage,
         getAllMessagesFromChat,
@@ -24,7 +26,8 @@ export const messageDbRepository=(repository:ReturnType<MessageRepositoryMongoDb
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     }
 
 }

@@ -33,6 +33,8 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const getRestOfAllUsers=async(userId:string)=>await repository.getRestOfAllUsers(userId)
 
+   const getSuggestedUsers=async(userId:string)=>await repository.getSuggestedUsers(userId)
+
    const followUser=async(userId:string,friendusername:string)=>await repository.followUser(userId,friendusername)
 
    const unfollowUser=async(userId:string,friendusername:string)=>await repository.unfollowUser(userId,friendusername)
@@ -79,6 +81,7 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
       updatePost,
       resetPassword,
       getRestOfAllUsers,
+      getSuggestedUsers,
       followUser,
       unfollowUser,
       getFollowing,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleDeleteMessageForMe = exports.handleDeleteMessage = exports.handleSetUnreadMessagesRead = exports.handleGetUnreadMessagesFromChat = exports.handleGetAllMessagesFromChat = exports.handleSendMessage = void 0;
+exports.handleGetAllUnreadMessages = exports.handleDeleteMessageForMe = exports.handleDeleteMessage = exports.handleSetUnreadMessagesRead = exports.handleGetUnreadMessagesFromChat = exports.handleGetAllMessagesFromChat = exports.handleSendMessage = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const handleSendMessage = async (message, messageDbRepository, chatDbRepository) => {
@@ -92,3 +92,13 @@ const handleDeleteMessageForMe = async (messageId, userId, messageDbRepository) 
     }
 };
 exports.handleDeleteMessageForMe = handleDeleteMessageForMe;
+const handleGetAllUnreadMessages = async (userId, messageDbRepository) => {
+    try {
+        return await messageDbRepository.getAllUnreadMessages(userId);
+    }
+    catch (error) {
+        console.log(error);
+        throw new appError_1.default('Error in fetching all unread messages', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+};
+exports.handleGetAllUnreadMessages = handleGetAllUnreadMessages;

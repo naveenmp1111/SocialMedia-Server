@@ -66,7 +66,7 @@ export const postRepositoryMongoDb = () => {
             }
           }
         }
-      ]);
+      ]).sort({createdAt:-1});
 
 
       console.log('myposts', UserPosts)
@@ -120,8 +120,13 @@ export const postRepositoryMongoDb = () => {
       const hasFollowing = user.following && user.following.length > 0;
   
       const matchCondition = hasFollowing
-        ? { "postUser._id": { $in: user.following, $nin: user.blocklist } }
-        : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
+      ? {
+          $or: [
+            { "postUser._id": { $in: user.following, $nin: user.blocklist } },
+            { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+          ]
+        }
+      : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
   
       const posts = await Post.aggregate([
         {

@@ -18,7 +18,8 @@ const messageRouter = () => {
     router.post('/getUnreadMessagesFromChat', authMiddleware_1.default, controller.getUnreadMessagesFromChat);
     router.patch('/setUnreadMessagesRead', authMiddleware_1.default, controller.setUnreadMessagesRead);
     router.patch('/deleteMessage', authMiddleware_1.default, controller.deleteMessage);
-    router.patch('/deleteMessageForMe', authMiddleware_1.default, controller.deleteMessageForMe);
+    router.patch('/deleteMessageForMe', authMiddleware_1.default, controller.deleteMessageForMe),
+        router.get('/getAllUnreadMessages', authMiddleware_1.default, controller.getAllUnreadMessages);
     return router;
 };
 exports.default = messageRouter;

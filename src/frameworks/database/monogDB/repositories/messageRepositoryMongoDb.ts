@@ -93,14 +93,21 @@ export const messageRepositoryMongoDb = () => {
         try {
           const chatIds = await Chat.find(
             { members: { $in: [userId] } },
-            { chatId: 1, _id: 0 } // Include chatId and exclude _id
+            {_id: 1 } // Include chatId and exclude _id
           );
+
+          // console.log('chatids of unread messsags are ',chatIds)
           
           // Extract chatId values from the array of objects
-          // const chatIdArray = chatIds.map(chat => chat.chatId);
+          //@ts-ignore
+          const chatIdArray = chatIds.map((chat) => chat?._id);
+          // console.log('array of chat id is ',chatIdArray)
           
           // // Use the extracted chatId values in the Message.find query
-          // const messages = await Message.find({ chatId: { $in: chatIdArray } });
+          const messages = await Message.find({ chatId: { $in: chatIdArray },senderId:{$ne:userId },isSeen:false});
+
+          // console.log('Unread messages are ',messages)
+          return messages
           
           
 
@@ -123,7 +130,7 @@ export const messageRepositoryMongoDb = () => {
         }
       }
 
-      const deleteMessage=async(messageId:string,userId:string)=>{
+      const deleteMessage=async(messageId:string)=>{
         try {
           let messageIdObj=new mongoose.Types.ObjectId(messageId)
           const messageData=await Message.findByIdAndUpdate(messageIdObj,{isDeleted:true}).populate('chatId')
@@ -134,9 +141,7 @@ export const messageRepositoryMongoDb = () => {
           // console.log('recieverid is ',recieverId)
           const receiverSocketId=getReceiverSocketId(recieverId)
           if(receiverSocketId){
-            // console.log('Ready to emit event to ',receiverSocketId)
             io.to(receiverSocketId).emit('deleteMessage',messageId)
-            // console.log('here is the erro')
           }
           const lastMessage=await Message.find({chatId:messageData?.chatId,isDeleted:false}).sort({createdAt:-1}).limit(1)
         //   console.log('latestmessage inside chat is',lastMessage)
@@ -169,7 +174,8 @@ export const messageRepositoryMongoDb = () => {
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     }
 
 }

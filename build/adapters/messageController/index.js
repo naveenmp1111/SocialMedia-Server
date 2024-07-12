@@ -64,13 +64,22 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
             messsage: 'messsage deleted for you successfully'
         });
     });
+    const getAllUnreadMessages = (0, express_async_handler_1.default)(async (req, res) => {
+        const { userId } = req.body;
+        const messages = await (0, message_1.handleGetAllUnreadMessages)(userId, messageDbRepository);
+        res.status(200).json({
+            status: 'success',
+            messages
+        });
+    });
     return {
         sendMessage,
         getAllMessagesFromChat,
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     };
 };
 exports.default = messageController;

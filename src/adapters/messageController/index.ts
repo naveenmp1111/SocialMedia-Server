@@ -4,7 +4,7 @@ import { MessageDbInterface } from "../../application/repositories/messageDbRepo
 import { ChatRepositoryMongoDb } from "../../frameworks/database/monogDB/repositories/chatRepositoryMongoDb";
 import { MessageRepositoryMongoDb } from "../../frameworks/database/monogDB/repositories/messageRepositoryMongoDb";
 import { Request, Response } from "express";
-import { handleDeleteMessage, handleDeleteMessageForMe, handleGetAllMessagesFromChat, handleGetUnreadMessagesFromChat, handleSendMessage, handleSetUnreadMessagesRead } from "../../application/user-cases/message/message";
+import { handleDeleteMessage, handleDeleteMessageForMe, handleGetAllMessagesFromChat, handleGetAllUnreadMessages, handleGetUnreadMessagesFromChat, handleSendMessage, handleSetUnreadMessagesRead } from "../../application/user-cases/message/message";
 
 
 const messageController = (
@@ -91,13 +91,23 @@ const messageController = (
         })
     })
 
+    const getAllUnreadMessages=asyncHandler(async(req:Request,res:Response)=>{
+        const {userId}=req.body
+       const messages= await handleGetAllUnreadMessages(userId,messageDbRepository)
+        res.status(200).json({
+            status:'success',
+            messages
+        })
+    })
+
     return {
         sendMessage,
         getAllMessagesFromChat,
         getUnreadMessagesFromChat,
         setUnreadMessagesRead,
         deleteMessage,
-        deleteMessageForMe
+        deleteMessageForMe,
+        getAllUnreadMessages
     }
 }
 

@@ -13,6 +13,16 @@ export const handleGetRestOfAllUsers = async (
 
 };
 
+export const handleGetSuggestedUsers = async (
+ userId:string,
+  dbUserRepository: ReturnType<UserDbInterface>
+) => {
+
+  const users = await dbUserRepository.getSuggestedUsers(userId)
+  return users
+
+};
+
 export const handleFollowUser=async(
   userId:string,
   friendusername:string,
@@ -120,7 +130,10 @@ export const handleBlockUserByUsername=async(
   username:string,
   dbUserRepository:ReturnType<UserDbInterface>
 )=>{
-  return await dbUserRepository.blockUserByUsername(userId,username)
+   const response=await dbUserRepository.blockUserByUsername(userId,username)
+  await dbUserRepository.removeFollower(userId,username) 
+  await dbUserRepository.unfollowUser(userId,username)
+  return response
 }
 
 export const handleUnblockUserByUsername=async(
@@ -128,7 +141,13 @@ export const handleUnblockUserByUsername=async(
   username:string,
   dbUserRepository:ReturnType<UserDbInterface>
 )=>{
-  return await dbUserRepository.unblockUserByUsername(userId,username)
+  try {
+    return await dbUserRepository.unblockUserByUsername(userId,username)
+   
+  } catch (error) {
+    console.log(error)
+    throw new AppError('error in blockUser',HttpStatus.INTERNAL_SERVER_ERROR)
+  }
 }
 
 export const handleGetBlockedUsers=async(

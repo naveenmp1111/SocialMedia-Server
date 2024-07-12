@@ -4,7 +4,7 @@ import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/reposit
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
 
 import asyncHandler from 'express-async-handler';
-import { handleAcceptRequest, handleBlockUserByUsername, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetBlockedUsers, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleRemoveFollower, handleSavePost, handleUnblockUserByUsername, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
+import { handleAcceptRequest, handleBlockUserByUsername, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetBlockedUsers, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleGetSuggestedUsers, handleRemoveFollower, handleSavePost, handleUnblockUserByUsername, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
 
 
 
@@ -18,6 +18,14 @@ const userController = (
     const getRestOfAllUsers = asyncHandler(async (req: Request, res: Response) => {
         const {userId}=req.body
       const users = await handleGetRestOfAllUsers(userId,dbUserRepository);
+      res.json({
+        users
+      });
+    });
+  
+    const getSuggestedUsers = asyncHandler(async (req: Request, res: Response) => {
+        const {userId}=req.body
+      const users = await handleGetSuggestedUsers(userId,dbUserRepository);
       res.json({
         users
       });
@@ -175,6 +183,7 @@ const userController = (
 
     return{ 
         getRestOfAllUsers,
+        getSuggestedUsers,
         followUser,
         unfollowUser,
         getFollowing,

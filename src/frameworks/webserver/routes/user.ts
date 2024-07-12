@@ -14,6 +14,7 @@ const userRouter = () => {
     )
 
     router.get('/getRestOfAllUsers',authMiddleware,controller.getRestOfAllUsers)
+    router.get('/getSuggestedUsers',authMiddleware,controller.getSuggestedUsers)
     router.post('/followUser',authMiddleware,controller.followUser)
     router.post('/unfollowUser',authMiddleware,controller.unfollowUser)
     router.get('/getFollowing/:userId',controller.getFollowing)
