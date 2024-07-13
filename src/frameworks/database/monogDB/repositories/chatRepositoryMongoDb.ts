@@ -30,7 +30,8 @@ export const chatRepositoryMongoDb = () => {
                 members: {
                     $all: [loggedInUserObjectId, otherUserObjectId]
                 }
-            }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt');
+            }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
+            .populate('latestMessage')
             // console.log('return from accesschat is ',chat)
             return chat;
         } catch (error) {
@@ -42,6 +43,7 @@ export const chatRepositoryMongoDb = () => {
     const getFullChat=async(chatId:string)=>{
         try {
             const fullChat=await Chat.findById(chatId).populate("members", "-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt")
+            .populate('latestMessage')
             return fullChat
         } catch (error) {
             console.log('error in getting full chat',error)
@@ -55,6 +57,7 @@ export const chatRepositoryMongoDb = () => {
         const chats = await Chat.find({
             members: {$in:[userObjectId]} // Check if userObjectId exists in the members array
         }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
+        .populate('latestMessage')
           .sort({ updatedAt: -1 }); // Sort by createdAt timestamp
             // console.log('chats are ',chats)
             return chats
@@ -67,24 +70,24 @@ export const chatRepositoryMongoDb = () => {
     const setLatestMessage = async (chatId: string, messageId: string) => {
         try {
           // Convert strings to ObjectId
-          const messageObjectId = new mongoose.Types.ObjectId(messageId);
+        //   const messageObjectId = new mongoose.Types.ObjectId(messageId);
           const chatObjectId = new mongoose.Types.ObjectId(chatId);
       
           // Find the message by ID
-          const message = await Message.findById(messageObjectId);
+        //   const message = await Message.findById(messageObjectId);
         //   console.log('message is', message);
       
           // Ensure the message exists and has a message field
-          if (!message || !message.message) {
+          if (!messageId) {
             throw new Error("Message not found or message content is empty");
           }
       
           // Update the chat's latest message
           const chatData = await Chat.findByIdAndUpdate(
             chatObjectId,
-            { $set: { latestMessage: message.message } },
+            { $set: { latestMessage: messageId } },
             { new: true } // Return the updated document
-          );
+          ).populate('latestMessage')
       
           // Ensure the chat was found and updated
           if (!chatData) {

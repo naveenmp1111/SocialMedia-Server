@@ -344,11 +344,11 @@ export const userRepositoryMongoDb = () => {
 
   const getFollowers = async (username: string) => {
     try {
-      const users = await User.findOne({ username }).populate({
+      const users = await User.findOne({ username,isBlock: false }).populate({
         path: 'followers',
         select: 'name username profilePic ' // Include only name and email fields
       });
-      console.log('followers data is ', users)
+      // console.log('followers data is ', users)
       return users?.followers
     } catch (error) {
       console.log('Error in Fetching followers')
@@ -358,11 +358,11 @@ export const userRepositoryMongoDb = () => {
 
   const getFollowing = async (username: string) => {
     try {
-      const users = await User.findOne({ username }).populate({
+      const users = await User.findOne({ username,isBlock: false }).populate({
         path: 'following',
         select: 'name username profilePic ' // Include only name and email fields
       });
-      console.log('following data is ', users)
+      // console.log('following data is ', users)
       return users?.following
     } catch (error) {
       console.log('Error in Fetching following')
@@ -372,7 +372,7 @@ export const userRepositoryMongoDb = () => {
 
   const getRequests=async(username:string)=>{
     try {
-       const user=await User.findOne({username}).populate({
+       const user=await User.findOne({username,isBlock: false}).populate({
         path:'requests',
         select:'name username profilePic -_id'
        })

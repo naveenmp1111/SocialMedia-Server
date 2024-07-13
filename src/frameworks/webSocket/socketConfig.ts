@@ -37,6 +37,59 @@ const socketConfig = (io: Server) => {
       let friendSocketId=getReceiverSocketId(selectedfriendId)
       io.to(friendSocketId).emit('RemoveTypingUser',myId)
     })
+
+    socket.on('outgoing-audio-call',(data)=>{
+      console.log('coming here',data)
+      const friendSocketId=getReceiverSocketId(data.to)
+      if(friendSocketId){
+        socket.to(friendSocketId).emit('incoming-audio-call',{
+          from:data.from,
+          roomId:data.roomId,
+          callType:data.callType,
+        })
+      }
+    })
+
+    socket.on('outgoing-video-call',(data)=>{
+      const friendSocketId=getReceiverSocketId(data.to)
+      if(friendSocketId){
+        socket.to(friendSocketId).emit('incoming-video-call',{
+          from:data.from,
+          roomId:data.roomId,
+          callType:data.callType,
+        })
+      }
+    })
+
+    // socket.on('reject-audio-call',(data)=>{
+    //   const friendSocketId=getReceiverSocketId(data.to)
+    //   if(friendSocketId){
+    //     socket.to(friendSocketId).emit('call-rejected')
+    //   }
+    // })
+
+    // socket.on('reject-video-call',(data)=>{
+    //   const friendSocketId=getReceiverSocketId(data.to)
+    //   if(friendSocketId){
+    //     socket.to(friendSocketId).emit('call-rejected')
+    //   }
+    // })
+
+    socket.on('reject-call',(data)=>{
+        const friendSocketId=getReceiverSocketId(data.to)
+        if(friendSocketId){
+          socket.to(friendSocketId).emit('call-rejected')
+        }
+      })
+
+    socket.on('accept-incoming-call',(data)=>{
+      const friendSocketId=getReceiverSocketId(data.to)
+      if(friendSocketId){
+        socket.to(friendSocketId).emit('accept-call')
+      }
+    })
+    
+
   });
 };
 

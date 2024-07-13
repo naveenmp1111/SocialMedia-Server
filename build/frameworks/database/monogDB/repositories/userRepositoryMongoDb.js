@@ -301,11 +301,11 @@ const userRepositoryMongoDb = () => {
     };
     const getFollowers = async (username) => {
         try {
-            const users = await userModel_1.default.findOne({ username }).populate({
+            const users = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'followers',
                 select: 'name username profilePic ' // Include only name and email fields
             });
-            console.log('followers data is ', users);
+            // console.log('followers data is ', users)
             return users?.followers;
         }
         catch (error) {
@@ -315,11 +315,11 @@ const userRepositoryMongoDb = () => {
     };
     const getFollowing = async (username) => {
         try {
-            const users = await userModel_1.default.findOne({ username }).populate({
+            const users = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'following',
                 select: 'name username profilePic ' // Include only name and email fields
             });
-            console.log('following data is ', users);
+            // console.log('following data is ', users)
             return users?.following;
         }
         catch (error) {
@@ -329,7 +329,7 @@ const userRepositoryMongoDb = () => {
     };
     const getRequests = async (username) => {
         try {
-            const user = await userModel_1.default.findOne({ username }).populate({
+            const user = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'requests',
                 select: 'name username profilePic -_id'
             });

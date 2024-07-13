@@ -9,7 +9,8 @@ const chatSchema = new Schema({
         }
     ],
     latestMessage:{
-        type:String
+        type:mongoose.Types.ObjectId,
+        ref:"Message"
     }
 },{
     timestamps:true
