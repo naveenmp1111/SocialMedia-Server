@@ -75,7 +75,15 @@ const socketConfig = (io: Server) => {
     //   }
     // })
 
+    socket.on('leave-room', (data) => {
+      const friendSocketId=getReceiverSocketId(data.to)
+      if(friendSocketId){
+        socket.to(friendSocketId).emit('user-left');
+      }
+  });
+
     socket.on('reject-call',(data)=>{
+      console.log('data coming through reject call is ',data)
         const friendSocketId=getReceiverSocketId(data.to)
         if(friendSocketId){
           socket.to(friendSocketId).emit('call-rejected')
@@ -85,7 +93,7 @@ const socketConfig = (io: Server) => {
     socket.on('accept-incoming-call',(data)=>{
       const friendSocketId=getReceiverSocketId(data.to)
       if(friendSocketId){
-        socket.to(friendSocketId).emit('accept-call')
+        socket.to(friendSocketId).emit('accept-call',(data))
       }
     })
     
