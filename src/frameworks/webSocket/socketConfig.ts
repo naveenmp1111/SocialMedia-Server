@@ -76,8 +76,10 @@ const socketConfig = (io: Server) => {
     // })
 
     socket.on('leave-room', (data) => {
+      console.log('coming here')
       const friendSocketId=getReceiverSocketId(data.to)
       if(friendSocketId){
+        console.log('coming here')
         socket.to(friendSocketId).emit('user-left');
       }
   });

@@ -260,6 +260,11 @@ const postRepositoryMongoDb = () => {
                     }
                 }
             ]);
+            // Shuffle the posts using the Fisher-Yates algorithm
+            for (let i = posts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [posts[i], posts[j]] = [posts[j], posts[i]];
+            }
             return posts;
         }
         catch (error) {
