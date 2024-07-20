@@ -39,7 +39,7 @@ const socketConfig = (io: Server) => {
     })
 
     socket.on('outgoing-audio-call',(data)=>{
-      console.log('coming here',data)
+      // console.log('coming here',data)
       const friendSocketId=getReceiverSocketId(data.to)
       if(friendSocketId){
         socket.to(friendSocketId).emit('incoming-audio-call',{
@@ -76,16 +76,16 @@ const socketConfig = (io: Server) => {
     // })
 
     socket.on('leave-room', (data) => {
-      console.log('coming here')
+      // console.log('coming here')
       const friendSocketId=getReceiverSocketId(data.to)
       if(friendSocketId){
-        console.log('coming here')
+        // console.log('coming here')
         socket.to(friendSocketId).emit('user-left');
       }
   });
 
     socket.on('reject-call',(data)=>{
-      console.log('data coming through reject call is ',data)
+      // console.log('data coming through reject call is ',data)
         const friendSocketId=getReceiverSocketId(data.to)
         if(friendSocketId){
           socket.to(friendSocketId).emit('call-rejected')

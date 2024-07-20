@@ -14,9 +14,11 @@ const postRepositoryMongoDb_1 = require("../../database/monogDB/repositories/pos
 const postDbRepository_1 = require("../../../application/repositories/postDbRepository");
 const commentRepostitoryMongoDb_1 = require("../../database/monogDB/repositories/commentRepostitoryMongoDb");
 const commentDbRepository_1 = require("../../../application/repositories/commentDbRepository");
+const notificationRepositoryMongoDb_1 = require("../../database/monogDB/repositories/notificationRepositoryMongoDb");
+const notificationDbRepository_1 = require("../../../application/repositories/notificationDbRepository");
 const postRouter = () => {
     const router = (0, express_1.default)();
-    const controller = (0, postController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository, commentRepostitoryMongoDb_1.commentRepositoryMongoDb, commentDbRepository_1.commentDbRepository);
+    const controller = (0, postController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, authService_1.authService, authServiceInterfaces_1.authServiceInterface, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository, commentRepostitoryMongoDb_1.commentRepositoryMongoDb, commentDbRepository_1.commentDbRepository, notificationRepositoryMongoDb_1.notficationRepositoryMongoDb, notificationDbRepository_1.notificationDbRepository);
     router.post('/createPost', authMiddleware_1.default, controller.createPost);
     router.get('/getPostsByUser/:username', authMiddleware_1.default, controller.getPostsByUser);
     router.post('/editPost', authMiddleware_1.default, controller.updatePostById);

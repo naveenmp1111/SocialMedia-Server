@@ -6,6 +6,7 @@ import postRouter from "./post";
 import userRouter from "./user"
 import chatRouter from "./chat";
 import messageRouter from "./message";
+import notificationRouter from "./notification";
 
 const routes = (app: Application) => {
     app.use('/api/auth', authRouter())
@@ -15,6 +16,7 @@ const routes = (app: Application) => {
     app.use('/api/user',userRouter())
     app.use('/api/chat',chatRouter())
     app.use('/api/message',messageRouter())
+    app.use('/api/notification',notificationRouter())
 }
 
 export default routes

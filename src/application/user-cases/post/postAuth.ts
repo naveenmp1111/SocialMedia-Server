@@ -2,8 +2,11 @@ import { PostDataInterface } from "../../../types/PostInterface"
 import { HttpStatus } from "../../../types/httpStatus"
 import AppError from "../../../utils/appError"
 import { CommentDbInterface } from "../../repositories/commentDbRepository"
+import { NotificationDbInterface, notificationDbRepository } from "../../repositories/notificationDbRepository"
 import { PostDbInterface, postDbRepository } from "../../repositories/postDbRepository"
 import { UserDbInterface } from "../../repositories/userDbRepository"
+import { io } from "../../../app"
+import { getReceiverSocketId } from "../../../frameworks/webSocket/socketConfig"
 
 
 
@@ -118,10 +121,18 @@ export const handleLikePost=async(
     postId:string,
     userId:string,
     postDbRepository:ReturnType<PostDbInterface>,
-    // nofificationDbRepository:ReturnType<NotificationDbInterface>
+    nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
     try {
-        await postDbRepository.likePost(postId,userId)
+       const postData= await postDbRepository.likePost(postId,userId)
+       if(postData){
+       const notification=await nofificationDbRepository.createNotification(userId,postData.userId as unknown as string,'like',postId)
+       console.log('ready to pass socket event')
+       const recieverSocketId=getReceiverSocketId(postData.userId as unknown as string)
+        io.to(recieverSocketId).emit('notification',(notification))
+        console.log('socket event passed successfuly')
+       }
+    //    console.log('like data is ',likeData)
     } catch (error) {
         console.log('error in liking the post')
     }

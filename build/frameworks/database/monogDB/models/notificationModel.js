@@ -29,7 +29,8 @@ const NotificationSchema = new mongoose_1.Schema({
     receiverId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
     senderId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
     event: { type: String, required: true, enum: ['like', 'comment', 'message', 'follow'] },
-    isSeen: { type: Boolean, required: true, default: false }
+    isSeen: { type: Boolean, required: true, default: false },
+    postId: { type: mongoose_1.default.Types.ObjectId, ref: 'Post', default: '' }
 }, {
     timestamps: true
 });

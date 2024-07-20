@@ -3,10 +3,18 @@ import Notification from "../models/notificationModel";
 
 export const notficationRepositoryMongoDb = () => {
 
-    const createNotification=async ({senderId,receiverId,event }: { receiverId: string, senderId: string,event:string }) => {
+    const createNotification=async ({senderId,receiverId,event,postId }: { receiverId: string, senderId: string,event:string,postId?:string }) => {
         try {
-            const notifications = await Notification.find({ receiverId}).sort({ timestamp: -1 });
-            return notifications
+            // const notifications = await Notification.find({ receiverId}).sort({ timestamp: -1 });
+            // return notifications
+            const notification= new Notification({
+                senderId,
+                receiverId,
+                event,
+                postId: postId ? postId : ''
+            })
+
+           return await notification.save()
         } catch (error) {
             console.log(error)
         }
@@ -21,9 +29,9 @@ export const notficationRepositoryMongoDb = () => {
         }
     }
 
-    const readNotifications = async (notificationId: string) => {
+    const readNotifications = async (userId: string) => {
         try {
-            await Notification.findByIdAndUpdate(notificationId, { isSeen: true });
+            await Notification.updateMany({receiverId:userId}, { isSeen: true });
         } catch (error) {
             console.log(error)
         }

@@ -9,6 +9,8 @@ import { postRepositoryMongoDb } from '../../database/monogDB/repositories/postR
 import { postDbRepository } from '../../../application/repositories/postDbRepository';
 import { commentRepositoryMongoDb } from '../../database/monogDB/repositories/commentRepostitoryMongoDb';
 import { commentDbRepository } from '../../../application/repositories/commentDbRepository';
+import { notficationRepositoryMongoDb } from '../../database/monogDB/repositories/notificationRepositoryMongoDb';
+import { notificationDbRepository } from '../../../application/repositories/notificationDbRepository';
 
 const postRouter = () => {
     const router = express();
@@ -21,7 +23,9 @@ const postRouter = () => {
         postRepositoryMongoDb,
         postDbRepository,
         commentRepositoryMongoDb,
-        commentDbRepository
+        commentDbRepository,
+        notficationRepositoryMongoDb,
+        notificationDbRepository
     )
 
     router.post('/createPost', authMiddleware, controller.createPost)

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPostsToExplore = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
+const app_1 = require("../../../app");
+const socketConfig_1 = require("../../../frameworks/webSocket/socketConfig");
 const handleCreatePost = async (postData, postDbRepository) => {
     try {
         const createdPost = await postDbRepository.createPost(postData);
@@ -92,9 +94,17 @@ const handleGetPostReports = async (postDbRepository) => {
     }
 };
 exports.handleGetPostReports = handleGetPostReports;
-const handleLikePost = async (postId, userId, postDbRepository) => {
+const handleLikePost = async (postId, userId, postDbRepository, nofificationDbRepository) => {
     try {
-        await postDbRepository.likePost(postId, userId);
+        const postData = await postDbRepository.likePost(postId, userId);
+        if (postData) {
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId, 'like', postId);
+            console.log('ready to pass socket event');
+            const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(postData.userId);
+            app_1.io.to(recieverSocketId).emit('notification', (notification));
+            console.log('socket event passed successfuly');
+        }
+        //    console.log('like data is ',likeData)
     }
     catch (error) {
         console.log('error in liking the post');

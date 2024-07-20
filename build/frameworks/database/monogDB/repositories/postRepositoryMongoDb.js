@@ -357,7 +357,7 @@ const postRepositoryMongoDb = () => {
     };
     const likePost = async (postId, userId) => {
         try {
-            await postModel_1.default.findByIdAndUpdate(postId, { $addToSet: { likes: userId } });
+            return await postModel_1.default.findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true });
         }
         catch (error) {
             console.log('error in liking the post');

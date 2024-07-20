@@ -371,7 +371,7 @@ export const postRepositoryMongoDb = () => {
 
   const likePost=async(postId:string,userId:string)=>{
     try {
-       await Post.findByIdAndUpdate(postId,{$addToSet:{likes:userId}})
+      return await Post.findByIdAndUpdate(postId,{$addToSet:{likes:userId}},{new:true})
     } catch (error) {
       console.log('error in liking the post')
     }
