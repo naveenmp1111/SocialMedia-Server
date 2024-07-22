@@ -95,14 +95,17 @@ const handleGetPostReports = async (postDbRepository) => {
 };
 exports.handleGetPostReports = handleGetPostReports;
 const handleLikePost = async (postId, userId, postDbRepository, nofificationDbRepository) => {
+    console.log('handke like data is ', postId, userId);
     try {
         const postData = await postDbRepository.likePost(postId, userId);
-        if (postData) {
+        console.log('postDatais ', postData);
+        if (postData && postData.userId != userId) {
+            console.log('getting ready to send create', postData);
             const notification = await nofificationDbRepository.createNotification(userId, postData.userId, 'like', postId);
-            console.log('ready to pass socket event');
+            //    console.log('ready to pass socket event')
             const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(postData.userId);
             app_1.io.to(recieverSocketId).emit('notification', (notification));
-            console.log('socket event passed successfuly');
+            // console.log('socket event passed successfuly')
         }
         //    console.log('like data is ',likeData)
     }
@@ -111,23 +114,33 @@ const handleLikePost = async (postId, userId, postDbRepository, nofificationDbRe
     }
 };
 exports.handleLikePost = handleLikePost;
-const handleUnlikePost = async (postId, userId, postDbRepository) => {
+const handleUnlikePost = async (postId, userId, postDbRepository, nofificationDbRepository) => {
     try {
-        await postDbRepository.unlikePost(postId, userId);
+        const postData = await postDbRepository.unlikePost(postId, userId);
+        if (postData && postData.userId != userId) {
+            console.log('deleting notification ');
+            await nofificationDbRepository.deleteNotification(userId, postData.userId, 'like', postId);
+        }
     }
     catch (error) {
         console.log('error in liking the post');
     }
 };
 exports.handleUnlikePost = handleUnlikePost;
-const handleAddComment = async (userId, postId, comment, commentDbRepository) => {
+const handleAddComment = async (userId, postId, comment, commentDbRepository, postDbRepository, nofificationDbRepository) => {
     try {
         const commentObj = {
             postId,
             commenterId: userId,
             comment
         };
+        const postData = await postDbRepository.getPostById(postId);
         const commentResponse = await commentDbRepository.addComment(commentObj);
+        if (commentResponse && postData && postData.userId != userId) {
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId, 'comment', postId);
+            const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(postData.userId);
+            app_1.io.to(recieverSocketId).emit('notification', (notification));
+        }
         return commentResponse;
     }
     catch (error) {
@@ -135,7 +148,7 @@ const handleAddComment = async (userId, postId, comment, commentDbRepository) =>
     }
 };
 exports.handleAddComment = handleAddComment;
-const handleAddReply = async (userId, postId, parentId, comment, commentDbRepository) => {
+const handleAddReply = async (userId, postId, parentId, comment, commentDbRepository, postDbRepository, nofificationDbRepository) => {
     try {
         const replyObj = {
             postId,
@@ -143,7 +156,13 @@ const handleAddReply = async (userId, postId, parentId, comment, commentDbReposi
             comment,
             parentId
         };
+        const postData = await postDbRepository.getPostById(postId);
         const commentResponse = await commentDbRepository.addReply(replyObj);
+        if (postData && commentResponse) {
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId, 'comment', postId);
+            const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(postData.userId);
+            app_1.io.to(recieverSocketId).emit('notification', (notification));
+        }
         return commentResponse;
     }
     catch (error) {

@@ -116,7 +116,7 @@ const postController = (
     const { userId } = req.body
     const { postId } = req.params
     // console.log('wooo', userId, postId)
-    await handleUnlikePost(postId, userId, dbPostRepository)
+    await handleUnlikePost(postId, userId, dbPostRepository,dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Post unliked successfully'
@@ -126,7 +126,7 @@ const postController = (
   const addComment = asyncHandler(async (req: Request, res: Response) => {
     const { userId, postId, comment } = req.body
     // console.log('comment data is ',userId ,postId ,comment)
-    const response = await handleAddComment(userId, postId, comment, dbCommentRepository)
+    const response = await handleAddComment(userId, postId, comment, dbCommentRepository,dbPostRepository,dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Comment added successfully',
@@ -137,7 +137,7 @@ const postController = (
   const addReply = asyncHandler(async (req: Request, res: Response) => {
     const { userId, postId, comment, parentId } = req.body
     // console.log('comment data is ',userId ,postId ,comment)
-    const response = await handleAddReply(userId, postId, parentId, comment, dbCommentRepository)
+    const response = await handleAddReply(userId, postId, parentId, comment, dbCommentRepository,dbPostRepository,dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Comment added successfully',

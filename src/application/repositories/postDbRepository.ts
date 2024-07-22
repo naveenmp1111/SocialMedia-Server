@@ -28,6 +28,8 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     const unlikePost=async(postId:string,userId:string)=>await repository.unlikePost(postId,userId)
 
+    const getPostById=async(postId:string)=>await repository.getPostById(postId)
+
     return {
         createPost,
         getPostsByUser,
@@ -40,7 +42,8 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
         unblockPost,
         likePost,
         unlikePost,
-        getAllPostsToExplore
+        getAllPostsToExplore,
+        getPostById
     }
 
 }

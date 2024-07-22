@@ -19,6 +19,7 @@ export const commentRepositoryMongoDb=()=>{
         try {
             const comment =new Comment(ReplyObj)
             const savedComment=await comment.save()
+            return savedComment
         } catch (error) {
             console.log('error in adding reply',error)
         }

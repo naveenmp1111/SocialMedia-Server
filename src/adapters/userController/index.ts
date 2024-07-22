@@ -5,15 +5,20 @@ import { UserDbInterface } from '../../application/repositories/userDbRepository
 
 import asyncHandler from 'express-async-handler';
 import { handleAcceptRequest, handleBlockUserByUsername, handleCancelRequest, handleDeclineRequest, handleFollowUser, handleGetBlockedUsers, handleGetFollowers, handleGetFollowing, handleGetRequests, handleGetRestOfAllUsers, handleGetSavedPosts, handleGetSuggestedUsers, handleRemoveFollower, handleSavePost, handleUnblockUserByUsername, handleUnfollowUser, handleUnsavePost } from '../../application/user-cases/user/userAuth';
+import { NotificationRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/notificationRepositoryMongoDb';
+import { NotificationDbInterface } from '../../application/repositories/notificationDbRepository';
 
 
 
 const userController = (
     userDbRepositoryImpl: UserRepositoryMongoDb,
-    userDbRepositoryInterface: UserDbInterface
+    userDbRepositoryInterface: UserDbInterface,
+    notificationDbRepositoryImpl:NotificationRepositoryMongoDb,
+  notificationDbRepositoryInterface:NotificationDbInterface,
   ) => {
     
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
+    const dbNotificationRepository=notificationDbRepositoryInterface(notificationDbRepositoryImpl())
   
     const getRestOfAllUsers = asyncHandler(async (req: Request, res: Response) => {
         const {userId}=req.body
@@ -33,7 +38,7 @@ const userController = (
 
     const followUser = asyncHandler(async(req:Request, res:Response)=>{
       const {userId,friendUsername}=req.body
-     const userData= await handleFollowUser(userId,friendUsername,dbUserRepository)
+     const userData= await handleFollowUser(userId,friendUsername,dbUserRepository,dbNotificationRepository)
       res.json({
         status:'success',
         message:'Following successfull',
@@ -43,7 +48,7 @@ const userController = (
     const unfollowUser=asyncHandler(async(req:Request,res:Response)=>{
       const {userId,friendUsername}=req.body
       console.log('userid is ',userId,friendUsername)
-      const userData=await handleUnfollowUser(userId,friendUsername,dbUserRepository)
+      const userData=await handleUnfollowUser(userId,friendUsername,dbUserRepository,dbNotificationRepository)
       res.json({
         status:'success',
         message:'Unfollowed successfully',
@@ -92,7 +97,7 @@ const userController = (
 
     const acceptRequest=asyncHandler(async(req:Request,res:Response)=>{
       const {userId,friendUsername}=req.body
-      await handleAcceptRequest(userId,friendUsername,dbUserRepository)
+      await handleAcceptRequest(userId,friendUsername,dbUserRepository,dbNotificationRepository)
       res.json({
         status:'success',
         message:'Request accepted successfully'

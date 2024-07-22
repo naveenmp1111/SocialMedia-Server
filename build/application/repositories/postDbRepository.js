@@ -14,6 +14,7 @@ const postDbRepository = (repository) => {
     const unblockPost = async (postId) => await repository.unBlockPost(postId);
     const likePost = async (postId, userId) => await repository.likePost(postId, userId);
     const unlikePost = async (postId, userId) => await repository.unlikePost(postId, userId);
+    const getPostById = async (postId) => await repository.getPostById(postId);
     return {
         createPost,
         getPostsByUser,
@@ -26,7 +27,8 @@ const postDbRepository = (repository) => {
         unblockPost,
         likePost,
         unlikePost,
-        getAllPostsToExplore
+        getAllPostsToExplore,
+        getPostById
     };
 };
 exports.postDbRepository = postDbRepository;

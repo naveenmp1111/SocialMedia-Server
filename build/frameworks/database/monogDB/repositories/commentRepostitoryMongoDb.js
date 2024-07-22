@@ -22,6 +22,7 @@ const commentRepositoryMongoDb = () => {
         try {
             const comment = new commentModel_1.default(ReplyObj);
             const savedComment = await comment.save();
+            return savedComment;
         }
         catch (error) {
             console.log('error in adding reply', error);

@@ -379,9 +379,19 @@ export const postRepositoryMongoDb = () => {
 
   const unlikePost=async(postId:string,userId:string)=>{
     try {
-      const unlikeData= await Post.findByIdAndUpdate(postId,{$pull:{likes:userId}})
+      console.log('unlike post funtion called ')
+      return await Post.findByIdAndUpdate(postId,{$pull:{likes:userId}})
     } catch (error) {
       console.log('error in unliking the post')
+    }
+  }
+
+  const getPostById=async(postId:string)=>{
+    try {
+      const postData=await Post.findById(postId)
+      return postData
+    } catch (error) {
+      console.log('error in getting post by id ',error)
     }
   }
 
@@ -398,7 +408,8 @@ export const postRepositoryMongoDb = () => {
     unBlockPost,
     likePost,
     unlikePost,
-    getAllPostsToExplore
+    getAllPostsToExplore,
+    getPostById
   }
 }
 

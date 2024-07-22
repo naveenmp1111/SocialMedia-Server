@@ -221,10 +221,12 @@ const userRepositoryMongoDb = () => {
             const followObjectId = friend?._id;
             if (friend?.isPrivate) {
                 await userModel_1.default.findByIdAndUpdate(followObjectId, { $addToSet: { requests: userObjectId } });
+                return { status: false };
             }
             else {
                 await userModel_1.default.findByIdAndUpdate(userObjectId, { $addToSet: { following: followObjectId } });
-                await userModel_1.default.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+                const friendData = await userModel_1.default.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+                return { status: true, friend: friendData };
             }
         }
         catch (error) {
@@ -246,6 +248,7 @@ const userRepositoryMongoDb = () => {
             const followerObjectId = friend?._id;
             await userModel_1.default.findByIdAndUpdate(userObjectId, { $addToSet: { followers: followerObjectId }, $pull: { requests: followerObjectId } });
             await userModel_1.default.findByIdAndUpdate(followerObjectId, { $addToSet: { following: userObjectId } });
+            return friend;
         }
         catch (error) {
             console.log('error in accepting request ', error);
@@ -262,6 +265,7 @@ const userRepositoryMongoDb = () => {
             const unfollowObject = friend?._id;
             await userModel_1.default.findByIdAndUpdate(userObjectId, { $pull: { following: unfollowObject } }, { new: true });
             await userModel_1.default.findByIdAndUpdate(unfollowObject, { $pull: { followers: userObjectId } });
+            return friend;
         }
         catch (error) {
             console.log('Error in unfolloeing user', error);

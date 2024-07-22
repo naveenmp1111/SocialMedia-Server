@@ -78,58 +78,58 @@ export const userRepositoryMongoDb = () => {
 
   const editProfile = async (profileInfo: ProfileInterface) => {
     try {
-        let user;
-   
-        // Update user profile based on the presence of profilePic
-        if (profileInfo.profilePic) {
-            user = await User.findByIdAndUpdate(profileInfo.userId, profileInfo, {
-                new: true,
-            });
-        } else {
-            user = await User.findByIdAndUpdate(profileInfo.userId, {
-                name: profileInfo.name,
-                username: profileInfo.username,
-                phoneNumber: profileInfo.phoneNumber,
-                bio: profileInfo.bio,
-                email: profileInfo.email,
-                isPrivate: profileInfo.isPrivate
-            }, {
-                new: true,
-            });
-        }
+      let user;
 
-        if (!user) {
-            throw new Error('User not found');
-        }
+      // Update user profile based on the presence of profilePic
+      if (profileInfo.profilePic) {
+        user = await User.findByIdAndUpdate(profileInfo.userId, profileInfo, {
+          new: true,
+        });
+      } else {
+        user = await User.findByIdAndUpdate(profileInfo.userId, {
+          name: profileInfo.name,
+          username: profileInfo.username,
+          phoneNumber: profileInfo.phoneNumber,
+          bio: profileInfo.bio,
+          email: profileInfo.email,
+          isPrivate: profileInfo.isPrivate
+        }, {
+          new: true,
+        });
+      }
 
-        // If profile is set to public, move users from request to followers and clear request field
-        if (profileInfo.isPrivate === false && user.requests.length > 0) {
-            // Get the list of users to update their following list
-            const requestedUserIds = user.requests.map(id =>id);
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-            // Update the current user's followers and clear requests
-            user = await User.findByIdAndUpdate(
-                profileInfo.userId,
-                {
-                    $addToSet: { followers: { $each: user.requests } }, // Add users in request to followers
-                    $set: { requests: [] } // Clear the request field
-                },
-                { new: true }
-            );
+      // If profile is set to public, move users from request to followers and clear request field
+      if (profileInfo.isPrivate === false && user.requests.length > 0) {
+        // Get the list of users to update their following list
+        const requestedUserIds = user.requests.map(id => id);
 
-            // Add the current user's ID to the following list of the requested users
-            await User.updateMany(
-                { _id: { $in: requestedUserIds } },
-                { $addToSet: { following: new ObjectId(profileInfo.userId) } }
-            );
-        }
+        // Update the current user's followers and clear requests
+        user = await User.findByIdAndUpdate(
+          profileInfo.userId,
+          {
+            $addToSet: { followers: { $each: user.requests } }, // Add users in request to followers
+            $set: { requests: [] } // Clear the request field
+          },
+          { new: true }
+        );
 
-        return user;
+        // Add the current user's ID to the following list of the requested users
+        await User.updateMany(
+          { _id: { $in: requestedUserIds } },
+          { $addToSet: { following: new ObjectId(profileInfo.userId) } }
+        );
+      }
+
+      return user;
     } catch (error) {
-        console.log(error);
-        throw new Error("Error updating profile!");
+      console.log(error);
+      throw new Error("Error updating profile!");
     }
-};
+  };
 
 
 
@@ -204,11 +204,11 @@ export const userRepositoryMongoDb = () => {
 
   const getRestOfAllUsers = async (userId: string) => {
     try {
-      const myData=await User.findById(new mongoose.Types.ObjectId(userId))
+      const myData = await User.findById(new mongoose.Types.ObjectId(userId))
       const data = await User.find({
         isBlock: false,
         role: 'client',
-        _id: { $ne: userId,$nin:myData?.blocklist },
+        _id: { $ne: userId, $nin: myData?.blocklist },
       });
 
       return data
@@ -220,12 +220,12 @@ export const userRepositoryMongoDb = () => {
 
   const getSuggestedUsers = async (userId: string) => {
     try {
-      const myData=await User.findById(new mongoose.Types.ObjectId(userId))
+      const myData = await User.findById(new mongoose.Types.ObjectId(userId))
       const data = await User.find({
         isBlock: false,
         role: 'client',
-        _id: { $ne: userId,$nin: [...myData?.blocklist || [], ...myData?.following || []]  },
-      }).sort({createdAt:-1}).limit(10)
+        _id: { $ne: userId, $nin: [...myData?.blocklist || [], ...myData?.following || []] },
+      }).sort({ createdAt: -1 }).limit(10)
 
       return data
 
@@ -252,9 +252,11 @@ export const userRepositoryMongoDb = () => {
 
       if (friend?.isPrivate) {
         await User.findByIdAndUpdate(followObjectId, { $addToSet: { requests: userObjectId } })
+        return { status: false }
       } else {
         await User.findByIdAndUpdate(userObjectId, { $addToSet: { following: followObjectId } });
-        await User.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+        const friendData = await User.findByIdAndUpdate(followObjectId, { $addToSet: { followers: userObjectId } });
+        return { status: true, friend: friendData }
       }
     } catch (error) {
       console.log('Error in following user', error);
@@ -262,7 +264,7 @@ export const userRepositoryMongoDb = () => {
     }
   };
 
-  const acceptRequest=async(userId:string,friendUsername:string)=>{
+  const acceptRequest = async (userId: string, friendUsername: string) => {
     try {
       if (!userId || !friendUsername) {
         throw new Error('User ID or Friends username is not provided');
@@ -272,17 +274,18 @@ export const userRepositoryMongoDb = () => {
       if (!ObjectId.isValid(userId)) {
         throw new Error('Invalid User ID or Friend ID');
       }
-        const friend=await User.findOne({username:friendUsername})
+      const friend = await User.findOne({ username: friendUsername })
 
-        const userObjectId=new ObjectId(userId)
-        const followerObjectId=friend?._id
+      const userObjectId = new ObjectId(userId)
+      const followerObjectId = friend?._id
 
-      
-        await User.findByIdAndUpdate(userObjectId,{$addToSet:{followers:followerObjectId},$pull: { requests: followerObjectId }})
-        await User.findByIdAndUpdate(followerObjectId, { $addToSet: { following: userObjectId } })
+
+      await User.findByIdAndUpdate(userObjectId, { $addToSet: { followers: followerObjectId }, $pull: { requests: followerObjectId } })
+      await User.findByIdAndUpdate(followerObjectId, { $addToSet: { following: userObjectId } })
+      return friend
 
     } catch (error) {
-      console.log('error in accepting request ',error)
+      console.log('error in accepting request ', error)
       throw new Error('Erron in accepting request')
     }
   }
@@ -301,31 +304,32 @@ export const userRepositoryMongoDb = () => {
       const unfollowObject = friend?._id
       await User.findByIdAndUpdate(userObjectId, { $pull: { following: unfollowObject } }, { new: true })
       await User.findByIdAndUpdate(unfollowObject, { $pull: { followers: userObjectId } })
+      return friend
     } catch (error) {
       console.log('Error in unfolloeing user', error)
       throw new Error('Error in unfollowUser')
     }
   }
 
-  const cancelRequest=async(userId:string,friendsUsername:string)=>{
+  const cancelRequest = async (userId: string, friendsUsername: string) => {
     try {
-       await User.findOneAndUpdate({username:friendsUsername},{$pull:{requests:userId}})
+      await User.findOneAndUpdate({ username: friendsUsername }, { $pull: { requests: userId } })
 
     } catch (error) {
-      console.log('Error in cancelling the request',error)
+      console.log('Error in cancelling the request', error)
     }
   }
 
-  const declineRequest=async(userId:string,friendUsername:string)=>{
+  const declineRequest = async (userId: string, friendUsername: string) => {
     try {
-      const friend=await User.findOne({username:friendUsername})
-       await User.findByIdAndUpdate(userId,{$pull:{requests:friend?._id}})
+      const friend = await User.findOne({ username: friendUsername })
+      await User.findByIdAndUpdate(userId, { $pull: { requests: friend?._id } })
     } catch (error) {
-      console.log('error in declining the reqeust',error)
+      console.log('error in declining the reqeust', error)
     }
   }
 
-  const removeFollower=async(userId:string,friendUsername:string)=>{
+  const removeFollower = async (userId: string, friendUsername: string) => {
     try {
       if ((!userId || !friendUsername)) {
         throw new Error('Userid or friend Username is missing')
@@ -338,13 +342,13 @@ export const userRepositoryMongoDb = () => {
       await User.findByIdAndUpdate(userObjectId, { $pull: { followers: removeObject } }, { new: true })
       await User.findByIdAndUpdate(removeObject, { $pull: { following: userObjectId } })
     } catch (error) {
-      
+
     }
   }
 
   const getFollowers = async (username: string) => {
     try {
-      const users = await User.findOne({ username,isBlock: false }).populate({
+      const users = await User.findOne({ username, isBlock: false }).populate({
         path: 'followers',
         select: 'name username profilePic ' // Include only name and email fields
       });
@@ -358,7 +362,7 @@ export const userRepositoryMongoDb = () => {
 
   const getFollowing = async (username: string) => {
     try {
-      const users = await User.findOne({ username,isBlock: false }).populate({
+      const users = await User.findOne({ username, isBlock: false }).populate({
         path: 'following',
         select: 'name username profilePic ' // Include only name and email fields
       });
@@ -370,49 +374,49 @@ export const userRepositoryMongoDb = () => {
     }
   }
 
-  const getRequests=async(username:string)=>{
+  const getRequests = async (username: string) => {
     try {
-       const user=await User.findOne({username,isBlock: false}).populate({
-        path:'requests',
-        select:'name username profilePic -_id'
-       })
-       return user?.requests
+      const user = await User.findOne({ username, isBlock: false }).populate({
+        path: 'requests',
+        select: 'name username profilePic -_id'
+      })
+      return user?.requests
     } catch (error) {
       console.log(error)
       throw new Error('Error in fetching requests')
     }
   }
 
-  const savePost=async(postId:string,userId:string)=>{
+  const savePost = async (postId: string, userId: string) => {
     try {
-       await User.findByIdAndUpdate(userId,{$addToSet:{savedPosts:postId}})
+      await User.findByIdAndUpdate(userId, { $addToSet: { savedPosts: postId } })
     } catch (error) {
       console.log('error in saving the post')
     }
   }
 
-  const unsavePost=async(postId:string,userId:string)=>{
+  const unsavePost = async (postId: string, userId: string) => {
     try {
-      const unsaveData= await User.findByIdAndUpdate(userId,{$pull:{savedPosts:postId}})
+      const unsaveData = await User.findByIdAndUpdate(userId, { $pull: { savedPosts: postId } })
     } catch (error) {
       console.log('error in unliking the post')
     }
   }
 
-   const blockUserByUsername=async(userId:string,username:string)=>{
+  const blockUserByUsername = async (userId: string, username: string) => {
     try {
-      const blockingUser=await User.findOne({username})
-      await User.findByIdAndUpdate(userId,{$addToSet:{blocklist:blockingUser?._id}})
+      const blockingUser = await User.findOne({ username })
+      await User.findByIdAndUpdate(userId, { $addToSet: { blocklist: blockingUser?._id } })
     } catch (error) {
       console.log('error in blocking user by username')
     }
   }
 
-   const unblockUserByUsername=async(userId:string,username:string)=>{
+  const unblockUserByUsername = async (userId: string, username: string) => {
     try {
-      const blockingUser=await User.findOne({username})
-      console.log('unblocking user id is ',blockingUser?._id)
-      await User.findByIdAndUpdate(userId,{$pull:{blocklist:blockingUser?._id}})
+      const blockingUser = await User.findOne({ username })
+      console.log('unblocking user id is ', blockingUser?._id)
+      await User.findByIdAndUpdate(userId, { $pull: { blocklist: blockingUser?._id } })
     } catch (error) {
       console.log('error in blocking user by username')
     }
@@ -514,7 +518,7 @@ export const userRepositoryMongoDb = () => {
   //   }
   // };
 
-  const getSavedPosts = async (userId:string) => {
+  const getSavedPosts = async (userId: string) => {
     try {
       const savedPosts = await User.aggregate([
         {
@@ -594,7 +598,7 @@ export const userRepositoryMongoDb = () => {
           }
         }
       ]);
-  
+
       console.log('saved posts is', savedPosts);
       return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
     } catch (error) {
@@ -602,48 +606,48 @@ export const userRepositoryMongoDb = () => {
     }
   };
 
-  const getBlockedUsers=async(userId:string)=>{
+  const getBlockedUsers = async (userId: string) => {
     try {
       // First, find the user by userId to get their blocklist
-    const user = await User.findById(userId).select('blocklist');
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
+      const user = await User.findById(userId).select('blocklist');
 
-    const blocklist = user.blocklist;
-
-    // Check if blocklist is empty
-    if (blocklist.length === 0) {
-      return []; // Return an empty array if there are no blocked users
-    }
-
-    // Now, perform the aggregation to get the details of blocked users
-    const blockedUsers = await User.aggregate([
-      {
-        $match: { _id: { $in: blocklist } } // Match users whose _id is in the blocklist
-      },
-      {
-        $project: {
-          _id: 0, // Exclude the _id field
-          name: 1,
-          username: 1,
-          profilePic: 1
-        }
+      if (!user) {
+        throw new Error('User not found');
       }
-    ]);
 
-    console.log('Blocked Users:', blockedUsers);
+      const blocklist = user.blocklist;
 
-    return blockedUsers;
+      // Check if blocklist is empty
+      if (blocklist.length === 0) {
+        return []; // Return an empty array if there are no blocked users
+      }
 
-  
+      // Now, perform the aggregation to get the details of blocked users
+      const blockedUsers = await User.aggregate([
+        {
+          $match: { _id: { $in: blocklist } } // Match users whose _id is in the blocklist
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the _id field
+            name: 1,
+            username: 1,
+            profilePic: 1
+          }
+        }
+      ]);
+
+      console.log('Blocked Users:', blockedUsers);
+
+      return blockedUsers;
+
+
     } catch (error) {
-      console.log('error in getting blocked users ',error)
+      console.log('error in getting blocked users ', error)
     }
   }
-  
-  
+
+
 
 
   return {

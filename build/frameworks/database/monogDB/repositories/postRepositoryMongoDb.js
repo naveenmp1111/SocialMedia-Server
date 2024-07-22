@@ -365,10 +365,20 @@ const postRepositoryMongoDb = () => {
     };
     const unlikePost = async (postId, userId) => {
         try {
-            const unlikeData = await postModel_1.default.findByIdAndUpdate(postId, { $pull: { likes: userId } });
+            console.log('unlike post funtion called ');
+            return await postModel_1.default.findByIdAndUpdate(postId, { $pull: { likes: userId } });
         }
         catch (error) {
             console.log('error in unliking the post');
+        }
+    };
+    const getPostById = async (postId) => {
+        try {
+            const postData = await postModel_1.default.findById(postId);
+            return postData;
+        }
+        catch (error) {
+            console.log('error in getting post by id ', error);
         }
     };
     return {
@@ -383,7 +393,8 @@ const postRepositoryMongoDb = () => {
         unBlockPost,
         likePost,
         unlikePost,
-        getAllPostsToExplore
+        getAllPostsToExplore,
+        getPostById
     };
 };
 exports.postRepositoryMongoDb = postRepositoryMongoDb;

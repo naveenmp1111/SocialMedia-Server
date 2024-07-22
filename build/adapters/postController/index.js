@@ -87,7 +87,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
         const { userId } = req.body;
         const { postId } = req.params;
         // console.log('wooo', userId, postId)
-        await (0, postAuth_1.handleUnlikePost)(postId, userId, dbPostRepository);
+        await (0, postAuth_1.handleUnlikePost)(postId, userId, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Post unliked successfully'
@@ -96,7 +96,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const addComment = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, postId, comment } = req.body;
         // console.log('comment data is ',userId ,postId ,comment)
-        const response = await (0, postAuth_1.handleAddComment)(userId, postId, comment, dbCommentRepository);
+        const response = await (0, postAuth_1.handleAddComment)(userId, postId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Comment added successfully',
@@ -106,7 +106,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const addReply = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, postId, comment, parentId } = req.body;
         // console.log('comment data is ',userId ,postId ,comment)
-        const response = await (0, postAuth_1.handleAddReply)(userId, postId, parentId, comment, dbCommentRepository);
+        const response = await (0, postAuth_1.handleAddReply)(userId, postId, parentId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Comment added successfully',

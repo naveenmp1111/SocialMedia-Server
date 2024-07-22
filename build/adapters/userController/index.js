@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userAuth_1 = require("../../application/user-cases/user/userAuth");
-const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
+const userController = (userDbRepositoryImpl, userDbRepositoryInterface, notificationDbRepositoryImpl, notificationDbRepositoryInterface) => {
     const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
+    const dbNotificationRepository = notificationDbRepositoryInterface(notificationDbRepositoryImpl());
     const getRestOfAllUsers = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const users = await (0, userAuth_1.handleGetRestOfAllUsers)(userId, dbUserRepository);
@@ -23,7 +24,7 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
     });
     const followUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
-        const userData = await (0, userAuth_1.handleFollowUser)(userId, friendUsername, dbUserRepository);
+        const userData = await (0, userAuth_1.handleFollowUser)(userId, friendUsername, dbUserRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Following successfull',
@@ -32,7 +33,7 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
     const unfollowUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
         console.log('userid is ', userId, friendUsername);
-        const userData = await (0, userAuth_1.handleUnfollowUser)(userId, friendUsername, dbUserRepository);
+        const userData = await (0, userAuth_1.handleUnfollowUser)(userId, friendUsername, dbUserRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Unfollowed successfully',
@@ -76,7 +77,7 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface) => {
     });
     const acceptRequest = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
-        await (0, userAuth_1.handleAcceptRequest)(userId, friendUsername, dbUserRepository);
+        await (0, userAuth_1.handleAcceptRequest)(userId, friendUsername, dbUserRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Request accepted successfully'

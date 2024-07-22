@@ -1,28 +1,52 @@
+import mongoose from "mongoose";
 import Notification from "../models/notificationModel";
+const { ObjectId } = mongoose.Types
 
 
 export const notficationRepositoryMongoDb = () => {
 
-    const createNotification=async ({senderId,receiverId,event,postId }: { receiverId: string, senderId: string,event:string,postId?:string }) => {
+    const createNotification = async ({ senderId, receiverId, event, postId }: { receiverId: string, senderId: string, event: string, postId?: string }) => {
         try {
-            // const notifications = await Notification.find({ receiverId}).sort({ timestamp: -1 });
-            // return notifications
-            const notification= new Notification({
+            const notification = new Notification({
                 senderId,
                 receiverId,
                 event,
-                postId: postId ? postId : ''
-            })
+                postId: postId 
+            });
 
-           return await notification.save()
+            await notification.save();
+
+            return await Notification.findById(notification._id)
+                .populate('postId', 'image')
+                .populate('senderId');
         } catch (error) {
-            console.log(error)
+            console.log(error);
+        }
+    }
+
+    const deleteNotification = async ({ senderId, receiverId, event, postId }: { receiverId: string, senderId: string, event: string, postId?: string }) => {
+        try {
+            const query: any = {
+                senderId: new ObjectId(senderId),
+                receiverId: new ObjectId(receiverId),
+                event
+            };
+    
+            if (postId) {
+                query.postId = new ObjectId(postId);
+            }
+    
+            const result = await Notification.findOneAndDelete(query);
+            
+            return result;
+        } catch (error) {
+            console.log(error);
         }
     }
 
     const getNotifications = async (receiverId:string) => {
         try {
-            const notifications = await Notification.find({ receiverId}).sort({ timestamp: -1 });
+            const notifications = await Notification.find({ receiverId}).sort({ createdAt: -1 }).populate('senderId').populate('postId','image')
             return notifications
         } catch (error) {
             console.log(error)
@@ -40,7 +64,8 @@ export const notficationRepositoryMongoDb = () => {
     return {
         getNotifications,
         readNotifications,
-        createNotification
+        createNotification,
+        deleteNotification
     }
 }
 

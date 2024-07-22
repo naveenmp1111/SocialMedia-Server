@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleGetBlockedUsers = exports.handleUnblockUserByUsername = exports.handleBlockUserByUsername = exports.handleDeclineRequest = exports.handleCancelRequest = exports.handleGetSavedPosts = exports.handleUnsavePost = exports.handleSavePost = exports.handleAcceptRequest = exports.handleGetRequests = exports.handleGetFollowers = exports.handleGetFollowing = exports.handleRemoveFollower = exports.handleUnfollowUser = exports.handleFollowUser = exports.handleGetSuggestedUsers = exports.handleGetRestOfAllUsers = void 0;
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const httpStatus_1 = require("../../../types/httpStatus");
+const app_1 = require("../../../app");
+const socketConfig_1 = require("../../../frameworks/webSocket/socketConfig");
 const handleGetRestOfAllUsers = async (userId, dbUserRepository) => {
     const users = await dbUserRepository.getRestOfAllUsers(userId);
     return users;
@@ -16,9 +18,15 @@ const handleGetSuggestedUsers = async (userId, dbUserRepository) => {
     return users;
 };
 exports.handleGetSuggestedUsers = handleGetSuggestedUsers;
-const handleFollowUser = async (userId, friendusername, dbUserRepository) => {
+const handleFollowUser = async (userId, friendusername, dbUserRepository, dbNotificationRepository) => {
     try {
-        await dbUserRepository.followUser(userId, friendusername);
+        const response = await dbUserRepository.followUser(userId, friendusername);
+        console.log('response from follw user is ', response);
+        if (response.status && response.friend && response.friend._id) {
+            const notification = await dbNotificationRepository.createNotification(userId, response.friend._id, 'follow');
+            const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(response.friend._id);
+            app_1.io.to(recieverSocketId).emit('notification', (notification));
+        }
     }
     catch (error) {
         console.log(error);
@@ -26,9 +34,10 @@ const handleFollowUser = async (userId, friendusername, dbUserRepository) => {
     }
 };
 exports.handleFollowUser = handleFollowUser;
-const handleUnfollowUser = async (userId, friendusername, dbUserRepository) => {
-    const users = await dbUserRepository.unfollowUser(userId, friendusername);
-    return users;
+const handleUnfollowUser = async (userId, friendusername, dbUserRepository, dbNotificationRepository) => {
+    const friend = await dbUserRepository.unfollowUser(userId, friendusername);
+    await dbNotificationRepository.deleteNotification(userId, friend?._id, 'follow');
+    return friend;
 };
 exports.handleUnfollowUser = handleUnfollowUser;
 const handleRemoveFollower = async (userId, friendUsername, dbUserRepository) => {
@@ -50,8 +59,11 @@ const handleGetRequests = async (username, dbUserRepository) => {
     return requestedUsers;
 };
 exports.handleGetRequests = handleGetRequests;
-const handleAcceptRequest = async (userId, friendUsername, dbUserRepository) => {
-    await dbUserRepository.acceptRequest(userId, friendUsername);
+const handleAcceptRequest = async (userId, friendUsername, dbUserRepository, dbNotificationRepository) => {
+    const friend = await dbUserRepository.acceptRequest(userId, friendUsername);
+    const notification = await dbNotificationRepository.createNotification(friend?._id, userId, 'follow');
+    const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(userId);
+    app_1.io.to(recieverSocketId).emit('notification', (notification));
 };
 exports.handleAcceptRequest = handleAcceptRequest;
 const handleSavePost = async (userId, postId, dbUserRepository) => {

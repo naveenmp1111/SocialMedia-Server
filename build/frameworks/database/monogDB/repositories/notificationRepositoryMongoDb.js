@@ -4,19 +4,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.notficationRepositoryMongoDb = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
 const notificationModel_1 = __importDefault(require("../models/notificationModel"));
+const { ObjectId } = mongoose_1.default.Types;
 const notficationRepositoryMongoDb = () => {
     const createNotification = async ({ senderId, receiverId, event, postId }) => {
         try {
-            // const notifications = await Notification.find({ receiverId}).sort({ timestamp: -1 });
-            // return notifications
             const notification = new notificationModel_1.default({
                 senderId,
                 receiverId,
                 event,
-                postId: postId ? postId : ''
+                postId: postId
             });
-            return await notification.save();
+            await notification.save();
+            return await notificationModel_1.default.findById(notification._id)
+                .populate('postId', 'image')
+                .populate('senderId');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+    const deleteNotification = async ({ senderId, receiverId, event, postId }) => {
+        try {
+            const query = {
+                senderId: new ObjectId(senderId),
+                receiverId: new ObjectId(receiverId),
+                event
+            };
+            if (postId) {
+                query.postId = new ObjectId(postId);
+            }
+            const result = await notificationModel_1.default.findOneAndDelete(query);
+            return result;
         }
         catch (error) {
             console.log(error);
@@ -24,7 +44,7 @@ const notficationRepositoryMongoDb = () => {
     };
     const getNotifications = async (receiverId) => {
         try {
-            const notifications = await notificationModel_1.default.find({ receiverId }).sort({ timestamp: -1 });
+            const notifications = await notificationModel_1.default.find({ receiverId }).sort({ createdAt: -1 }).populate('senderId').populate('postId', 'image');
             return notifications;
         }
         catch (error) {
@@ -42,7 +62,8 @@ const notficationRepositoryMongoDb = () => {
     return {
         getNotifications,
         readNotifications,
-        createNotification
+        createNotification,
+        deleteNotification
     };
 };
 exports.notficationRepositoryMongoDb = notficationRepositoryMongoDb;

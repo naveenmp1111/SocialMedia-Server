@@ -3,6 +3,8 @@ import { userRepositoryMongoDb } from '../../database/monogDB/repositories/userR
 import { userDbRepository } from '../../../application/repositories/userDbRepository';
 import userController from '../../../adapters/userController';
 import authMiddleware from '../middlewares/authMiddleware';
+import { notficationRepositoryMongoDb } from '../../database/monogDB/repositories/notificationRepositoryMongoDb';
+import { notificationDbRepository } from '../../../application/repositories/notificationDbRepository';
 
 
 const userRouter = () => {
@@ -11,6 +13,8 @@ const userRouter = () => {
     const controller= userController(
         userRepositoryMongoDb,
         userDbRepository,
+        notficationRepositoryMongoDb,
+        notificationDbRepository
     )
 
     router.get('/getRestOfAllUsers',authMiddleware,controller.getRestOfAllUsers)

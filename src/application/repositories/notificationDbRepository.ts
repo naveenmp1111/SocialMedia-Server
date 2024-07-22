@@ -8,10 +8,13 @@ export const notificationDbRepository=(repository:ReturnType<NotificationReposit
 
     const readNotifications=async(userId:string)=>await repository.readNotifications(userId)
 
+    const deleteNotification=async(senderId:string,receiverId:string,event:string,postId?:string)=>await repository.deleteNotification({senderId,receiverId,event,postId}) 
+
     return {
         createNotification,
         getNotifications,
-        readNotifications 
+        readNotifications ,
+        deleteNotification
     }
 
 }

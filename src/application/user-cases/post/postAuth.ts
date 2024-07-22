@@ -123,14 +123,17 @@ export const handleLikePost=async(
     postDbRepository:ReturnType<PostDbInterface>,
     nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
+    console.log('handke like data is ',postId,userId,)
     try {
        const postData= await postDbRepository.likePost(postId,userId)
-       if(postData){
+       console.log('postDatais ',postData)
+       if(postData && postData.userId as unknown as string != userId ){
+        console.log('getting ready to send create',postData)
        const notification=await nofificationDbRepository.createNotification(userId,postData.userId as unknown as string,'like',postId)
-       console.log('ready to pass socket event')
+    //    console.log('ready to pass socket event')
        const recieverSocketId=getReceiverSocketId(postData.userId as unknown as string)
         io.to(recieverSocketId).emit('notification',(notification))
-        console.log('socket event passed successfuly')
+        // console.log('socket event passed successfuly')
        }
     //    console.log('like data is ',likeData)
     } catch (error) {
@@ -141,10 +144,15 @@ export const handleLikePost=async(
 export const handleUnlikePost=async(
     postId:string,
     userId:string,
-    postDbRepository:ReturnType<PostDbInterface>
+    postDbRepository:ReturnType<PostDbInterface>,
+    nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
     try {
-        await postDbRepository.unlikePost(postId,userId)
+        const postData = await postDbRepository.unlikePost(postId,userId)
+        if(postData && postData.userId as unknown as string != userId){
+            console.log('deleting notification ')
+           await nofificationDbRepository.deleteNotification(userId,postData.userId as unknown as string,'like',postId)
+        }
     } catch (error) {
         console.log('error in liking the post')
     }
@@ -154,7 +162,9 @@ export const handleAddComment=async(
     userId:string,
     postId:string,
     comment:string,
-    commentDbRepository:ReturnType<CommentDbInterface>
+    commentDbRepository:ReturnType<CommentDbInterface>,
+    postDbRepository:ReturnType<PostDbInterface>,
+    nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
     try {
         const commentObj={
@@ -162,7 +172,13 @@ export const handleAddComment=async(
             commenterId: userId,
             comment
         }
+        const postData=await postDbRepository.getPostById(postId)
        const commentResponse= await commentDbRepository.addComment(commentObj)
+       if(commentResponse && postData && postData.userId as unknown as string != userId){
+         const notification=await nofificationDbRepository.createNotification(userId,postData.userId as unknown as string,'comment',postId)
+       const recieverSocketId=getReceiverSocketId(postData.userId as unknown as string)
+        io.to(recieverSocketId).emit('notification',(notification))
+       }
        return commentResponse
     } catch (error) {
         console.log('error in adding comment ',error)
@@ -174,7 +190,9 @@ export const handleAddReply=async(
     postId:string,
     parentId:string,
     comment:string,
-    commentDbRepository:ReturnType<CommentDbInterface>
+    commentDbRepository:ReturnType<CommentDbInterface>,
+    postDbRepository:ReturnType<PostDbInterface>,
+    nofificationDbRepository:ReturnType<NotificationDbInterface>
 )=>{
     try {
         const replyObj={
@@ -183,7 +201,13 @@ export const handleAddReply=async(
             comment,
             parentId
         }
+        const postData=await postDbRepository.getPostById(postId)
        const commentResponse= await commentDbRepository.addReply(replyObj)
+       if(postData && commentResponse){
+        const notification=await nofificationDbRepository.createNotification(userId,postData.userId as unknown as string,'comment',postId)
+      const recieverSocketId=getReceiverSocketId(postData.userId as unknown as string)
+       io.to(recieverSocketId).emit('notification',(notification))
+      }
        return commentResponse
     } catch (error) {
         console.log('error in adding reply comment ',error)

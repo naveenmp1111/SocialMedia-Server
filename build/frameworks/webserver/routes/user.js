@@ -8,9 +8,11 @@ const userRepositoryMongoDb_1 = require("../../database/monogDB/repositories/use
 const userDbRepository_1 = require("../../../application/repositories/userDbRepository");
 const userController_1 = __importDefault(require("../../../adapters/userController"));
 const authMiddleware_1 = __importDefault(require("../middlewares/authMiddleware"));
+const notificationRepositoryMongoDb_1 = require("../../database/monogDB/repositories/notificationRepositoryMongoDb");
+const notificationDbRepository_1 = require("../../../application/repositories/notificationDbRepository");
 const userRouter = () => {
     const router = (0, express_1.default)();
-    const controller = (0, userController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository);
+    const controller = (0, userController_1.default)(userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, notificationRepositoryMongoDb_1.notficationRepositoryMongoDb, notificationDbRepository_1.notificationDbRepository);
     router.get('/getRestOfAllUsers', authMiddleware_1.default, controller.getRestOfAllUsers);
     router.get('/getSuggestedUsers', authMiddleware_1.default, controller.getSuggestedUsers);
     router.post('/followUser', authMiddleware_1.default, controller.followUser);
