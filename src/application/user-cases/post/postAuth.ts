@@ -225,3 +225,16 @@ export const handleGetComments=async(
     }
 }
 
+export const handleGetTaggedPosts=async(
+    username:string,
+    postDbRepository:ReturnType<PostDbInterface>
+)=>{
+    try {
+        return await postDbRepository.getTaggedPosts(username)
+    } catch (error) {
+        console.log('error in getting taggedposts ',error)
+    }
+}
+
+
+

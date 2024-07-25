@@ -341,6 +341,7 @@ export const userRepositoryMongoDb = () => {
       const removeObject = friend?._id
       await User.findByIdAndUpdate(userObjectId, { $pull: { followers: removeObject } }, { new: true })
       await User.findByIdAndUpdate(removeObject, { $pull: { following: userObjectId } })
+      return friend
     } catch (error) {
 
     }
@@ -605,6 +606,7 @@ export const userRepositoryMongoDb = () => {
       console.log('error in fetching saved posts', error);
     }
   };
+
 
   const getBlockedUsers = async (userId: string) => {
     try {

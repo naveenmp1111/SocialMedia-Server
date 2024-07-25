@@ -31,6 +31,7 @@ const postRouter = () => {
     router.post('/addComment', authMiddleware_1.default, controller.addComment);
     router.get('/getComments/:postId', authMiddleware_1.default, controller.getComments);
     router.post('/addReply', authMiddleware_1.default, controller.addReply);
+    router.get('/getTaggedPosts/:username', controller.getTaggedPosts);
     return router;
 };
 exports.default = postRouter;

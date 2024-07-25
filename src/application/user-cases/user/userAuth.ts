@@ -61,9 +61,11 @@ export const handleUnfollowUser=async(
 export const handleRemoveFollower=async(
   userId:string,
   friendUsername:string,
-  dbUserRepository:ReturnType<UserDbInterface>
+  dbUserRepository:ReturnType<UserDbInterface>,
+  dbNotificationRepository:ReturnType<NotificationDbInterface>
 )=>{
-  await dbUserRepository.removeFollower(userId,friendUsername)
+  const friend=await dbUserRepository.removeFollower(userId,friendUsername)
+  await dbNotificationRepository.deleteNotification(userId,friend?._id as unknown as string,'follow')
 }
 
 export const handleGetFollowing=async(

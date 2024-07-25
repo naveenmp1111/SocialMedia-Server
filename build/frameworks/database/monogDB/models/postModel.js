@@ -40,7 +40,11 @@ const postSchema = new mongoose_1.Schema({
     isBlock: {
         type: Boolean,
         default: false,
-    }
+    },
+    taggedUsers: [{
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: 'User'
+        }]
 }, {
     timestamps: true,
 });

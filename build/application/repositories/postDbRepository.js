@@ -15,6 +15,11 @@ const postDbRepository = (repository) => {
     const likePost = async (postId, userId) => await repository.likePost(postId, userId);
     const unlikePost = async (postId, userId) => await repository.unlikePost(postId, userId);
     const getPostById = async (postId) => await repository.getPostById(postId);
+    const getTaggedPosts = async (username) => await repository.getTaggedPosts(username);
+    const getWeeklyData = async () => await repository.getWeeklyData();
+    const getMonthlyData = async () => await repository.getMonthlyData();
+    const getYearlyData = async () => await repository.getYearlyData();
+    const getAllPostsForAdmin = async () => await repository.getAllPostsForAdmin();
     return {
         createPost,
         getPostsByUser,
@@ -28,7 +33,12 @@ const postDbRepository = (repository) => {
         likePost,
         unlikePost,
         getAllPostsToExplore,
-        getPostById
+        getPostById,
+        getTaggedPosts,
+        getWeeklyData,
+        getMonthlyData,
+        getYearlyData,
+        getAllPostsForAdmin
     };
 };
 exports.postDbRepository = postDbRepository;

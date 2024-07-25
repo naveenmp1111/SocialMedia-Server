@@ -122,6 +122,15 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
             comments
         });
     });
+    const getTaggedPosts = (0, express_async_handler_1.default)(async (req, res) => {
+        const { username } = req.params;
+        const taggedPosts = await (0, postAuth_1.handleGetTaggedPosts)(username, dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'taggedposts fetched successfull',
+            posts: taggedPosts
+        });
+    });
     return {
         createPost,
         getPostsByUser,
@@ -134,7 +143,8 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
         addComment,
         getComments,
         addReply,
-        getAllPostsToExplore
+        getAllPostsToExplore,
+        getTaggedPosts,
     };
 };
 exports.default = postController;

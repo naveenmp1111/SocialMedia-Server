@@ -40,8 +40,9 @@ const handleUnfollowUser = async (userId, friendusername, dbUserRepository, dbNo
     return friend;
 };
 exports.handleUnfollowUser = handleUnfollowUser;
-const handleRemoveFollower = async (userId, friendUsername, dbUserRepository) => {
-    await dbUserRepository.removeFollower(userId, friendUsername);
+const handleRemoveFollower = async (userId, friendUsername, dbUserRepository, dbNotificationRepository) => {
+    const friend = await dbUserRepository.removeFollower(userId, friendUsername);
+    await dbNotificationRepository.deleteNotification(userId, friend?._id, 'follow');
 };
 exports.handleRemoveFollower = handleRemoveFollower;
 const handleGetFollowing = async (friendusername, dbUserRepository) => {

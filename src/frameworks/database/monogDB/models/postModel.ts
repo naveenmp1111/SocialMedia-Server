@@ -12,6 +12,7 @@ interface PostInterface extends Document {
     // video?: string;
     image?: ObjectId[];
     isBlock: boolean;
+    taggedUsers:ObjectId[]
 }
 
 const postSchema = new Schema<PostInterface>(
@@ -31,7 +32,11 @@ const postSchema = new Schema<PostInterface>(
         isBlock: {
             type: Boolean,
             default: false,
-        }
+        },
+        taggedUsers:[{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'User'
+        }]
     },
     {
         timestamps: true,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPostsToExplore = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
+exports.handleGetTaggedPosts = exports.handleGetComments = exports.handleAddReply = exports.handleAddComment = exports.handleUnlikePost = exports.handleLikePost = exports.handleGetPostReports = exports.handleReportPost = exports.handleDeletePost = exports.handleGetAllPostsToExplore = exports.handleGetAllPosts = exports.handleEditPostbyId = exports.handleGetPostsByUser = exports.handleCreatePost = void 0;
 const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const app_1 = require("../../../app");
@@ -179,3 +179,12 @@ const handleGetComments = async (postId, commentDbRepository) => {
     }
 };
 exports.handleGetComments = handleGetComments;
+const handleGetTaggedPosts = async (username, postDbRepository) => {
+    try {
+        return await postDbRepository.getTaggedPosts(username);
+    }
+    catch (error) {
+        console.log('error in getting taggedposts ', error);
+    }
+};
+exports.handleGetTaggedPosts = handleGetTaggedPosts;

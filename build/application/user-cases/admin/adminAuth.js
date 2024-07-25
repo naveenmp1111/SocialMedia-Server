@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleUnblockPost = exports.handleBlockPost = exports.handleUnblockUser = exports.handleBlockUser = exports.handleGetAllUsersForAdmin = void 0;
+exports.handleGetAllPostsForAdmin = exports.handleGetYearlyData = exports.handleGetMonthlyData = exports.handleGetWeeklyData = exports.handleUnblockPost = exports.handleBlockPost = exports.handleUnblockUser = exports.handleBlockUser = exports.handleGetAllUsersForAdmin = void 0;
 const handleGetAllUsersForAdmin = async (dbUserRepository) => {
     const users = dbUserRepository.getAllUsersForAdmin();
     return users;
@@ -26,3 +26,39 @@ const handleUnblockPost = async (postId, dbPostRepository) => {
     return userData;
 };
 exports.handleUnblockPost = handleUnblockPost;
+const handleGetWeeklyData = async (postDbRepository) => {
+    try {
+        return await postDbRepository.getWeeklyData();
+    }
+    catch (error) {
+        console.log('error in getting weekly data ', error);
+    }
+};
+exports.handleGetWeeklyData = handleGetWeeklyData;
+const handleGetMonthlyData = async (postDbRepository) => {
+    try {
+        return await postDbRepository.getMonthlyData();
+    }
+    catch (error) {
+        console.log('error in getting monthly data');
+    }
+};
+exports.handleGetMonthlyData = handleGetMonthlyData;
+const handleGetYearlyData = async (postDbRepository) => {
+    try {
+        return await postDbRepository.getYearlyData();
+    }
+    catch (error) {
+        console.log('error in getting yearly data', error);
+    }
+};
+exports.handleGetYearlyData = handleGetYearlyData;
+const handleGetAllPostsForAdmin = async (postDbRepository) => {
+    try {
+        return await postDbRepository.getAllPostsForAdmin();
+    }
+    catch (error) {
+        console.log('error in gettig all posts for admin ', error);
+    }
+};
+exports.handleGetAllPostsForAdmin = handleGetAllPostsForAdmin;

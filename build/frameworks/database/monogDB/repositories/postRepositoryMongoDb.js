@@ -7,6 +7,8 @@ exports.postRepositoryMongoDb = void 0;
 const postModel_1 = __importDefault(require("../models/postModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const userModel_1 = __importDefault(require("../models/userModel"));
+// const { startOfWeek, endOfWeek, isWithinInterval, format } = require('date-fns');
+const date_fns_1 = require("date-fns");
 const postRepositoryMongoDb = () => {
     const createPost = async (postData) => {
         try {
@@ -381,6 +383,214 @@ const postRepositoryMongoDb = () => {
             console.log('error in getting post by id ', error);
         }
     };
+    const getTaggedPosts = async (username) => {
+        try {
+            // Find the user by username
+            const user = await userModel_1.default.findOne({ username });
+            if (!user) {
+                throw new Error('User not found');
+            }
+            // Find posts where the user is tagged
+            const posts = await postModel_1.default.find({ taggedUsers: user._id })
+                .populate('userId', 'profilePic username')
+                .sort({ createdAt: -1 });
+            // Transform the result to include `user` object
+            const transformedPosts = posts.map(post => ({
+                ...post.toObject(),
+                user: {
+                    //@ts-ignore
+                    username: post.userId.username,
+                    //@ts-ignore
+                    profilePic: post.userId.profilePic
+                },
+                userId: undefined // Optionally remove userId if you don't want it in the final result
+            }));
+            return transformedPosts;
+        }
+        catch (error) {
+            console.error(error);
+            throw new Error('Error fetching tagged posts');
+        }
+    };
+    const getWeeklyData = async () => {
+        try {
+            const currentDate = new Date();
+            //@ts-ignore
+            const weekIntervals = [];
+            // Calculate the start and end dates of each week in the current month
+            for (let i = 0; i < 4; i++) {
+                const start = (0, date_fns_1.startOfWeek)(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1 + i * 7));
+                const end = (0, date_fns_1.endOfWeek)(start);
+                weekIntervals.push({ start, end });
+            }
+            const weeklyUserCounts = Array(4).fill(0);
+            const weeklyPostCounts = Array(4).fill(0);
+            // Fetch all users created in the current month
+            const users = await userModel_1.default.find({
+                createdAt: {
+                    $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+                    $lt: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+                }
+            });
+            // Fetch all posts created in the current month
+            const posts = await postModel_1.default.find({
+                createdAt: {
+                    $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+                    $lt: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+                }
+            });
+            // Aggregate user data
+            users.forEach((user) => {
+                //@ts-ignore
+                weekIntervals.forEach((interval, index) => {
+                    if ((0, date_fns_1.isWithinInterval)(user.createdAt, interval)) {
+                        weeklyUserCounts[index] += 1;
+                    }
+                });
+            });
+            // Aggregate post data
+            posts.forEach((post) => {
+                //@ts-ignore
+                weekIntervals.forEach((interval, index) => {
+                    //@ts-ignore
+                    if ((0, date_fns_1.isWithinInterval)(post.createdAt, interval)) {
+                        weeklyPostCounts[index] += 1;
+                    }
+                });
+            });
+            return {
+                labels: weekIntervals.map((interval, index) => `Week ${index + 1} (${(0, date_fns_1.format)(interval.start, 'MM/dd')} - ${(0, date_fns_1.format)(interval.end, 'MM/dd')})`),
+                users: weeklyUserCounts,
+                posts: weeklyPostCounts,
+            };
+        }
+        catch (error) {
+            console.log('error in getting weekly data ', error);
+        }
+    };
+    const getMonthlyData = async () => {
+        try {
+            const currentDate = new Date();
+            const monthIntervals = [];
+            // Calculate the start and end dates of the last 12 months
+            for (let i = 0; i < 12; i++) {
+                const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+                const start = (0, date_fns_1.startOfMonth)(monthDate);
+                const end = (0, date_fns_1.endOfMonth)(start);
+                monthIntervals.push({ start, end });
+            }
+            const monthlyUserCounts = Array(12).fill(0);
+            const monthlyPostCounts = Array(12).fill(0);
+            // Fetch all users created in the last 12 months
+            const users = await userModel_1.default.find({
+                createdAt: {
+                    $gte: (0, date_fns_1.startOfMonth)(new Date(currentDate.getFullYear(), currentDate.getMonth() - 11, 1)),
+                    $lt: (0, date_fns_1.endOfMonth)(currentDate)
+                }
+            });
+            // Fetch all posts created in the last 12 months
+            const posts = await postModel_1.default.find({
+                createdAt: {
+                    $gte: (0, date_fns_1.startOfMonth)(new Date(currentDate.getFullYear(), currentDate.getMonth() - 11, 1)),
+                    $lt: (0, date_fns_1.endOfMonth)(currentDate)
+                }
+            });
+            // Aggregate user data
+            users.forEach((user) => {
+                //@ts-ignore
+                monthIntervals.forEach((interval, index) => {
+                    if ((0, date_fns_1.isWithinInterval)(user.createdAt, interval)) {
+                        monthlyUserCounts[index] += 1;
+                    }
+                });
+            });
+            // Aggregate post data
+            posts.forEach((post) => {
+                //@ts-ignore
+                monthIntervals.forEach((interval, index) => {
+                    //@ts-ignore
+                    if ((0, date_fns_1.isWithinInterval)(post.createdAt, interval)) {
+                        monthlyPostCounts[index] += 1;
+                    }
+                });
+            });
+            return {
+                //@ts-ignore
+                labels: monthIntervals.map(interval => (0, date_fns_1.format)(interval.start, 'MMMM yyyy')).reverse(),
+                users: monthlyUserCounts.reverse(),
+                posts: monthlyPostCounts.reverse(),
+            };
+        }
+        catch (error) {
+            console.log('error in getting monthly data', error);
+        }
+    };
+    const getYearlyData = async () => {
+        try {
+            const currentDate = new Date();
+            const yearIntervals = [];
+            // Calculate the start and end dates of the last 5 years
+            for (let i = 0; i < 5; i++) {
+                const year = currentDate.getFullYear() - i;
+                const start = (0, date_fns_1.startOfYear)(new Date(year, 0, 1));
+                const end = (0, date_fns_1.endOfYear)(start);
+                yearIntervals.push({ start, end });
+            }
+            const yearlyUserCounts = Array(5).fill(0);
+            const yearlyPostCounts = Array(5).fill(0);
+            // Fetch all users created in the last 5 years
+            const users = await userModel_1.default.find({
+                createdAt: {
+                    $gte: (0, date_fns_1.startOfYear)(new Date(currentDate.getFullYear() - 4, 0, 1)),
+                    $lt: (0, date_fns_1.endOfYear)(currentDate)
+                }
+            });
+            // Fetch all posts created in the last 5 years
+            const posts = await postModel_1.default.find({
+                createdAt: {
+                    $gte: (0, date_fns_1.startOfYear)(new Date(currentDate.getFullYear() - 4, 0, 1)),
+                    $lt: (0, date_fns_1.endOfYear)(currentDate)
+                }
+            });
+            // Aggregate user data
+            users.forEach((user) => {
+                //@ts-ignore
+                yearIntervals.forEach((interval, index) => {
+                    if ((0, date_fns_1.isWithinInterval)(user.createdAt, interval)) {
+                        yearlyUserCounts[index] += 1;
+                    }
+                });
+            });
+            // Aggregate post data
+            posts.forEach((post) => {
+                //@ts-ignore
+                yearIntervals.forEach((interval, index) => {
+                    //@ts-ignore
+                    if ((0, date_fns_1.isWithinInterval)(post.createdAt, interval)) {
+                        yearlyPostCounts[index] += 1;
+                    }
+                });
+            });
+            return {
+                //@ts-ignore
+                labels: yearIntervals.map(interval => (0, date_fns_1.format)(interval.start, 'yyyy')).reverse(),
+                users: yearlyUserCounts.reverse(),
+                posts: yearlyPostCounts.reverse(),
+            };
+        }
+        catch (error) {
+            console.log('error in getting yearly data ', error);
+        }
+    };
+    const getAllPostsForAdmin = async () => {
+        try {
+            const posts = await postModel_1.default.find().populate('userId', 'username profilePic');
+            return posts;
+        }
+        catch (error) {
+            console.log('error in getting all posts for admin');
+        }
+    };
     return {
         createPost,
         getPostsByUser,
@@ -394,7 +604,12 @@ const postRepositoryMongoDb = () => {
         likePost,
         unlikePost,
         getAllPostsToExplore,
-        getPostById
+        getPostById,
+        getTaggedPosts,
+        getWeeklyData,
+        getMonthlyData,
+        getYearlyData,
+        getAllPostsForAdmin
     };
 };
 exports.postRepositoryMongoDb = postRepositoryMongoDb;

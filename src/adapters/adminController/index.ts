@@ -4,8 +4,8 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleBlockPost, handleBlockUser, handleGetAllUsersForAdmin, handleUnblockPost, handleUnblockUser } from '../../application/user-cases/admin/adminAuth';
-import { handleGetPostReports } from '../../application/user-cases/post/postAuth';
+import { handleBlockPost, handleBlockUser, handleGetAllPostsForAdmin, handleGetAllUsersForAdmin, handleGetMonthlyData, handleGetWeeklyData, handleGetYearlyData, handleUnblockPost, handleUnblockUser } from '../../application/user-cases/admin/adminAuth';
+import { handleGetPostReports, } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 
@@ -78,13 +78,53 @@ const adminController=(
         })
       })
 
+      const getWeeklyData=asyncHandler(async(req:Request,res:Response)=>{
+        const weeklyData=await handleGetWeeklyData(dbPostRepository)
+        res.json({
+          status:'success',
+          message:'weekly data fetched succesffully',
+          weeklyData
+        })
+      })
+
+      const getMonthlyData=asyncHandler(async(req:Request,res:Response)=>{
+        const monthlyData=await handleGetMonthlyData(dbPostRepository)
+        res.json({
+            status:'success',
+            message:'monthly data fetched successfully',
+            monthlyData
+        })
+      })
+
+      const getYearlyData=asyncHandler(async(req:Request,res:Response)=>{
+        const yearlyData=await handleGetYearlyData(dbPostRepository)
+        res.json({
+            status:'success',
+            message:'yearly data fetched successfully',
+            yearlyData
+        })
+      })
+
+      const getAllPostsForAdmin=asyncHandler(async(req:Request,res:Response)=>{
+        const posts=await handleGetAllPostsForAdmin(dbPostRepository)
+        res.json({
+            status:'success',
+            message:'posts fetched successfully',
+            posts
+        })
+      })
+
     return {
         getAllUsersForAdmin,
         blockUser,
         unblockUser,
         getPostReports,
         blockPost,
-        unblockPost
+        unblockPost,
+        getWeeklyData,
+        getMonthlyData,
+        getYearlyData,
+        getAllPostsForAdmin
     }
 }
 

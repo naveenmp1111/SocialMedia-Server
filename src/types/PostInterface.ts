@@ -8,6 +8,7 @@ export interface PostDataInterface{
     // saved?: string[];
     // reports: string[];
     // video?: string;
+    taggedUsers?:string[]
     image?: string[];
     isBlock: boolean;
 }

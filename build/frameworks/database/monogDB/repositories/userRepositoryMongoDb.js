@@ -299,6 +299,7 @@ const userRepositoryMongoDb = () => {
             const removeObject = friend?._id;
             await userModel_1.default.findByIdAndUpdate(userObjectId, { $pull: { followers: removeObject } }, { new: true });
             await userModel_1.default.findByIdAndUpdate(removeObject, { $pull: { following: userObjectId } });
+            return friend;
         }
         catch (error) {
         }

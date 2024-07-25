@@ -4,7 +4,7 @@ import { AuthService } from '../../frameworks/services/authService';
 import { AuthServiceInterface } from '../../application/services/authServiceInterfaces';
 import { UserRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/userRepositoryMongoDb';
 import { UserDbInterface } from '../../application/repositories/userDbRepository';
-import { handleAddComment, handleAddReply, handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetAllPostsToExplore, handleGetComments, handleGetPostReports, handleGetPostsByUser, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
+import { handleAddComment, handleAddReply, handleCreatePost, handleDeletePost, handleEditPostbyId, handleGetAllPosts, handleGetAllPostsToExplore, handleGetComments, handleGetPostReports, handleGetPostsByUser, handleGetTaggedPosts, handleLikePost, handleReportPost, handleUnlikePost } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 import { CommentDbInterface } from '../../application/repositories/commentDbRepository'
@@ -155,6 +155,18 @@ const postController = (
     })
   })
 
+  const getTaggedPosts=asyncHandler(async(req:Request,res:Response)=>{
+    const {username}=req.params
+    const taggedPosts=await handleGetTaggedPosts(username,dbPostRepository)
+    res.json({
+      status:'success',
+      message:'taggedposts fetched successfull',
+      posts:taggedPosts
+    })
+  })
+
+ 
+
 
   return {
     createPost,
@@ -168,7 +180,8 @@ const postController = (
     addComment,
     getComments,
     addReply,
-    getAllPostsToExplore
+    getAllPostsToExplore,
+    getTaggedPosts,
   }
 }
 

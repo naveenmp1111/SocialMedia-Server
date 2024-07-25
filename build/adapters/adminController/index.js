@@ -59,13 +59,49 @@ const adminController = (authServiceImpl, authServieInterface, userDbRepositoryI
             reports
         });
     });
+    const getWeeklyData = (0, express_async_handler_1.default)(async (req, res) => {
+        const weeklyData = await (0, adminAuth_1.handleGetWeeklyData)(dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'weekly data fetched succesffully',
+            weeklyData
+        });
+    });
+    const getMonthlyData = (0, express_async_handler_1.default)(async (req, res) => {
+        const monthlyData = await (0, adminAuth_1.handleGetMonthlyData)(dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'monthly data fetched successfully',
+            monthlyData
+        });
+    });
+    const getYearlyData = (0, express_async_handler_1.default)(async (req, res) => {
+        const yearlyData = await (0, adminAuth_1.handleGetYearlyData)(dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'yearly data fetched successfully',
+            yearlyData
+        });
+    });
+    const getAllPostsForAdmin = (0, express_async_handler_1.default)(async (req, res) => {
+        const posts = await (0, adminAuth_1.handleGetAllPostsForAdmin)(dbPostRepository);
+        res.json({
+            status: 'success',
+            message: 'posts fetched successfully',
+            posts
+        });
+    });
     return {
         getAllUsersForAdmin,
         blockUser,
         unblockUser,
         getPostReports,
         blockPost,
-        unblockPost
+        unblockPost,
+        getWeeklyData,
+        getMonthlyData,
+        getYearlyData,
+        getAllPostsForAdmin
     };
 };
 exports.default = adminController;

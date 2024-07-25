@@ -58,7 +58,7 @@ const userController = (
     const removeFollower=asyncHandler(async(req:Request,res:Response)=>{
       const {userId}=req.body
       const {followerUsername}=req.params
-      await handleRemoveFollower(userId,followerUsername,dbUserRepository)
+      await handleRemoveFollower(userId,followerUsername,dbUserRepository,dbNotificationRepository)
       res.json({
         status:'success',
         message:'Follower removed successfully'

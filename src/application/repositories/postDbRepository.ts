@@ -30,6 +30,16 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
 
     const getPostById=async(postId:string)=>await repository.getPostById(postId)
 
+    const getTaggedPosts=async(username:string)=>await repository.getTaggedPosts(username)
+
+    const getWeeklyData=async()=>await repository.getWeeklyData()
+
+    const getMonthlyData=async()=>await repository.getMonthlyData()
+
+    const getYearlyData=async()=>await repository.getYearlyData()
+
+    const getAllPostsForAdmin=async()=>await repository.getAllPostsForAdmin()
+
     return {
         createPost,
         getPostsByUser,
@@ -43,7 +53,12 @@ export const postDbRepository = (repository: ReturnType<PostRepositoryMongoDb>) 
         likePost,
         unlikePost,
         getAllPostsToExplore,
-        getPostById
+        getPostById,
+        getTaggedPosts,
+        getWeeklyData,
+        getMonthlyData,
+        getYearlyData,
+        getAllPostsForAdmin
     }
 
 }

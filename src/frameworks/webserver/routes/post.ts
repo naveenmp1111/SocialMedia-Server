@@ -40,6 +40,8 @@ const postRouter = () => {
     router.post('/addComment',authMiddleware,controller.addComment)
     router.get('/getComments/:postId',authMiddleware,controller.getComments)
     router.post('/addReply',authMiddleware,controller.addReply)
+    router.get('/getTaggedPosts/:username',controller.getTaggedPosts)
+    
   
     return router
 }

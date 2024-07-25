@@ -42,7 +42,7 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface, notific
     const removeFollower = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const { followerUsername } = req.params;
-        await (0, userAuth_1.handleRemoveFollower)(userId, followerUsername, dbUserRepository);
+        await (0, userAuth_1.handleRemoveFollower)(userId, followerUsername, dbUserRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Follower removed successfully'
