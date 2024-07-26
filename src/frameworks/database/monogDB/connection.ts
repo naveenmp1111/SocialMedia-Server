@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 import configKeys from '../../../config';
 
 
-mongoose.set('strictQuery',true)
+mongoose.set('strictQuery', true)
 
-const connectDB=async()=>{
+const connectDB = async () => {
     try {
         await mongoose.connect(configKeys.MONGO_URL)
         console.log('Database connected Successfully')

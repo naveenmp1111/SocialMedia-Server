@@ -16,7 +16,6 @@ const sendMail = async (email: string, title: string, body: string) => {
             }
         });
 
-
         const mailOptions = {
             from: configKeys.MAIL_USERNAME,
             to: email,

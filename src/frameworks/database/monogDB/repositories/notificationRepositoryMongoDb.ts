@@ -11,7 +11,7 @@ export const notficationRepositoryMongoDb = () => {
                 senderId,
                 receiverId,
                 event,
-                postId: postId 
+                postId: postId
             });
 
             await notification.save();
@@ -31,22 +31,22 @@ export const notficationRepositoryMongoDb = () => {
                 receiverId: new ObjectId(receiverId),
                 event
             };
-    
+
             if (postId) {
                 query.postId = new ObjectId(postId);
             }
-    
+
             const result = await Notification.findOneAndDelete(query);
-            
+
             return result;
         } catch (error) {
             console.log(error);
         }
     }
 
-    const getNotifications = async (receiverId:string) => {
+    const getNotifications = async (receiverId: string) => {
         try {
-            const notifications = await Notification.find({ receiverId}).sort({ createdAt: -1 }).populate('senderId').populate('postId','image')
+            const notifications = await Notification.find({ receiverId }).sort({ createdAt: -1 }).populate('senderId').populate('postId', 'image')
             return notifications
         } catch (error) {
             console.log(error)
@@ -55,7 +55,7 @@ export const notficationRepositoryMongoDb = () => {
 
     const readNotifications = async (userId: string) => {
         try {
-            await Notification.updateMany({receiverId:userId}, { isSeen: true });
+            await Notification.updateMany({ receiverId: userId }, { isSeen: true });
         } catch (error) {
             console.log(error)
         }

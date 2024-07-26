@@ -24,7 +24,7 @@ const userSchema = new Schema(
         },
         profilePic: {
             type: String,
-            default:"https://static.vecteezy.com/system/resources/thumbnails/002/387/693/small/user-profile-icon-free-vector.jpg"
+            default: "https://static.vecteezy.com/system/resources/thumbnails/002/387/693/small/user-profile-icon-free-vector.jpg"
         },
         phoneNumber: {
             type: Number

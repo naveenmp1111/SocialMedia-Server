@@ -7,36 +7,33 @@ import { handleGetNotifications, handleReadNotification } from "../../applicatio
 const notificationController = (
     notificationDbRepositoryImpl: NotificationRepositoryMongoDb,
     notificationDbRepositoryInterface: NotificationDbInterface,
-  ) => {
+) => {
     const dbNotificationRepository = notificationDbRepositoryInterface(notificationDbRepositoryImpl());
 
 
-    const getNotifications=asyncHandler(async(req:Request,res:Response)=>{
-        const {userId}=req.body;
-        const notifications=await handleGetNotifications(userId,dbNotificationRepository)
-        console.log('notifications are ',notifications)
+    const getNotifications = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.body;
+        const notifications = await handleGetNotifications(userId, dbNotificationRepository)
         res.json({
-            status:'success',
-            message:'Notifications fetched successfully',
+            status: 'success',
+            message: 'Notifications fetched successfully',
             notifications
         })
     })
 
-    const readNotifications=asyncHandler(async(req:Request,res:Response)=>{
-        const {userId}=req.body;
-        await handleReadNotification(userId,dbNotificationRepository)
+    const readNotifications = asyncHandler(async (req: Request, res: Response) => {
+        const { userId } = req.body;
+        await handleReadNotification(userId, dbNotificationRepository)
         res.json({
-            status:'success',
-            message:'made notifications read',
+            status: 'success',
+            message: 'made notifications read',
         })
     })
-  
-  
-  
+
     return {
         getNotifications,
         readNotifications
     }
-  }
-  
-  export default notificationController
+}
+
+export default notificationController

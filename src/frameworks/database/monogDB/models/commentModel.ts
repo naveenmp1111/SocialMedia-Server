@@ -9,30 +9,30 @@ interface CommentInterface extends Document {
 
 const commentSchema = new Schema<CommentInterface>(
     {
-        postId:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'Post',
-            required:true
+        postId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post',
+            required: true
         },
-        commenterId:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required:true
+        commenterId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         },
-        comment:{
-            type:String
+        comment: {
+            type: String
         },
-        parentId:{
-            type:mongoose.Schema.Types.ObjectId,
-            default:null
+        parentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            default: null
         }
     },
     {
-        timestamps:true
+        timestamps: true
     }
 )
 
 
-const Comment=model<CommentInterface>('Comment',commentSchema)
+const Comment = model<CommentInterface>('Comment', commentSchema)
 
 export default Comment

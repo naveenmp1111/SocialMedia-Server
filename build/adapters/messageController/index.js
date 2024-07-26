@@ -24,7 +24,6 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
     const getAllMessagesFromChat = (0, express_async_handler_1.default)(async (req, res) => {
         const { chatId, userId } = req.body;
         const messages = await (0, message_1.handleGetAllMessagesFromChat)(chatId, userId, messageDbRepository);
-        console.log('messages from chat is ', messages);
         res.status(200).json({
             status: "success",
             messages
@@ -33,7 +32,6 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
     const getUnreadMessagesFromChat = (0, express_async_handler_1.default)(async (req, res) => {
         const { chatId, userId } = req.body;
         const messages = await (0, message_1.handleGetUnreadMessagesFromChat)(chatId, userId, messageDbRepository);
-        console.log('unreadmessages from chat is ', messages);
         res.status(200).json({
             status: "success",
             messages
@@ -57,7 +55,6 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
     });
     const deleteMessageForMe = (0, express_async_handler_1.default)(async (req, res) => {
         const { messageId, userId } = req.body;
-        console.log('messageid is ', messageId);
         await (0, message_1.handleDeleteMessageForMe)(messageId, userId, messageDbRepository);
         res.status(200).json({
             status: "success",

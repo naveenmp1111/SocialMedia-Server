@@ -4,7 +4,7 @@ export interface UserInterface {
     username: string;
     email: string;
     password: string;
-    phoneNumber?:number;
+    phoneNumber?: number;
 }
 
 export interface GoogleUserInterface {

@@ -13,7 +13,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
     const dbOtpRepository = otpDbRepositoryInterface(otpDbRepositoryImpl());
     const mailSenderService = mailSenderServiceInterface(mailSenderServiceImpl());
     const registerUser = (0, express_async_handler_1.default)(async (req, res) => {
-        // console.log('data from body',req.body)
         const user = req.body;
         await (0, userAuth_1.userRegister)(user, dbUserRepository, authService);
         res.json({
@@ -25,7 +24,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         try {
             const { username } = req.params;
             const isAvailable = await dbUserRepository.getUserByUsername(username);
-            // console.log('isavailable',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -47,7 +45,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         try {
             const { email } = req.params;
             const isAvailable = await dbUserRepository.getUserByEmail(email);
-            // console.log('email',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -74,7 +71,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
-        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'Login successfull',
@@ -91,7 +87,7 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
-        console.log('userDetails :', userDetails, 'accessToken :', accessToken);
+        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'user verified',
@@ -101,7 +97,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
     });
     const sendOtpForEmailVerification = (0, express_async_handler_1.default)(async (req, res) => {
         const { email, message } = req.body;
-        console.log('email is ', email);
         const response = await (0, userAuth_1.handleSendOtp)({ email, message }, dbOtpRepository, mailSenderService, dbUserRepository);
         if (response) {
             res.status(httpStatus_1.HttpStatus.OK).json({
@@ -121,8 +116,6 @@ const authController = (authServiceImpl, authServieInterface, userDbRepositoryIm
         }
     });
     const refreshAccessToken = (0, express_async_handler_1.default)(async (req, res) => {
-        // console.log('cookies jjj',req.cookies)
-        // console.log('coming to refresh acesstoken')
         const { refreshToken } = req.cookies;
         const accessToken = await (0, userAuth_1.handleRefreshAccessToken)({ refreshToken }, dbUserRepository, authService);
         res.status(httpStatus_1.HttpStatus.OK).json({

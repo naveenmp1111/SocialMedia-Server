@@ -15,11 +15,9 @@ const adminController = (authServiceImpl, authServieInterface, userDbRepositoryI
         res.json({
             users
         });
-        console.log(users);
     });
     const blockUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.params;
-        console.log('userdddddd ', userId);
         await (0, adminAuth_1.handleBlockUser)(userId, dbUserRepository);
         res.json({
             status: 'success',
@@ -36,7 +34,6 @@ const adminController = (authServiceImpl, authServieInterface, userDbRepositoryI
     });
     const blockPost = (0, express_async_handler_1.default)(async (req, res) => {
         const { postId } = req.params;
-        console.log('userdddddd ', postId);
         await (0, adminAuth_1.handleBlockPost)(postId, dbPostRepository);
         res.json({
             status: 'success',

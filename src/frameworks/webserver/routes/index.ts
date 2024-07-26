@@ -12,11 +12,11 @@ const routes = (app: Application) => {
     app.use('/api/auth', authRouter())
     app.use('/api/profile', profileRouter())
     app.use('/api/admin', adminRouter())
-    app.use('/api/post',postRouter())
-    app.use('/api/user',userRouter())
-    app.use('/api/chat',chatRouter())
-    app.use('/api/message',messageRouter())
-    app.use('/api/notification',notificationRouter())
+    app.use('/api/post', postRouter())
+    app.use('/api/user', userRouter())
+    app.use('/api/chat', chatRouter())
+    app.use('/api/message', messageRouter())
+    app.use('/api/notification', notificationRouter())
 }
 
 export default routes

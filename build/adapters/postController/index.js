@@ -13,7 +13,6 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const dbNotificationRepository = notificationDbRepositoryInterface(notificationDbRepositoryImpl());
     const createPost = (0, express_async_handler_1.default)(async (req, res) => {
         const postData = req.body;
-        // console.log('body data',req.body)
         const post = await (0, postAuth_1.handleCreatePost)(postData, dbPostRepository);
         res.json({
             status: "success",
@@ -76,7 +75,6 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const likePost = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const { postId } = req.params;
-        // console.log('coming in like controller')
         await (0, postAuth_1.handleLikePost)(postId, userId, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
@@ -86,7 +84,6 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const unlikePost = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const { postId } = req.params;
-        // console.log('wooo', userId, postId)
         await (0, postAuth_1.handleUnlikePost)(postId, userId, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
@@ -95,7 +92,6 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     });
     const addComment = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, postId, comment } = req.body;
-        // console.log('comment data is ',userId ,postId ,comment)
         const response = await (0, postAuth_1.handleAddComment)(userId, postId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
@@ -105,7 +101,6 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     });
     const addReply = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, postId, comment, parentId } = req.body;
-        // console.log('comment data is ',userId ,postId ,comment)
         const response = await (0, postAuth_1.handleAddReply)(userId, postId, parentId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',

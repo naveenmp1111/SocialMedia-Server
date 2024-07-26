@@ -4,9 +4,9 @@ export interface CommentDataInterface {
     comment: string,
 }
 
-export interface ReplyCommentInterface{
-    postId:string,
-    commenterId:string,
-    parentId:string,
-    comment:string
+export interface ReplyCommentInterface {
+    postId: string,
+    commenterId: string,
+    parentId: string,
+    comment: string
 }

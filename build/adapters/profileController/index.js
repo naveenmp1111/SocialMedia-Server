@@ -10,9 +10,7 @@ const profileController = (userDbRepositoryImpl, userDbRepositoryInterface, auth
     const authService = authServiceInterface(authServiceImpl());
     const editProfile = (0, express_async_handler_1.default)(async (req, res) => {
         const profileInfo = req.body;
-        // console.log('body data',req.body)
         const user = await (0, profileAuth_1.handleEditProfile)(profileInfo, dbUserRepository);
-        // console.log('edited user profile ',user)
         res.json({
             status: "success",
             message: "user info fetched",
@@ -21,9 +19,7 @@ const profileController = (userDbRepositoryImpl, userDbRepositoryInterface, auth
     });
     const getUserByUsername = (0, express_async_handler_1.default)(async (req, res) => {
         const { username } = req.params;
-        console.log('username for finding user by usrname is ', username);
         const userData = await (0, profileAuth_1.handleGetUserByUsername)(username, dbUserRepository);
-        console.log('userData is ', userData);
         res.json({
             status: 'success',
             message: 'userdata fetched successfully',

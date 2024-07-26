@@ -8,13 +8,13 @@ const chatSchema = new Schema({
             ref: 'User'
         }
     ],
-    latestMessage:{
-        type:mongoose.Types.ObjectId,
-        ref:"Message"
+    latestMessage: {
+        type: mongoose.Types.ObjectId,
+        ref: "Message"
     }
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-const Chat=model('Chat',chatSchema)
+const Chat = model('Chat', chatSchema)
 export default Chat

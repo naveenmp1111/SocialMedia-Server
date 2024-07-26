@@ -10,7 +10,6 @@ const notificationController = (notificationDbRepositoryImpl, notificationDbRepo
     const getNotifications = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const notifications = await (0, notificationAuth_1.handleGetNotifications)(userId, dbNotificationRepository);
-        console.log('notifications are ', notifications);
         res.json({
             status: 'success',
             message: 'Notifications fetched successfully',

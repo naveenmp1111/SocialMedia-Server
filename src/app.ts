@@ -5,7 +5,7 @@ import serverConfig from './frameworks/webserver/server';
 import connectDB from './frameworks/database/monogDB/connection';
 import routes from './frameworks/webserver/routes';
 import errorHandlingMiddleware from './frameworks/webserver/middlewares/errorHandlingMiddleware';
-import {Server} from 'socket.io'
+import { Server } from 'socket.io'
 import configKeys from './config';
 import socketConfig from './frameworks/webSocket/socketConfig';
 

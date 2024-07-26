@@ -6,7 +6,7 @@ interface INotification extends Document {
   senderId: mongoose.Types.ObjectId;
   event: 'like' | 'comment' | 'message' | 'follow';
   isSeen: boolean;
-  postId?:mongoose.Types.ObjectId
+  postId?: mongoose.Types.ObjectId
 }
 
 // Define the schema
@@ -15,9 +15,9 @@ const NotificationSchema: Schema = new Schema({
   senderId: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
   event: { type: String, required: true, enum: ['like', 'comment', 'message', 'follow'] },
   isSeen: { type: Boolean, required: true, default: false },
-  postId:{ type:mongoose.Types.ObjectId,ref:'Post',default:''}
-},{
-    timestamps:true
+  postId: { type: mongoose.Types.ObjectId, ref: 'Post', default: '' }
+}, {
+  timestamps: true
 });
 
 // Create the model

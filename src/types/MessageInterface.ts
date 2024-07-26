@@ -2,6 +2,6 @@ export interface MessageInterface {
     senderId: string,
     message: string,
     chatId: string,
-    isSeen?:boolean
+    isSeen?: boolean
     // image?: string,
 }

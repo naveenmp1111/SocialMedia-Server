@@ -41,19 +41,19 @@ export const handleUnblockPost = async (
     return userData
 }
 
-export const handleGetWeeklyData=async(
-    postDbRepository:ReturnType<PostDbInterface>
-)=>{
+export const handleGetWeeklyData = async (
+    postDbRepository: ReturnType<PostDbInterface>
+) => {
     try {
         return await postDbRepository.getWeeklyData()
     } catch (error) {
-        console.log('error in getting weekly data ',error)
+        console.log('error in getting weekly data ', error)
     }
 }
 
-export const handleGetMonthlyData=async(
-    postDbRepository:ReturnType<PostDbInterface>
-)=>{
+export const handleGetMonthlyData = async (
+    postDbRepository: ReturnType<PostDbInterface>
+) => {
     try {
         return await postDbRepository.getMonthlyData()
     } catch (error) {
@@ -61,22 +61,22 @@ export const handleGetMonthlyData=async(
     }
 }
 
-export const handleGetYearlyData=async(
-    postDbRepository:ReturnType<PostDbInterface>
-)=>{
+export const handleGetYearlyData = async (
+    postDbRepository: ReturnType<PostDbInterface>
+) => {
     try {
         return await postDbRepository.getYearlyData()
     } catch (error) {
-        console.log('error in getting yearly data',error)
+        console.log('error in getting yearly data', error)
     }
 }
 
-export const handleGetAllPostsForAdmin=async(
-    postDbRepository:ReturnType<PostDbInterface>
-)=>{
+export const handleGetAllPostsForAdmin = async (
+    postDbRepository: ReturnType<PostDbInterface>
+) => {
     try {
         return await postDbRepository.getAllPostsForAdmin()
     } catch (error) {
-        console.log('error in gettig all posts for admin ',error)
+        console.log('error in gettig all posts for admin ', error)
     }
 }

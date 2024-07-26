@@ -32,7 +32,6 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface, notific
     });
     const unfollowUser = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId, friendUsername } = req.body;
-        console.log('userid is ', userId, friendUsername);
         const userData = await (0, userAuth_1.handleUnfollowUser)(userId, friendUsername, dbUserRepository, dbNotificationRepository);
         res.json({
             status: 'success',
@@ -122,7 +121,6 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface, notific
     const declineRequest = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
         const { friendUsername } = req.params;
-        console.log('decline request data ', userId, friendUsername);
         await (0, userAuth_1.handleDeclineRequest)(userId, friendUsername, dbUserRepository);
         res.json({
             status: 'success',
@@ -149,7 +147,6 @@ const userController = (userDbRepositoryImpl, userDbRepositoryInterface, notific
     });
     const getBlockedUsers = (0, express_async_handler_1.default)(async (req, res) => {
         const { userId } = req.body;
-        // console.log('userid is ',userId)
         const blockedUsers = await (0, userAuth_1.handleGetBlockedUsers)(userId, dbUserRepository);
         res.json({
             status: 'success',

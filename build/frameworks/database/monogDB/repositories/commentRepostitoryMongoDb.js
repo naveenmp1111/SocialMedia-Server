@@ -31,15 +31,16 @@ const commentRepositoryMongoDb = () => {
     const getComments = async (postId) => {
         try {
             const PostObj = new ObjectId(postId);
-            console.log('post id is ', PostObj);
             const comments = await commentModel_1.default.aggregate([
                 { $match: { postId: PostObj } },
-                { $lookup: {
+                {
+                    $lookup: {
                         from: 'users',
                         localField: 'commenterId',
                         foreignField: '_id',
                         as: 'user'
-                    } },
+                    }
+                },
                 {
                     $unwind: '$user'
                 },
@@ -58,7 +59,6 @@ const commentRepositoryMongoDb = () => {
                     $sort: { createdAt: -1 },
                 },
             ]);
-            console.log('retrieved comment data is  :', comments);
             return comments;
         }
         catch (error) {

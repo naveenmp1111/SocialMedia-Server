@@ -23,7 +23,6 @@ export const userRegister = async (
     throw new AppError('Email already taken', HttpStatus.UNAUTHORIZED)
   }
 
-
   const isExistingUsername = await dbUserRepository.getUserByEmail(user.username)
   if (isExistingUsername) {
     throw new AppError('Username already taken', HttpStatus.UNAUTHORIZED)
@@ -40,7 +39,7 @@ export const userLogin = async (
   password: string,
   dbUserRepository: ReturnType<UserDbInterface>,
   authService: ReturnType<AuthServiceInterface>
-) => { 
+) => {
   const user = await dbUserRepository.getUserByEmail(email)
   if (!user) {
     throw new AppError('Invalid email', HttpStatus.UNAUTHORIZED)
@@ -63,10 +62,10 @@ export const userLogin = async (
     email: user?.email,
     bio: user?.bio,
     profilePic: user?.profilePic,
-    phoneNumber:user?.phoneNumber,
+    phoneNumber: user?.phoneNumber,
     isBlock: user.isBlock,
-    role:user.role,
-    isPrivate:user.isPrivate
+    role: user.role,
+    isPrivate: user.isPrivate
   };
   const refreshToken = await authService.generateRefreshToken(user._id.toString(), user.role as string)
   const accessToken = await authService.generateAccessToken(user._id.toString(), user.role as string)
@@ -77,7 +76,7 @@ export const userLogin = async (
 
 
 export const handleSendOtp = async (
-  data:{email:string,message:string},
+  data: { email: string, message: string },
   dbOtpRepository: ReturnType<OtpDbInterface>,
   mailSenderService: ReturnType<MailSenderServiceInterface>,
   dbUserRepository: ReturnType<UserDbInterface>,
@@ -89,13 +88,13 @@ export const handleSendOtp = async (
   });
   const otp = parseInt(otpString)
   console.log('Otp is ', otp)
-  if(data.message=='passwordRecovery'){
+  if (data.message == 'passwordRecovery') {
     const isExistingEmail = await dbUserRepository.getUserByEmail(data.email)
-    if(!isExistingEmail){
-      throw new AppError('No user found',HttpStatus.UNAUTHORIZED)
+    if (!isExistingEmail) {
+      throw new AppError('No user found', HttpStatus.UNAUTHORIZED)
     }
   }
-  await dbOtpRepository.saveNewOtp({ email:data.email, otp })
+  await dbOtpRepository.saveNewOtp({ email: data.email, otp })
   const response = await mailSenderService.sendVerificationMail(data.email, otp)
   return response
 }
@@ -144,10 +143,10 @@ export const userLoginUsingGoogle = async (
       isBlock: isExistingEmail.isBlock,
       bio: isExistingEmail?.bio,
       profilePic: isExistingEmail?.profilePic,
-      phoneNumber:isExistingEmail?.phoneNumber,
-      role:isExistingEmail.role,
-      _id:isExistingEmail._id,
-      isPrivate:isExistingEmail.isPrivate
+      phoneNumber: isExistingEmail?.phoneNumber,
+      role: isExistingEmail.role,
+      _id: isExistingEmail._id,
+      isPrivate: isExistingEmail.isPrivate
     }
 
     await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email as string, refreshToken);
@@ -174,12 +173,12 @@ export const userLoginUsingGoogle = async (
   return { userDetails, accessToken, refreshToken }
 }
 
-export const handleRefreshAccessToken=async(
-  cookies:{refreshToken:string},
-  dbUserRepository:ReturnType<UserDbInterface>,
-  authService:ReturnType<AuthServiceInterface>
-)=>{
-  console.log('cookies ',cookies)
+export const handleRefreshAccessToken = async (
+  cookies: { refreshToken: string },
+  dbUserRepository: ReturnType<UserDbInterface>,
+  authService: ReturnType<AuthServiceInterface>
+) => {
+  console.log('cookies ', cookies)
   if (!cookies?.refreshToken) {
     throw new AppError("Invalid token!", HttpStatus.UNAUTHORIZED);
   }
@@ -189,26 +188,18 @@ export const handleRefreshAccessToken=async(
     throw new AppError("Invalid token!2", HttpStatus.UNAUTHORIZED);
   }
   const user = await dbUserRepository.getUserById(userId);
-  // if (!user?.refreshToken && !user?.refreshTokenExpiresAt) {
-  //   throw new AppError("Invalid token!3", HttpStatus.UNAUTHORIZED);
-  // }
-  // if (user) {
-  //   const expiresAt = user.refreshTokenExpiresAt.getTime();
-  //   if (Date.now() > expiresAt) {
-  //     throw new AppError("Invalid token!4", HttpStatus.UNAUTHORIZED);
-  //   }
-  // }
-  const newAccessToken = authService.generateAccessToken(userId,"client");
+
+  const newAccessToken = authService.generateAccessToken(userId, "client");
   return newAccessToken;
 
 }
 
-export const handleResetPassword=async(
-  data:{email:string,password:string},
-  dbUserRepository:ReturnType<UserDbInterface>,
-  authService:ReturnType<AuthServiceInterface>
-)=>{
-  const password= await authService.encryptPassword(data.password)
-  const user= await dbUserRepository.resetPassword(data.email,password )
+export const handleResetPassword = async (
+  data: { email: string, password: string },
+  dbUserRepository: ReturnType<UserDbInterface>,
+  authService: ReturnType<AuthServiceInterface>
+) => {
+  const password = await authService.encryptPassword(data.password)
+  const user = await dbUserRepository.resetPassword(data.email, password)
   return user
 }

@@ -1,13 +1,13 @@
 import { CommentRepositoryMongoDb } from "../../frameworks/database/monogDB/repositories/commentRepostitoryMongoDb";
 import { CommentDataInterface, ReplyCommentInterface } from "../../types/CommentInterface";
 
-export const commentDbRepository=(repository:ReturnType<CommentRepositoryMongoDb>)=>{
+export const commentDbRepository = (repository: ReturnType<CommentRepositoryMongoDb>) => {
 
-    const addComment=async(commentObj:CommentDataInterface)=>repository.addComment(commentObj)
+    const addComment = async (commentObj: CommentDataInterface) => repository.addComment(commentObj)
 
-    const getComments=async(postId:string)=>repository.getComments(postId)
+    const getComments = async (postId: string) => repository.getComments(postId)
 
-    const addReply=async(replyObj:ReplyCommentInterface)=>repository.addReply(replyObj)
+    const addReply = async (replyObj: ReplyCommentInterface) => repository.addReply(replyObj)
 
     return {
         addComment,
@@ -16,4 +16,4 @@ export const commentDbRepository=(repository:ReturnType<CommentRepositoryMongoDb
     }
 }
 
-export type CommentDbInterface=typeof commentDbRepository
+export type CommentDbInterface = typeof commentDbRepository

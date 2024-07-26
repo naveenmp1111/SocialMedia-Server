@@ -12,14 +12,14 @@ interface PostInterface extends Document {
     // video?: string;
     image?: ObjectId[];
     isBlock: boolean;
-    taggedUsers:ObjectId[]
+    taggedUsers: ObjectId[]
 }
 
 const postSchema = new Schema<PostInterface>(
     {
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref:'User',
+            ref: 'User',
             required: true,
         },
         description: {
@@ -33,9 +33,9 @@ const postSchema = new Schema<PostInterface>(
             type: Boolean,
             default: false,
         },
-        taggedUsers:[{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User'
+        taggedUsers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         }]
     },
     {

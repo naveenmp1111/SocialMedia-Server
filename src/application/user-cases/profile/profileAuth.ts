@@ -1,7 +1,5 @@
-import { authService } from "../../../frameworks/services/authService";
 import { ProfileInterface } from "../../../types/ProfileInterface";
 import { UserDbInterface } from "../../repositories/userDbRepository";
-import { AuthServiceInterface } from "../../services/authServiceInterfaces";
 import AppError from "../../../utils/appError";
 import { HttpStatus } from "../../../types/httpStatus";
 
@@ -9,8 +7,6 @@ export const handleEditProfile = async (
   profileInfo: ProfileInterface,
   dbUserRepository: ReturnType<UserDbInterface>
 ) => {
-
-  // console.log("profileInfo...", profileInfo);
 
   const usernameExists = await dbUserRepository.checkUsernameForEdit(profileInfo.username, profileInfo.userId)
   if (usernameExists) {
@@ -26,11 +22,11 @@ export const handleEditProfile = async (
 
 };
 
-export const handleGetUserByUsername=async(
-  username:string,
-  dbUserRepository:ReturnType<UserDbInterface>
-)=>{
-  const userData=await dbUserRepository.getUserByUsername(username)
+export const handleGetUserByUsername = async (
+  username: string,
+  dbUserRepository: ReturnType<UserDbInterface>
+) => {
+  const userData = await dbUserRepository.getUserByUsername(username)
   return userData
 }
 

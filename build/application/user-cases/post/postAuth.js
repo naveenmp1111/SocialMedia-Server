@@ -11,15 +11,6 @@ const socketConfig_1 = require("../../../frameworks/webSocket/socketConfig");
 const handleCreatePost = async (postData, postDbRepository) => {
     try {
         const createdPost = await postDbRepository.createPost(postData);
-        // console.log('checking created post id ',createdPost?._id)
-        // if(createdPost){
-        //     // console.log('post created successfully')
-        //     const updatedUserdata=await userDbRepository.updatePost(
-        //         postData.userId as string,
-        //         createdPost._id as string
-        //       );
-        //     //   console.log('updated user ',updatedUserdata)
-        // }
         return createdPost;
     }
     catch (error) {
@@ -51,13 +42,8 @@ const handleEditPostbyId = async (postId, description, postDbRepository) => {
 };
 exports.handleEditPostbyId = handleEditPostbyId;
 const handleGetAllPosts = async (userId, postDbRepository) => {
-    // try {
-    // throw new AppError('error created', HttpStatus.UNAUTHORIZED)
     const allPosts = await postDbRepository.getAllPosts(userId);
     return allPosts;
-    // } catch (error) {
-    //     console.log('errror in getting all posts',error)
-    // }
 };
 exports.handleGetAllPosts = handleGetAllPosts;
 const handleGetAllPostsToExplore = async (userId, postDbRepository) => {
@@ -95,19 +81,13 @@ const handleGetPostReports = async (postDbRepository) => {
 };
 exports.handleGetPostReports = handleGetPostReports;
 const handleLikePost = async (postId, userId, postDbRepository, nofificationDbRepository) => {
-    console.log('handke like data is ', postId, userId);
     try {
         const postData = await postDbRepository.likePost(postId, userId);
-        console.log('postDatais ', postData);
         if (postData && postData.userId != userId) {
-            console.log('getting ready to send create', postData);
             const notification = await nofificationDbRepository.createNotification(userId, postData.userId, 'like', postId);
-            //    console.log('ready to pass socket event')
             const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(postData.userId);
             app_1.io.to(recieverSocketId).emit('notification', (notification));
-            // console.log('socket event passed successfuly')
         }
-        //    console.log('like data is ',likeData)
     }
     catch (error) {
         console.log('error in liking the post');
@@ -118,7 +98,6 @@ const handleUnlikePost = async (postId, userId, postDbRepository, nofificationDb
     try {
         const postData = await postDbRepository.unlikePost(postId, userId);
         if (postData && postData.userId != userId) {
-            console.log('deleting notification ');
             await nofificationDbRepository.deleteNotification(userId, postData.userId, 'like', postId);
         }
     }

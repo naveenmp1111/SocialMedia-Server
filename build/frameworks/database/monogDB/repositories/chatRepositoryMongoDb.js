@@ -32,7 +32,6 @@ const chatRepositoryMongoDb = () => {
                 }
             }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
                 .populate('latestMessage');
-            // console.log('return from accesschat is ',chat)
             return chat;
         }
         catch (error) {
@@ -51,7 +50,6 @@ const chatRepositoryMongoDb = () => {
         }
     };
     const fetchChats = async (userId) => {
-        // console.log('userid is ',userId)
         try {
             const userObjectId = new mongoose_1.default.Types.ObjectId(userId); // Convert userId to ObjectId
             const chats = await chatModel_1.default.find({
@@ -68,12 +66,7 @@ const chatRepositoryMongoDb = () => {
     };
     const setLatestMessage = async (chatId, messageId) => {
         try {
-            // Convert strings to ObjectId
-            //   const messageObjectId = new mongoose.Types.ObjectId(messageId);
             const chatObjectId = new mongoose_1.default.Types.ObjectId(chatId);
-            // Find the message by ID
-            //   const message = await Message.findById(messageObjectId);
-            //   console.log('message is', message);
             // Ensure the message exists and has a message field
             if (!messageId) {
                 throw new Error("Message not found or message content is empty");
@@ -85,7 +78,6 @@ const chatRepositoryMongoDb = () => {
             if (!chatData) {
                 throw new Error("Chat not found or could not be updated");
             }
-            console.log('updated chat data is', chatData);
             // Optionally return the updated chat data
             return chatData;
         }

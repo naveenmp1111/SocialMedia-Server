@@ -23,13 +23,13 @@ const adminRouter = () => {
     router.get('/getAllUsersForAdmin', controller.getAllUsersForAdmin)
     router.patch('/blockUser/:userId', controller.blockUser)
     router.patch('/unblockUser/:userId', controller.unblockUser)
-    router.get('/getPostReports',controller.getPostReports)
-    router.patch('/blockPost/:postId',controller.blockPost)
-    router.patch('/unBlockPost/:postId',controller.unblockPost)
-    router.get('/getWeeklyData',controller.getWeeklyData)
-    router.get('/getMonthlyData',controller.getMonthlyData)
-    router.get('/getYearlyData',controller.getYearlyData)
-    router.get('/getAllPostsForAdmin',controller.getAllPostsForAdmin)
+    router.get('/getPostReports', controller.getPostReports)
+    router.patch('/blockPost/:postId', controller.blockPost)
+    router.patch('/unBlockPost/:postId', controller.unblockPost)
+    router.get('/getWeeklyData', controller.getWeeklyData)
+    router.get('/getMonthlyData', controller.getMonthlyData)
+    router.get('/getYearlyData', controller.getYearlyData)
+    router.get('/getAllPostsForAdmin', controller.getAllPostsForAdmin)
 
     return router
 }

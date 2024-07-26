@@ -11,12 +11,10 @@ export const authServiceInterface = (service: AuthServiceReturn) => {
     }
 
     const generateAccessToken = async (userId: string, role: string) => {
-        // console.log('coming to generate accesstoken')
         return await service.generateAccessToken({ userId, role })
     }
 
     const generateRefreshToken = async (userId: string, role: string) => {
-        // console.log('coing to authSeriveceinterfaces')
         return await service.generateRefreshToken({ userId, role })
     }
 

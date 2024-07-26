@@ -25,45 +25,45 @@ export const userDbRepository = (repository: ReturnType<UserRepositoryMongoDb>) 
 
    const unblockUser = async (userId: string) => await repository.unBlockUser(userId)
 
-   const getUserById=async(userId:string)=> await repository.getUserById(userId)
+   const getUserById = async (userId: string) => await repository.getUserById(userId)
 
-   const updatePost=async(userId:string,postId:string)=>await repository.updatePosts(userId,postId)
-   
-   const resetPassword=async(email:string,password:string)=>await repository.resetPassword(email,password)
+   const updatePost = async (userId: string, postId: string) => await repository.updatePosts(userId, postId)
 
-   const getRestOfAllUsers=async(userId:string)=>await repository.getRestOfAllUsers(userId)
+   const resetPassword = async (email: string, password: string) => await repository.resetPassword(email, password)
 
-   const getSuggestedUsers=async(userId:string)=>await repository.getSuggestedUsers(userId)
+   const getRestOfAllUsers = async (userId: string) => await repository.getRestOfAllUsers(userId)
 
-   const followUser=async(userId:string,friendusername:string)=>await repository.followUser(userId,friendusername)
+   const getSuggestedUsers = async (userId: string) => await repository.getSuggestedUsers(userId)
 
-   const unfollowUser=async(userId:string,friendusername:string)=>await repository.unfollowUser(userId,friendusername)
+   const followUser = async (userId: string, friendusername: string) => await repository.followUser(userId, friendusername)
 
-   const getFollowers=async(username:string)=>await repository.getFollowers(username)
+   const unfollowUser = async (userId: string, friendusername: string) => await repository.unfollowUser(userId, friendusername)
 
-   const getFollowing=async(username:string)=>await repository.getFollowing(username)
+   const getFollowers = async (username: string) => await repository.getFollowers(username)
 
-   const getRequests=async(username:string)=>await repository.getRequests(username)
-   
-   const acceptRequest=async(userId:string,friendUsername:string)=>await repository.acceptRequest(userId,friendUsername)
+   const getFollowing = async (username: string) => await repository.getFollowing(username)
 
-   const removeFollower=async(userId:string,friendUsername:string)=>await repository.removeFollower(userId,friendUsername)
+   const getRequests = async (username: string) => await repository.getRequests(username)
 
-   const savePost=async(userId:string,postId:string)=>await repository.savePost(postId,userId)
+   const acceptRequest = async (userId: string, friendUsername: string) => await repository.acceptRequest(userId, friendUsername)
 
-   const unsavePost=async(userId:string,postId:string)=>await repository.unsavePost(postId,userId)
+   const removeFollower = async (userId: string, friendUsername: string) => await repository.removeFollower(userId, friendUsername)
 
-   const getSavedPosts=async(userId:string)=>await repository.getSavedPosts(userId)
+   const savePost = async (userId: string, postId: string) => await repository.savePost(postId, userId)
 
-   const cancelRequest=async(userId:string,friendUsername:string)=>await repository.cancelRequest(userId,friendUsername)
+   const unsavePost = async (userId: string, postId: string) => await repository.unsavePost(postId, userId)
 
-   const declineRequest=async(userId:string,friendUsername:string)=>await repository.declineRequest(userId,friendUsername)
+   const getSavedPosts = async (userId: string) => await repository.getSavedPosts(userId)
 
-   const blockUserByUsername=async(userId:string,username:string)=>await repository.blockUserByUsername(userId,username)
+   const cancelRequest = async (userId: string, friendUsername: string) => await repository.cancelRequest(userId, friendUsername)
 
-   const unblockUserByUsername=async(userId:string,username:string)=>await repository.unblockUserByUsername(userId,username)
+   const declineRequest = async (userId: string, friendUsername: string) => await repository.declineRequest(userId, friendUsername)
 
-   const getBlockedUsers=async(userId:string)=>await repository.getBlockedUsers(userId)
+   const blockUserByUsername = async (userId: string, username: string) => await repository.blockUserByUsername(userId, username)
+
+   const unblockUserByUsername = async (userId: string, username: string) => await repository.unblockUserByUsername(userId, username)
+
+   const getBlockedUsers = async (userId: string) => await repository.getBlockedUsers(userId)
 
 
    return {

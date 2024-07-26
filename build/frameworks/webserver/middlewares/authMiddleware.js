@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
         token = token?.replace('"', ' ');
         if (token) {
             const decryptedToken = jsonwebtoken_1.default.verify(token, config_1.default.JWT_ACCESS_SECRET);
-            console.log('decryted token', decryptedToken);
+            // console.log('decryted token',decryptedToken)
             const user = await userModel_1.default.findOne({ _id: decryptedToken.userId, isBlock: true });
             req.body.userId = decryptedToken.userId;
             if (user && req.path != '/logout') {

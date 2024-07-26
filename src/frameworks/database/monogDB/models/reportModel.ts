@@ -2,9 +2,9 @@ import mongoose, { Document, ObjectId, Schema, model } from 'mongoose'
 
 interface ReportInterface extends Document {
     targetId: ObjectId;
-    type:string;
+    type: string;
     reason?: string;
-    reporterId:ObjectId;
+    reporterId: ObjectId;
     createdAt: Date;
 }
 
@@ -14,20 +14,20 @@ const reportSchema = new Schema<ReportInterface>(
             type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
-        type:{
-            type:String
+        type: {
+            type: String
         },
         reason: {
             type: String,
         },
         reporterId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref:'User',
+            ref: 'User',
             required: true,
         },
         createdAt: {
-          type: Date,
-          default: Date.now,
+            type: Date,
+            default: Date.now,
         },
     }
 );

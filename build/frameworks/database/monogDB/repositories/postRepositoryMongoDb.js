@@ -7,7 +7,6 @@ exports.postRepositoryMongoDb = void 0;
 const postModel_1 = __importDefault(require("../models/postModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const userModel_1 = __importDefault(require("../models/userModel"));
-// const { startOfWeek, endOfWeek, isWithinInterval, format } = require('date-fns');
 const date_fns_1 = require("date-fns");
 const postRepositoryMongoDb = () => {
     const createPost = async (postData) => {
@@ -22,7 +21,6 @@ const postRepositoryMongoDb = () => {
     };
     const getPostsByUser = async (username) => {
         try {
-            // const myPosts=await Post.find({userId}).sort({createdAt:-1})
             const user = await userModel_1.default.findOne({ username });
             const UserPosts = await postModel_1.default.aggregate([
                 {
@@ -69,7 +67,6 @@ const postRepositoryMongoDb = () => {
                     }
                 }
             ]).sort({ createdAt: -1 });
-            console.log('myposts', UserPosts);
             return UserPosts;
         }
         catch (error) {
@@ -78,9 +75,7 @@ const postRepositoryMongoDb = () => {
     };
     const updatePostById = async (postId, description) => {
         try {
-            //   const post = await Post.findById(postId)
             const post = await postModel_1.default.findByIdAndUpdate(postId, { $set: { description: description } }, { new: true });
-            //   console.log('updated post ',post)
             return post;
         }
         catch (err) {
@@ -198,10 +193,6 @@ const postRepositoryMongoDb = () => {
             if (!user) {
                 throw new Error('User not found');
             }
-            // const hasFollowing = user.following && user.following.length > 0;
-            // const matchCondition = hasFollowing
-            //   ? { "postUser._id": { $in: user.following, $nin: user.blocklist } }
-            //   : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
             const posts = await postModel_1.default.aggregate([
                 {
                     $match: { isBlock: false }
@@ -338,7 +329,6 @@ const postRepositoryMongoDb = () => {
                 }
             }
         ]);
-        console.log('aggregated reports are ', aggregatedReports);
         return aggregatedReports;
     };
     const blockPost = async (postId) => {

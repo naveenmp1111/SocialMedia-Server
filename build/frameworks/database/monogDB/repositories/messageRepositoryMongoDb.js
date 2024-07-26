@@ -36,7 +36,6 @@ const messageRepositoryMongoDb = () => {
             if (receiverSocketId) {
                 // console.log('Ready to emit event to ',receiverSocketId)
                 app_1.io.to(receiverSocketId).emit('newMessage', fullMessage);
-                // console.log('here is the erro')
             }
             return fullMessage;
         }
@@ -78,7 +77,6 @@ const messageRepositoryMongoDb = () => {
         try {
             const chatIds = await chatModel_1.default.find({ members: { $in: [userId] } }, { _id: 1 } // Include chatId and exclude _id
             );
-            // console.log('chatids of unread messsags are ',chatIds)
             // Extract chatId values from the array of objects
             //@ts-ignore
             const chatIdArray = chatIds.map((chat) => chat?._id);
@@ -87,7 +85,6 @@ const messageRepositoryMongoDb = () => {
             const messages = await messageModel_1.default.find({ chatId: { $in: chatIdArray }, senderId: { $ne: userId }, isSeen: false });
             // console.log('Unread messages are ',messages)
             return messages;
-            return;
         }
         catch (error) {
             console.log(error);
@@ -108,10 +105,8 @@ const messageRepositoryMongoDb = () => {
         try {
             let messageIdObj = new mongoose_1.default.Types.ObjectId(messageId);
             const messageData = await messageModel_1.default.findByIdAndUpdate(messageIdObj, { isDeleted: true }).populate('chatId');
-            console.log('messageData on deletion ', messageData);
             //@ts-ignore
             const recieverId = messageData?.chatId?.members?.find(item => item.toString() !== messageData?.senderId._id.toString());
-            // console.log('recieverid is ',recieverId)
             const receiverSocketId = (0, socketConfig_1.getReceiverSocketId)(recieverId);
             if (receiverSocketId) {
                 app_1.io.to(receiverSocketId).emit('deleteMessage', messageId);

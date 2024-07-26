@@ -32,7 +32,6 @@ const authController = (
     const mailSenderService = mailSenderServiceInterface(mailSenderServiceImpl())
 
     const registerUser = asyncHandler(async (req: Request, res: Response) => {
-        // console.log('data from body',req.body)
         const user: UserInterface = req.body;
         await userRegister(user, dbUserRepository, authService);
         res.json({
@@ -45,7 +44,6 @@ const authController = (
         try {
             const { username } = req.params
             const isAvailable = await dbUserRepository.getUserByUsername(username)
-            // console.log('isavailable',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -66,7 +64,6 @@ const authController = (
         try {
             const { email } = req.params
             const isAvailable = await dbUserRepository.getUserByEmail(email)
-            // console.log('email',isAvailable)
             if (!isAvailable) {
                 res.json({
                     available: true,
@@ -98,7 +95,6 @@ const authController = (
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
-        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'Login successfull',
@@ -117,7 +113,7 @@ const authController = (
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
-        console.log('userDetails :',userDetails,'accessToken :',accessToken)
+        // console.log('userDetails :',userDetails,'accessToken :',accessToken)
         res.json({
             status: 'success',
             message: 'user verified',
@@ -128,9 +124,8 @@ const authController = (
 
     const sendOtpForEmailVerification = asyncHandler(async (req: Request, res: Response) => {
 
-        const { email ,message }: { email: string, message:string } = req.body
-        console.log('email is ',email)
-        const response = await handleSendOtp({email,message}, dbOtpRepository, mailSenderService,dbUserRepository)
+        const { email, message }: { email: string, message: string } = req.body
+        const response = await handleSendOtp({ email, message }, dbOtpRepository, mailSenderService, dbUserRepository)
         if (response) {
             res.status(HttpStatus.OK).json({
                 status: "success",
@@ -151,23 +146,21 @@ const authController = (
         }
     })
 
-    const refreshAccessToken=asyncHandler(async(req:Request,res:Response)=>{
-        // console.log('cookies jjj',req.cookies)
-        // console.log('coming to refresh acesstoken')
-        const {refreshToken}=req.cookies;
-        const accessToken=await handleRefreshAccessToken({refreshToken},dbUserRepository,authService)
+    const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+        const { refreshToken } = req.cookies;
+        const accessToken = await handleRefreshAccessToken({ refreshToken }, dbUserRepository, authService)
         res.status(HttpStatus.OK).json({
             accessToken
         })
     })
 
 
-    const resetPassword=asyncHandler(async(req:Request,res:Response)=>{
-        const {email,password}=req.body
-        await handleResetPassword({email,password},dbUserRepository,authService)
+    const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+        const { email, password } = req.body
+        await handleResetPassword({ email, password }, dbUserRepository, authService)
         res.status(HttpStatus.OK).json({
-            status:'success',
-            message:'Password reset successfull'
+            status: 'success',
+            message: 'Password reset successfull'
         })
     })
 

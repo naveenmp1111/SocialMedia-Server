@@ -4,16 +4,16 @@ import { chatDbRepository } from "../../../application/repositories/chatDbReposi
 import chatController from "../../../adapters/chatController"
 import authMiddleware from "../middlewares/authMiddleware"
 
-const chatRouter=()=>{
-    const router=Router()
+const chatRouter = () => {
+    const router = Router()
 
-    const controller=chatController(
+    const controller = chatController(
         chatRepositoryMongoDb,
         chatDbRepository
     );
 
-    router.post('/createOrAccessChat',authMiddleware,controller.createOrAccessChat)
-    router.get('/fetchChats',authMiddleware,controller.fetchChats)
+    router.post('/createOrAccessChat', authMiddleware, controller.createOrAccessChat)
+    router.get('/fetchChats', authMiddleware, controller.fetchChats)
 
     return router
 }

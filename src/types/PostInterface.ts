@@ -1,4 +1,4 @@
-export interface PostDataInterface{
+export interface PostDataInterface {
     userId: string;
     description?: string;
     // hashtags?: string;
@@ -8,7 +8,7 @@ export interface PostDataInterface{
     // saved?: string[];
     // reports: string[];
     // video?: string;
-    taggedUsers?:string[]
+    taggedUsers?: string[]
     image?: string[];
     isBlock: boolean;
 }

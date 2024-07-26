@@ -27,14 +27,3 @@ const handleReadNotification = async (userId, notificationDbRepository) => {
     }
 };
 exports.handleReadNotification = handleReadNotification;
-// export const handleCreateNotification=async(
-//     userId:string,
-//     notificationDbRepository:ReturnType<NotificationDbInterface>
-// )=>{
-//     try {
-//         await notificationDbRepository.createNotification()
-//     } catch (error) {
-//         console.log('error in creating notification',error)
-//         throw new AppError('Error in creating notification',HttpStatus.INTERNAL_SERVER_ERROR)
-//     }
-// }

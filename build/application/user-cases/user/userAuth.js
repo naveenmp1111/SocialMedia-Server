@@ -21,7 +21,6 @@ exports.handleGetSuggestedUsers = handleGetSuggestedUsers;
 const handleFollowUser = async (userId, friendusername, dbUserRepository, dbNotificationRepository) => {
     try {
         const response = await dbUserRepository.followUser(userId, friendusername);
-        console.log('response from follw user is ', response);
         if (response.status && response.friend && response.friend._id) {
             const notification = await dbNotificationRepository.createNotification(userId, response.friend._id, 'follow');
             const recieverSocketId = (0, socketConfig_1.getReceiverSocketId)(response.friend._id);

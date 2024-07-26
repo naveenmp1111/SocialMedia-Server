@@ -9,7 +9,7 @@ const getReceiverSocketId = (userId) => {
 exports.getReceiverSocketId = getReceiverSocketId;
 const socketConfig = (io) => {
     io.on("connection", (socket) => {
-        console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         console.log("A user connected", socket.id);
         const userId = socket.handshake.query.userId;
         console.log('connected user id is ', userId);
@@ -54,18 +54,6 @@ const socketConfig = (io) => {
                 });
             }
         });
-        // socket.on('reject-audio-call',(data)=>{
-        //   const friendSocketId=getReceiverSocketId(data.to)
-        //   if(friendSocketId){
-        //     socket.to(friendSocketId).emit('call-rejected')
-        //   }
-        // })
-        // socket.on('reject-video-call',(data)=>{
-        //   const friendSocketId=getReceiverSocketId(data.to)
-        //   if(friendSocketId){
-        //     socket.to(friendSocketId).emit('call-rejected')
-        //   }
-        // })
         socket.on('leave-room', (data) => {
             // console.log('coming here')
             const friendSocketId = (0, exports.getReceiverSocketId)(data.to);

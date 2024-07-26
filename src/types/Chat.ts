@@ -1,8 +1,8 @@
 import { UserDataInterface } from "./LoginUserInterface";
 
-export interface fetchChatsResponse{
-    message:string,
-    status:string,
-    chats:UserDataInterface[]
+export interface fetchChatsResponse {
+    message: string,
+    status: string,
+    chats: UserDataInterface[]
 }
 

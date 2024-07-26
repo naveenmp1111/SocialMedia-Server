@@ -416,108 +416,11 @@ export const userRepositoryMongoDb = () => {
   const unblockUserByUsername = async (userId: string, username: string) => {
     try {
       const blockingUser = await User.findOne({ username })
-      console.log('unblocking user id is ', blockingUser?._id)
       await User.findByIdAndUpdate(userId, { $pull: { blocklist: blockingUser?._id } })
     } catch (error) {
       console.log('error in blocking user by username')
     }
   }
-
-  // const getSavedPosts=async(userId:string)=>{
-  //   try {
-  //     const savedPosts = await User.aggregate([
-  //       {
-  //           $match: { _id: new ObjectId(userId) }
-  //       },
-  //       {
-  //           $project: {
-  //               savedPosts: {
-  //                   $map: {
-  //                       input: "$savedPosts",
-  //                       as: "postId",
-  //                       in: { $toObjectId: "$$postId" }
-  //                   }
-  //               }
-  //           }
-  //       },
-  //       {
-  //           $lookup: {
-  //               from: 'posts', // The collection name in the database
-  //               localField: 'savedPosts',
-  //               foreignField: '_id',
-  //               as: 'savedPostsDetails'
-  //           }
-  //       },
-  //       {
-  //         $project: {
-  //           savedPostsDetails: {
-  //               $filter: {
-  //                   input: "$savedPostsDetails",
-  //                   as: "post",
-  //                   cond: { $eq: ["$$post.isBlock", false] }
-  //               }
-  //           },
-  //           _id: 0 // Optional: Exclude the userId from the result if not needed
-  //       }
-  //       }
-  //   ]);
-
-  //     return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
-  //   } catch (error) {
-  //     console.log('error in fetching saved posts')
-  //   }
-  // }
-
-  // const getSavedPosts = async (userId:string) => {
-  //   try {
-  //     const savedPosts = await User.aggregate([
-  //       {
-  //         $match: { _id: new ObjectId(userId) }
-  //       },
-  //       {
-  //         $project: {
-  //           savedPosts: {
-  //             $map: {
-  //               input: "$savedPosts",
-  //               as: "postId",
-  //               in: { $toObjectId: "$$postId" }
-  //             }
-  //           },
-  //           blocklist: 1 // Include the blocklist in the projection
-  //         }
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'posts', // The collection name in the database
-  //           localField: 'savedPosts',
-  //           foreignField: '_id',
-  //           as: 'savedPostsDetails'
-  //         }
-  //       },
-  //       {
-  //         $project: {
-  //           savedPostsDetails: {
-  //             $filter: {
-  //               input: "$savedPostsDetails",
-  //               as: "post",
-  //               cond: {
-  //                 $and: [
-  //                   { $eq: ["$$post.isBlock", false] },
-  //                   { $not: { $in: ["$$post.userId", "$blocklist"] } } // Exclude posts by users in the blocklist
-  //                 ]
-  //               }
-  //             }
-  //           },
-  //           _id: 0 // Optional: Exclude the userId from the result if not needed
-  //         }
-  //       }
-  //     ]);
-  //    console.log('saved posts is ',savedPosts)
-  //     return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
-  //   } catch (error) {
-  //     console.log('error in fetching saved posts', error);
-  //   }
-  // };
 
   const getSavedPosts = async (userId: string) => {
     try {
@@ -599,8 +502,6 @@ export const userRepositoryMongoDb = () => {
           }
         }
       ]);
-
-      console.log('saved posts is', savedPosts);
       return savedPosts.length > 0 ? savedPosts[0].savedPostsDetails : [];
     } catch (error) {
       console.log('error in fetching saved posts', error);
@@ -639,8 +540,6 @@ export const userRepositoryMongoDb = () => {
         }
       ]);
 
-      console.log('Blocked Users:', blockedUsers);
-
       return blockedUsers;
 
 
@@ -648,9 +547,6 @@ export const userRepositoryMongoDb = () => {
       console.log('error in getting blocked users ', error)
     }
   }
-
-
-
 
   return {
     addUser,

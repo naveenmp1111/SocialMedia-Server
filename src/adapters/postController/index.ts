@@ -23,18 +23,17 @@ const postController = (
   postDbRepositoryInterface: PostDbInterface,
   commentDbRepositoryImpl: CommentRepositoryMongoDb,
   commentDbrepositoryInterface: CommentDbInterface,
-  notificationDbRepositoryImpl:NotificationRepositoryMongoDb,
-  notificationDbRepositoryInterface:NotificationDbInterface,
+  notificationDbRepositoryImpl: NotificationRepositoryMongoDb,
+  notificationDbRepositoryInterface: NotificationDbInterface,
 ) => {
   const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl());
   const authService = authServiceInterface(authServiceImpl());
   const dbPostRepository = postDbRepositoryInterface(postDbRepositoryImpl())
   const dbCommentRepository = commentDbrepositoryInterface(commentDbRepositoryImpl())
-  const dbNotificationRepository=notificationDbRepositoryInterface(notificationDbRepositoryImpl())
+  const dbNotificationRepository = notificationDbRepositoryInterface(notificationDbRepositoryImpl())
 
   const createPost = asyncHandler(async (req: Request, res: Response) => {
     const postData: PostDataInterface = req.body;
-    // console.log('body data',req.body)
     const post = await handleCreatePost(postData, dbPostRepository);
     res.json({
       status: "success",
@@ -104,8 +103,7 @@ const postController = (
   const likePost = asyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.body
     const { postId } = req.params
-    // console.log('coming in like controller')
-    await handleLikePost(postId, userId, dbPostRepository,dbNotificationRepository)
+    await handleLikePost(postId, userId, dbPostRepository, dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Post liked successfully'
@@ -115,8 +113,7 @@ const postController = (
   const unlikePost = asyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.body
     const { postId } = req.params
-    // console.log('wooo', userId, postId)
-    await handleUnlikePost(postId, userId, dbPostRepository,dbNotificationRepository)
+    await handleUnlikePost(postId, userId, dbPostRepository, dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Post unliked successfully'
@@ -125,8 +122,7 @@ const postController = (
 
   const addComment = asyncHandler(async (req: Request, res: Response) => {
     const { userId, postId, comment } = req.body
-    // console.log('comment data is ',userId ,postId ,comment)
-    const response = await handleAddComment(userId, postId, comment, dbCommentRepository,dbPostRepository,dbNotificationRepository)
+    const response = await handleAddComment(userId, postId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Comment added successfully',
@@ -136,8 +132,7 @@ const postController = (
 
   const addReply = asyncHandler(async (req: Request, res: Response) => {
     const { userId, postId, comment, parentId } = req.body
-    // console.log('comment data is ',userId ,postId ,comment)
-    const response = await handleAddReply(userId, postId, parentId, comment, dbCommentRepository,dbPostRepository,dbNotificationRepository)
+    const response = await handleAddReply(userId, postId, parentId, comment, dbCommentRepository, dbPostRepository, dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Comment added successfully',
@@ -155,18 +150,15 @@ const postController = (
     })
   })
 
-  const getTaggedPosts=asyncHandler(async(req:Request,res:Response)=>{
-    const {username}=req.params
-    const taggedPosts=await handleGetTaggedPosts(username,dbPostRepository)
+  const getTaggedPosts = asyncHandler(async (req: Request, res: Response) => {
+    const { username } = req.params
+    const taggedPosts = await handleGetTaggedPosts(username, dbPostRepository)
     res.json({
-      status:'success',
-      message:'taggedposts fetched successfull',
-      posts:taggedPosts
+      status: 'success',
+      message: 'taggedposts fetched successfull',
+      posts: taggedPosts
     })
   })
-
- 
-
 
   return {
     createPost,

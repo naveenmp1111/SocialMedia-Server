@@ -10,122 +10,119 @@ import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/reposit
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
 
 
-const adminController=(
-    authServiceImpl: AuthService,
-    authServieInterface: AuthServiceInterface,
-    userDbRepositoryImpl: UserRepositoryMongoDb,
-    userDbRepositoryInterface: UserDbInterface,
-    postDbRepositoryImpl:PostRepositoryMongoDb,
-    postDbRepositoryInterface:PostDbInterface
-)=>{
-    const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl())
-    const authService = authServieInterface(authServiceImpl())
-    const dbPostRepository =postDbRepositoryInterface(postDbRepositoryImpl())
+const adminController = (
+  authServiceImpl: AuthService,
+  authServieInterface: AuthServiceInterface,
+  userDbRepositoryImpl: UserRepositoryMongoDb,
+  userDbRepositoryInterface: UserDbInterface,
+  postDbRepositoryImpl: PostRepositoryMongoDb,
+  postDbRepositoryInterface: PostDbInterface
+) => {
+  const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl())
+  const authService = authServieInterface(authServiceImpl())
+  const dbPostRepository = postDbRepositoryInterface(postDbRepositoryImpl())
 
 
-    const getAllUsersForAdmin=asyncHandler(async(req:Request,res:Response)=>{
-          const users=await handleGetAllUsersForAdmin(dbUserRepository)
-          res.json({
-            users
-          })
-          console.log(users)
+  const getAllUsersForAdmin = asyncHandler(async (req: Request, res: Response) => {
+    const users = await handleGetAllUsersForAdmin(dbUserRepository)
+    res.json({
+      users
     })
+  })
 
-    const blockUser=asyncHandler(async(req:Request,res:Response)=>{
-        const {userId}=req.params
-        console.log('userdddddd ',userId)
-        await handleBlockUser(userId,dbUserRepository)
-        res.json({
-            status:'success',
-            message:'User blocked successfully'
-        })
+  const blockUser = asyncHandler(async (req: Request, res: Response) => {
+    const { userId } = req.params
+    await handleBlockUser(userId, dbUserRepository)
+    res.json({
+      status: 'success',
+      message: 'User blocked successfully'
     })
+  })
 
-    const unblockUser=asyncHandler(async(req:Request,res:Response)=>{
-        const {userId}=req.params
-        await handleUnblockUser(userId,dbUserRepository)
-        res.json({
-            status:'success',
-            message:'User unblocked successfully'
-        })
+  const unblockUser = asyncHandler(async (req: Request, res: Response) => {
+    const { userId } = req.params
+    await handleUnblockUser(userId, dbUserRepository)
+    res.json({
+      status: 'success',
+      message: 'User unblocked successfully'
     })
+  })
 
-    const blockPost=asyncHandler(async(req:Request,res:Response)=>{
-        const {postId}=req.params
-        console.log('userdddddd ',postId)
-        await handleBlockPost(postId,dbPostRepository)
-        res.json({
-            status:'success',
-            message:'Post blocked successfully'
-        })
+  const blockPost = asyncHandler(async (req: Request, res: Response) => {
+    const { postId } = req.params
+    await handleBlockPost(postId, dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'Post blocked successfully'
     })
+  })
 
-    const unblockPost=asyncHandler(async(req:Request,res:Response)=>{
-        const {postId}=req.params
-        await handleUnblockPost(postId,dbPostRepository)
-        res.json({
-            status:'success',
-            message:'Post unblocked successfully'
-        })
+  const unblockPost = asyncHandler(async (req: Request, res: Response) => {
+    const { postId } = req.params
+    await handleUnblockPost(postId, dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'Post unblocked successfully'
     })
+  })
 
-    const getPostReports=asyncHandler(async(req:Request,res:Response)=>{
-        const reports=await handleGetPostReports(dbPostRepository)
-        res.json({
-          status:'success',
-          message:'Reports fetched successfully',
-          reports
-        })
-      })
+  const getPostReports = asyncHandler(async (req: Request, res: Response) => {
+    const reports = await handleGetPostReports(dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'Reports fetched successfully',
+      reports
+    })
+  })
 
-      const getWeeklyData=asyncHandler(async(req:Request,res:Response)=>{
-        const weeklyData=await handleGetWeeklyData(dbPostRepository)
-        res.json({
-          status:'success',
-          message:'weekly data fetched succesffully',
-          weeklyData
-        })
-      })
+  const getWeeklyData = asyncHandler(async (req: Request, res: Response) => {
+    const weeklyData = await handleGetWeeklyData(dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'weekly data fetched succesffully',
+      weeklyData
+    })
+  })
 
-      const getMonthlyData=asyncHandler(async(req:Request,res:Response)=>{
-        const monthlyData=await handleGetMonthlyData(dbPostRepository)
-        res.json({
-            status:'success',
-            message:'monthly data fetched successfully',
-            monthlyData
-        })
-      })
+  const getMonthlyData = asyncHandler(async (req: Request, res: Response) => {
+    const monthlyData = await handleGetMonthlyData(dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'monthly data fetched successfully',
+      monthlyData
+    })
+  })
 
-      const getYearlyData=asyncHandler(async(req:Request,res:Response)=>{
-        const yearlyData=await handleGetYearlyData(dbPostRepository)
-        res.json({
-            status:'success',
-            message:'yearly data fetched successfully',
-            yearlyData
-        })
-      })
+  const getYearlyData = asyncHandler(async (req: Request, res: Response) => {
+    const yearlyData = await handleGetYearlyData(dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'yearly data fetched successfully',
+      yearlyData
+    })
+  })
 
-      const getAllPostsForAdmin=asyncHandler(async(req:Request,res:Response)=>{
-        const posts=await handleGetAllPostsForAdmin(dbPostRepository)
-        res.json({
-            status:'success',
-            message:'posts fetched successfully',
-            posts
-        })
-      })
+  const getAllPostsForAdmin = asyncHandler(async (req: Request, res: Response) => {
+    const posts = await handleGetAllPostsForAdmin(dbPostRepository)
+    res.json({
+      status: 'success',
+      message: 'posts fetched successfully',
+      posts
+    })
+  })
 
-    return {
-        getAllUsersForAdmin,
-        blockUser,
-        unblockUser,
-        getPostReports,
-        blockPost,
-        unblockPost,
-        getWeeklyData,
-        getMonthlyData,
-        getYearlyData,
-        getAllPostsForAdmin
-    }
+  return {
+    getAllUsersForAdmin,
+    blockUser,
+    unblockUser,
+    getPostReports,
+    blockPost,
+    unblockPost,
+    getWeeklyData,
+    getMonthlyData,
+    getYearlyData,
+    getAllPostsForAdmin
+  }
 }
 
 export default adminController
