@@ -21,8 +21,8 @@ exports.server = http_1.default.createServer(exports.app);
 exports.io = new socket_io_1.Server(exports.server, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST", "DELETE"],
+        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        methods: ["GET", "POST", "DELETE", "PATCH", "PUT"],
     }
 });
 (0, socketConfig_1.default)(exports.io);
