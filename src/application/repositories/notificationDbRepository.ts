@@ -2,7 +2,7 @@ import { NotificationRepositoryMongoDb } from "../../frameworks/database/monogDB
 
 export const notificationDbRepository = (repository: ReturnType<NotificationRepositoryMongoDb>) => {
 
-    const createNotification = async (senderId: string, receiverId: string, event: string, postId?: string) => await repository.createNotification({ senderId, receiverId, event, postId })
+    const createNotification = async (senderId: string, receiverId: string[], event: string, postId?: string) => await repository.createNotification({ senderId, receiverId, event, postId })
 
     const getNotifications = async (receiverId: string) => await repository.getNotifications(receiverId)
 

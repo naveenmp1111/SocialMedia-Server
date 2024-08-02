@@ -6,6 +6,8 @@ import { userDbRepository } from '../../../application/repositories/userDbReposi
 import adminController from '../../../adapters/adminController';
 import { postRepositoryMongoDb } from '../../database/monogDB/repositories/postRepositoryMongoDb';
 import { postDbRepository } from '../../../application/repositories/postDbRepository';
+import { mailSenderService } from '../../services/mailSenderService';
+import { mailSenderServiceInterface } from '../../../application/services/mailSenderService';
 
 
 const adminRouter = () => {
@@ -17,7 +19,9 @@ const adminRouter = () => {
         userRepositoryMongoDb,
         userDbRepository,
         postRepositoryMongoDb,
-        postDbRepository
+        postDbRepository,
+        mailSenderService,
+        mailSenderServiceInterface
     )
 
     router.get('/getAllUsersForAdmin', controller.getAllUsersForAdmin)

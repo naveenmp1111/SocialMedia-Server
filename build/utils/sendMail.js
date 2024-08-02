@@ -7,7 +7,7 @@ const config_1 = __importDefault(require("../config"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const appError_1 = __importDefault(require("./appError"));
 const httpStatus_1 = require("../types/httpStatus");
-const sendMail = async (email, title, body) => {
+const sendMail = async (email, title, body, post) => {
     try {
         console.log(`Sending mail to: ${email}`);
         console.log(`Title: ${title}`);
@@ -19,11 +19,15 @@ const sendMail = async (email, title, body) => {
                 pass: config_1.default.MAIL_PASSKEY
             }
         });
+        let htmlContent = `<p>${body}</p>`;
+        if (post && post) {
+            htmlContent += `<img src="${post}" alt="Post Image" style="max-width: 100%; height: auto;"/>`;
+        }
         const mailOptions = {
             from: config_1.default.MAIL_USERNAME,
             to: email,
             subject: title,
-            text: body
+            html: htmlContent,
         };
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent: ' + info.response);

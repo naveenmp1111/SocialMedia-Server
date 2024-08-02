@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import AppError from './appError';
 import { HttpStatus } from '../types/httpStatus';
 
-const sendMail = async (email: string, title: string, body: string) => {
+const sendMail = async (email: string, title: string, body: string,post?:string) => {
     try {
         console.log(`Sending mail to: ${email}`);
         console.log(`Title: ${title}`);
@@ -16,11 +16,17 @@ const sendMail = async (email: string, title: string, body: string) => {
             }
         });
 
+        let htmlContent = `<p>${body}</p>`;
+
+        if (post && post) {
+            htmlContent += `<img src="${post}" alt="Post Image" style="max-width: 100%; height: auto;"/>`;
+        }
+
         const mailOptions = {
             from: configKeys.MAIL_USERNAME,
             to: email,
             subject: title,
-            text: body
+            html: htmlContent,
         };
 
         const info = await transporter.sendMail(mailOptions);

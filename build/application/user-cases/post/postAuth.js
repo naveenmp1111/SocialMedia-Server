@@ -8,10 +8,19 @@ const httpStatus_1 = require("../../../types/httpStatus");
 const appError_1 = __importDefault(require("../../../utils/appError"));
 const app_1 = require("../../../app");
 const socketConfig_1 = require("../../../frameworks/webSocket/socketConfig");
-const handleCreatePost = async (postData, postDbRepository) => {
+const handleCreatePost = async (postData, postDbRepository, nofificationDbRepository) => {
     try {
-        const createdPost = await postDbRepository.createPost(postData);
-        return createdPost;
+        const newPost = await postDbRepository.createPost(postData);
+        if (newPost && postData && postData.taggedUsers) {
+            const notification = await nofificationDbRepository.createNotification(postData.userId, postData.taggedUsers, 'tag', newPost._id);
+            postData.taggedUsers.forEach(taggedUserId => {
+                const receiverSocketId = (0, socketConfig_1.getReceiverSocketId)(taggedUserId);
+                if (receiverSocketId) {
+                    app_1.io.to(receiverSocketId).emit('notification', notification);
+                }
+            });
+        }
+        return newPost;
     }
     catch (error) {
         console.log('Error creating in post', error);
@@ -51,7 +60,7 @@ const handleGetAllPostsToExplore = async (userId, postDbRepository) => {
     return allposts;
 };
 exports.handleGetAllPostsToExplore = handleGetAllPostsToExplore;
-const handleDeletePost = async (postId, postDbRepository) => {
+const handleDeletePost = async (postId, postDbRepository, notificationDbRepository) => {
     try {
         const post = await postDbRepository.deletePost(postId);
         return post;

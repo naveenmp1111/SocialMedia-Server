@@ -11,9 +11,11 @@ const userDbRepository_1 = require("../../../application/repositories/userDbRepo
 const adminController_1 = __importDefault(require("../../../adapters/adminController"));
 const postRepositoryMongoDb_1 = require("../../database/monogDB/repositories/postRepositoryMongoDb");
 const postDbRepository_1 = require("../../../application/repositories/postDbRepository");
+const mailSenderService_1 = require("../../services/mailSenderService");
+const mailSenderService_2 = require("../../../application/services/mailSenderService");
 const adminRouter = () => {
     const router = (0, express_1.default)();
-    const controller = (0, adminController_1.default)(authService_1.authService, authServiceInterfaces_1.authServiceInterface, userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository);
+    const controller = (0, adminController_1.default)(authService_1.authService, authServiceInterfaces_1.authServiceInterface, userRepositoryMongoDb_1.userRepositoryMongoDb, userDbRepository_1.userDbRepository, postRepositoryMongoDb_1.postRepositoryMongoDb, postDbRepository_1.postDbRepository, mailSenderService_1.mailSenderService, mailSenderService_2.mailSenderServiceInterface);
     router.get('/getAllUsersForAdmin', controller.getAllUsersForAdmin);
     router.patch('/blockUser/:userId', controller.blockUser);
     router.patch('/unblockUser/:userId', controller.unblockUser);

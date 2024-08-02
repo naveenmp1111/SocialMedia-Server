@@ -16,9 +16,15 @@ const handleUnblockUser = async (userId, dbUserRepository) => {
     return userData;
 };
 exports.handleUnblockUser = handleUnblockUser;
-const handleBlockPost = async (postId, dbPostRepository) => {
-    const userData = dbPostRepository.blockPost(postId);
-    return userData;
+const handleBlockPost = async (postId, dbPostRepository, dbUserRepository, mailSenderService) => {
+    const postData = await dbPostRepository.blockPost(postId);
+    console.log('postData while blockiing is ');
+    //@ts-ignore
+    const userData = await dbUserRepository.getUserById(postData.userId);
+    console.log('userData while blocking post is ', userData);
+    //@ts-ignore
+    await mailSenderService.sendPostBlockNotification(userData.email, postData.image[0]);
+    return postData;
 };
 exports.handleBlockPost = handleBlockPost;
 const handleUnblockPost = async (postId, dbPostRepository) => {

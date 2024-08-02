@@ -333,7 +333,8 @@ const postRepositoryMongoDb = () => {
     };
     const blockPost = async (postId) => {
         try {
-            await postModel_1.default.findByIdAndUpdate(postId, { $set: { isBlock: true } });
+            const postData = await postModel_1.default.findByIdAndUpdate(postId, { $set: { isBlock: true } }, { new: true });
+            return postData;
         }
         catch (error) {
             console.log('error in blocking post');

@@ -8,6 +8,8 @@ import { handleBlockPost, handleBlockUser, handleGetAllPostsForAdmin, handleGetA
 import { handleGetPostReports, } from '../../application/user-cases/post/postAuth';
 import { PostRepositoryMongoDb } from '../../frameworks/database/monogDB/repositories/postRepositoryMongoDb';
 import { PostDbInterface } from '../../application/repositories/postDbRepository';
+import { MailSenderServie } from '../../frameworks/services/mailSenderService';
+import { MailSenderServiceInterface } from '../../application/services/mailSenderService';
 
 
 const adminController = (
@@ -16,12 +18,14 @@ const adminController = (
   userDbRepositoryImpl: UserRepositoryMongoDb,
   userDbRepositoryInterface: UserDbInterface,
   postDbRepositoryImpl: PostRepositoryMongoDb,
-  postDbRepositoryInterface: PostDbInterface
+  postDbRepositoryInterface: PostDbInterface,
+  mailSenderServiceImpl: MailSenderServie,
+  mailSenderServiceInterface: MailSenderServiceInterface
 ) => {
   const dbUserRepository = userDbRepositoryInterface(userDbRepositoryImpl())
   const authService = authServieInterface(authServiceImpl())
   const dbPostRepository = postDbRepositoryInterface(postDbRepositoryImpl())
-
+  const mailSenderService = mailSenderServiceInterface(mailSenderServiceImpl())
 
   const getAllUsersForAdmin = asyncHandler(async (req: Request, res: Response) => {
     const users = await handleGetAllUsersForAdmin(dbUserRepository)
@@ -50,7 +54,7 @@ const adminController = (
 
   const blockPost = asyncHandler(async (req: Request, res: Response) => {
     const { postId } = req.params
-    await handleBlockPost(postId, dbPostRepository)
+    await handleBlockPost(postId, dbPostRepository,dbUserRepository,mailSenderService)
     res.json({
       status: 'success',
       message: 'Post blocked successfully'

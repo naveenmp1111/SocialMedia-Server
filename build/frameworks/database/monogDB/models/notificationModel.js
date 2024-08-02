@@ -26,9 +26,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 // Define the schema
 const NotificationSchema = new mongoose_1.Schema({
-    receiverId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
+    receiverId: [{ type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' }],
     senderId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: 'User' },
-    event: { type: String, required: true, enum: ['like', 'comment', 'message', 'follow'] },
+    event: { type: String, required: true, enum: ['like', 'comment', 'message', 'follow', 'tag'] },
     isSeen: { type: Boolean, required: true, default: false },
     postId: { type: mongoose_1.default.Types.ObjectId, ref: 'Post', default: '' }
 }, {

@@ -1,5 +1,6 @@
 import { PostDbInterface, postDbRepository } from "../../repositories/postDbRepository";
 import { UserDbInterface } from "../../repositories/userDbRepository";
+import { MailSenderServiceInterface } from "../../services/mailSenderService";
 
 
 export const handleGetAllUsersForAdmin = async (
@@ -27,10 +28,18 @@ export const handleUnblockUser = async (
 
 export const handleBlockPost = async (
     postId: string,
-    dbPostRepository: ReturnType<PostDbInterface>
+    dbPostRepository: ReturnType<PostDbInterface>,
+    dbUserRepository:ReturnType<UserDbInterface>,
+    mailSenderService: ReturnType<MailSenderServiceInterface>,
 ) => {
-    const userData = dbPostRepository.blockPost(postId)
-    return userData
+    const postData =await dbPostRepository.blockPost(postId)
+    console.log('postData while blockiing is ',)
+    //@ts-ignore
+    const userData=await dbUserRepository.getUserById(postData.userId)
+    console.log('userData while blocking post is ',userData)
+    //@ts-ignore
+    await mailSenderService.sendPostBlockNotification(userData.email,postData.image[0])
+    return postData
 }
 
 export const handleUnblockPost = async (

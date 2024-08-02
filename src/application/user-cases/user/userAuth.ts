@@ -34,7 +34,7 @@ export const handleFollowUser = async (
   try {
     const response = await dbUserRepository.followUser(userId, friendusername)
     if (response.status && response.friend && response.friend._id) {
-      const notification = await dbNotificationRepository.createNotification(userId, response.friend._id as unknown as string, 'follow')
+      const notification = await dbNotificationRepository.createNotification(userId, response.friend._id as unknown as string[], 'follow')
       const recieverSocketId = getReceiverSocketId(response.friend._id as unknown as string)
       io.to(recieverSocketId).emit('notification', (notification))
     }
@@ -97,7 +97,7 @@ export const handleAcceptRequest = async (
   dbNotificationRepository: ReturnType<NotificationDbInterface>
 ) => {
   const friend = await dbUserRepository.acceptRequest(userId, friendUsername)
-  const notification = await dbNotificationRepository.createNotification(friend?._id as unknown as string, userId, 'follow')
+  const notification = await dbNotificationRepository.createNotification(friend?._id as unknown as string, userId as unknown as string[], 'follow')
   const recieverSocketId = getReceiverSocketId(userId)
   io.to(recieverSocketId).emit('notification', (notification))
 }

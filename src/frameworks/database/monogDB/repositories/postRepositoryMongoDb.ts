@@ -70,6 +70,7 @@ export const postRepositoryMongoDb = () => {
       console.log(error)
     }
   }
+  
   const updatePostById = async (postId: string, description: string) => {
     try {
       const post = await Post.findByIdAndUpdate(postId, { $set: { description: description } }, { new: true });
@@ -341,7 +342,8 @@ export const postRepositoryMongoDb = () => {
 
   const blockPost = async (postId: string) => {
     try {
-      await Post.findByIdAndUpdate(postId, { $set: { isBlock: true } })
+     const postData= await Post.findByIdAndUpdate(postId, { $set: { isBlock: true } }, { new: true })
+     return postData
     } catch (error) {
       console.log('error in blocking post')
     }

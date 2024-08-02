@@ -7,11 +7,15 @@ exports.mailSenderService = void 0;
 const sendMail_1 = __importDefault(require("../../utils/sendMail"));
 const mailSenderService = () => {
     const sendVerificationMail = async (email, otp) => {
-        const mailResponse = await (0, sendMail_1.default)(email, 'SOCIAL-MEDIA - Email verification', `Otp for email verification is ${otp}`);
+        const mailResponse = await (0, sendMail_1.default)(email, 'Sickomode - Email verification', `Otp for email verification is ${otp}`);
         return mailResponse;
     };
+    const sendPostBlockNotification = async (email, post) => {
+        const mailResponse = await (0, sendMail_1.default)(email, 'Sickomode - Post blocked', 'Your post has been removed as it does not adhere to our community guidelines and standards.', post);
+    };
     return {
-        sendVerificationMail
+        sendVerificationMail,
+        sendPostBlockNotification
     };
 };
 exports.mailSenderService = mailSenderService;

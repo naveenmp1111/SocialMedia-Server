@@ -13,7 +13,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     const dbNotificationRepository = notificationDbRepositoryInterface(notificationDbRepositoryImpl());
     const createPost = (0, express_async_handler_1.default)(async (req, res) => {
         const postData = req.body;
-        const post = await (0, postAuth_1.handleCreatePost)(postData, dbPostRepository);
+        const post = await (0, postAuth_1.handleCreatePost)(postData, dbPostRepository, dbNotificationRepository);
         res.json({
             status: "success",
             message: "Post created successfully",
@@ -58,7 +58,7 @@ const postController = (userDbRepositoryImpl, userDbRepositoryInterface, authSer
     });
     const deletePost = (0, express_async_handler_1.default)(async (req, res) => {
         const { postId } = req.params;
-        const post = await (0, postAuth_1.handleDeletePost)(postId, dbPostRepository);
+        const post = await (0, postAuth_1.handleDeletePost)(postId, dbPostRepository, dbNotificationRepository);
         res.json({
             status: 'success',
             message: 'Post deleted successfully'

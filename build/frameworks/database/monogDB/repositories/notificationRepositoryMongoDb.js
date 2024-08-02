@@ -10,6 +10,7 @@ const { ObjectId } = mongoose_1.default.Types;
 const notficationRepositoryMongoDb = () => {
     const createNotification = async ({ senderId, receiverId, event, postId }) => {
         try {
+            console.log('reciever ids are ', receiverId);
             const notification = new notificationModel_1.default({
                 senderId,
                 receiverId,
@@ -45,6 +46,7 @@ const notficationRepositoryMongoDb = () => {
     const getNotifications = async (receiverId) => {
         try {
             const notifications = await notificationModel_1.default.find({ receiverId }).sort({ createdAt: -1 }).populate('senderId').populate('postId', 'image');
+            //    console.log('fetched notifications are ',notifications)
             return notifications;
         }
         catch (error) {

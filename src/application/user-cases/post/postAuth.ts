@@ -12,10 +12,21 @@ import { getReceiverSocketId } from "../../../frameworks/webSocket/socketConfig"
 export const handleCreatePost = async (
     postData: PostDataInterface,
     postDbRepository: ReturnType<PostDbInterface>,
+    nofificationDbRepository:ReturnType<NotificationDbInterface>
 ) => {
     try {
-        const createdPost = await postDbRepository.createPost(postData)
-        return createdPost
+        const newPost = await postDbRepository.createPost(postData)
+        if (newPost && postData && postData.taggedUsers) {
+            const notification = await nofificationDbRepository.createNotification(postData.userId, postData.taggedUsers, 'tag', newPost._id as unknown as string)
+
+            postData.taggedUsers.forEach(taggedUserId => {
+                const receiverSocketId = getReceiverSocketId(taggedUserId as unknown as string);
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit('notification', notification);
+                }
+            });
+        }
+        return newPost
     } catch (error) {
         console.log('Error creating in post', error)
         throw new AppError('Error creating in post', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,7 +78,8 @@ export const handleGetAllPostsToExplore = async (
 
 export const handleDeletePost = async (
     postId: string,
-    postDbRepository: ReturnType<PostDbInterface>
+    postDbRepository: ReturnType<PostDbInterface>,
+    notificationDbRepository:ReturnType<NotificationDbInterface>
 ) => {
     try {
         const post = await postDbRepository.deletePost(postId)
@@ -110,7 +122,7 @@ export const handleLikePost = async (
     try {
         const postData = await postDbRepository.likePost(postId, userId)
         if (postData && postData.userId as unknown as string != userId) {
-            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string, 'like', postId)
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string[], 'like', postId)
 
             const recieverSocketId = getReceiverSocketId(postData.userId as unknown as string)
             io.to(recieverSocketId).emit('notification', (notification))
@@ -153,7 +165,7 @@ export const handleAddComment = async (
         const postData = await postDbRepository.getPostById(postId)
         const commentResponse = await commentDbRepository.addComment(commentObj)
         if (commentResponse && postData && postData.userId as unknown as string != userId) {
-            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string, 'comment', postId)
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string[], 'comment', postId)
             const recieverSocketId = getReceiverSocketId(postData.userId as unknown as string)
             io.to(recieverSocketId).emit('notification', (notification))
         }
@@ -182,7 +194,7 @@ export const handleAddReply = async (
         const postData = await postDbRepository.getPostById(postId)
         const commentResponse = await commentDbRepository.addReply(replyObj)
         if (postData && commentResponse) {
-            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string, 'comment', postId)
+            const notification = await nofificationDbRepository.createNotification(userId, postData.userId as unknown as string[], 'comment', postId)
             const recieverSocketId = getReceiverSocketId(postData.userId as unknown as string)
             io.to(recieverSocketId).emit('notification', (notification))
         }

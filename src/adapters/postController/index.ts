@@ -34,7 +34,7 @@ const postController = (
 
   const createPost = asyncHandler(async (req: Request, res: Response) => {
     const postData: PostDataInterface = req.body;
-    const post = await handleCreatePost(postData, dbPostRepository);
+    const post = await handleCreatePost(postData, dbPostRepository,dbNotificationRepository);
     res.json({
       status: "success",
       message: "Post created successfully",
@@ -84,7 +84,7 @@ const postController = (
 
   const deletePost = asyncHandler(async (req: Request, res: Response) => {
     const { postId } = req.params
-    const post = await handleDeletePost(postId, dbPostRepository)
+    const post = await handleDeletePost(postId, dbPostRepository,dbNotificationRepository)
     res.json({
       status: 'success',
       message: 'Post deleted successfully'
