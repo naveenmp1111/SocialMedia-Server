@@ -8,6 +8,7 @@ import { postRepositoryMongoDb } from '../../database/monogDB/repositories/postR
 import { postDbRepository } from '../../../application/repositories/postDbRepository';
 import { mailSenderService } from '../../services/mailSenderService';
 import { mailSenderServiceInterface } from '../../../application/services/mailSenderService';
+import adminAuthMiddleware from '../middlewares/adminAuthMiddleware';
 
 
 const adminRouter = () => {
@@ -24,16 +25,16 @@ const adminRouter = () => {
         mailSenderServiceInterface
     )
 
-    router.get('/getAllUsersForAdmin', controller.getAllUsersForAdmin)
-    router.patch('/blockUser/:userId', controller.blockUser)
-    router.patch('/unblockUser/:userId', controller.unblockUser)
-    router.get('/getPostReports', controller.getPostReports)
-    router.patch('/blockPost/:postId', controller.blockPost)
-    router.patch('/unBlockPost/:postId', controller.unblockPost)
-    router.get('/getWeeklyData', controller.getWeeklyData)
-    router.get('/getMonthlyData', controller.getMonthlyData)
-    router.get('/getYearlyData', controller.getYearlyData)
-    router.get('/getAllPostsForAdmin', controller.getAllPostsForAdmin)
+    router.get('/getAllUsersForAdmin',adminAuthMiddleware, controller.getAllUsersForAdmin)
+    router.patch('/blockUser/:userId',adminAuthMiddleware, controller.blockUser)
+    router.patch('/unblockUser/:userId',adminAuthMiddleware, controller.unblockUser)
+    router.get('/getPostReports',adminAuthMiddleware, controller.getPostReports)
+    router.patch('/blockPost/:postId',adminAuthMiddleware, controller.blockPost)
+    router.patch('/unBlockPost/:postId',adminAuthMiddleware, controller.unblockPost)
+    router.get('/getWeeklyData',adminAuthMiddleware, controller.getWeeklyData)
+    router.get('/getMonthlyData',adminAuthMiddleware, controller.getMonthlyData)
+    router.get('/getYearlyData',adminAuthMiddleware, controller.getYearlyData)
+    router.get('/getAllPostsForAdmin',adminAuthMiddleware, controller.getAllPostsForAdmin)
 
     return router
 }

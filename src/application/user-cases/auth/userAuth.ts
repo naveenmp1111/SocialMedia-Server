@@ -184,12 +184,17 @@ export const handleRefreshAccessToken = async (
   }
   const refreshToken = cookies.refreshToken;
   const { userId, role } = authService.verifyRefreshToken(refreshToken.toString());
-  if (!userId || role !== "client") {
-    throw new AppError("Invalid token!2", HttpStatus.UNAUTHORIZED);
+  
+   // Check if role is valid (either 'client' or 'admin')
+   if (!userId || (role !== "client" && role !== "admin")) {
+    throw new AppError("Invalid token!", HttpStatus.UNAUTHORIZED);
   }
+
   const user = await dbUserRepository.getUserById(userId);
 
-  const newAccessToken = authService.generateAccessToken(userId, "client");
+  console.log('user for setting refresh access Token ',user)
+
+  const newAccessToken = authService.generateAccessToken(userId, user?.role as string);
   return newAccessToken;
 
 }
