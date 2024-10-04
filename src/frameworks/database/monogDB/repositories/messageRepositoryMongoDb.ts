@@ -39,7 +39,7 @@ export const messageRepositoryMongoDb = () => {
       // console.log('recieverid is ',recieverId)
       const receiverSocketId = getReceiverSocketId(recieverId)
       if (receiverSocketId) {
-        // console.log('Ready to emit event to ',receiverSocketId)
+        console.log('Ready to emit event to ', receiverSocketId)
         io.to(receiverSocketId).emit('newMessage', fullMessage)
       }
       return fullMessage
@@ -150,7 +150,7 @@ export const messageRepositoryMongoDb = () => {
   const deleteMessageForMe = async (messageId: string, userId: string) => {
     try {
       let messageIdObj = new mongoose.Types.ObjectId(messageId)
-     return await Message.findByIdAndUpdate(messageIdObj, { $addToSet: { deletedBy: userId } })
+      return await Message.findByIdAndUpdate(messageIdObj, { $addToSet: { deletedBy: userId } })
     } catch (error) {
       console.log('error is ', error)
       throw new Error('Error in deleting message for me')

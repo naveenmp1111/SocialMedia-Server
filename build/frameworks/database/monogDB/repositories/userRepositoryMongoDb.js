@@ -306,8 +306,13 @@ const userRepositoryMongoDb = () => {
     };
     const getFollowers = async (username) => {
         try {
+            const currentUser = await userModel_1.default.findOne({ username });
             const users = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'followers',
+                match: {
+                    isBlock: false, // Only include non-blocked followers
+                    _id: { $nin: currentUser?.blocklist } // Exclude users blocked by the current user
+                },
                 select: 'name username profilePic ' // Include only name and email fields
             });
             // console.log('followers data is ', users)
@@ -322,6 +327,7 @@ const userRepositoryMongoDb = () => {
         try {
             const users = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'following',
+                match: { isBlock: false },
                 select: 'name username profilePic ' // Include only name and email fields
             });
             // console.log('following data is ', users)
@@ -336,6 +342,7 @@ const userRepositoryMongoDb = () => {
         try {
             const user = await userModel_1.default.findOne({ username, isBlock: false }).populate({
                 path: 'requests',
+                match: { isBlock: false },
                 select: 'name username profilePic -_id'
             });
             return user?.requests;

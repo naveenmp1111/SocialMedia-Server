@@ -55,7 +55,12 @@ const chatRepositoryMongoDb = () => {
             const userObjectId = new mongoose_1.default.Types.ObjectId(userId); // Convert userId to ObjectId
             const chats = await chatModel_1.default.find({
                 members: { $in: [userObjectId] } // Check if userObjectId exists in the members array
-            }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
+            })
+                .populate({
+                path: 'members',
+                match: { isBlock: false }, // Only include members where isBlock is false
+                select: '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt' // Exclude sensitive fields
+            })
                 .populate('latestMessage')
                 .sort({ updatedAt: -1 }); // Sort by createdAt timestamp
             // console.log('chats are ',chats)

@@ -109,12 +109,33 @@ const userLoginUsingGoogle = async (user, dbUserRepository, authService) => {
         await dbUserRepository.addRefreshTokenAndExpiry(userDetails.email, refreshToken);
         return { userDetails, accessToken, refreshToken };
     }
+    ///---------------------------generating unique username====================>
+    const generateUniqueUsername = async (email, otpString) => {
+        let username;
+        let existingUser;
+        do {
+            // Generate the username using the email and OTP
+            username = email.slice(0, Math.min(5, email.indexOf('@'))) + otpString;
+            // Check if the generated username already exists in the database
+            existingUser = await dbUserRepository.getUserByUsername(username);
+            // If it exists, regenerate the OTP and retry
+            if (existingUser) {
+                otpString = otp_generator_1.default.generate(4, {
+                    lowerCaseAlphabets: true,
+                    upperCaseAlphabets: false,
+                    specialChars: false,
+                });
+            }
+        } while (existingUser);
+        return username;
+    };
+    //------------------------------------------------------------------------------>>>>>
     const otpString = otp_generator_1.default.generate(4, {
         lowerCaseAlphabets: true,
         upperCaseAlphabets: false,
         specialChars: false,
     });
-    const username = user.email.slice(0, user.email.indexOf('@')) + otpString;
+    const username = await generateUniqueUsername(user.email, otpString);
     const newUser = {
         name: user.name,
         email: user.email,

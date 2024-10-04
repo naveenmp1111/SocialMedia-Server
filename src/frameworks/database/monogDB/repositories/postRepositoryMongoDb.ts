@@ -70,7 +70,7 @@ export const postRepositoryMongoDb = () => {
       console.log(error)
     }
   }
-  
+
   const updatePostById = async (postId: string, description: string) => {
     try {
       const post = await Post.findByIdAndUpdate(postId, { $set: { description: description } }, { new: true });
@@ -117,10 +117,10 @@ export const postRepositoryMongoDb = () => {
         ? {
           $or: [
             { "postUser._id": { $in: user.following, $nin: user.blocklist } },
-            { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+            { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } }
           ]
         }
-        : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
+        : { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } };
 
       const posts = await Post.aggregate([
         {
@@ -231,7 +231,7 @@ export const postRepositoryMongoDb = () => {
           $unwind: "$postUser"
         },
         {
-          $match: { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+          $match: { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } }
         },
         {
           $project: {
@@ -342,8 +342,8 @@ export const postRepositoryMongoDb = () => {
 
   const blockPost = async (postId: string) => {
     try {
-     const postData= await Post.findByIdAndUpdate(postId, { $set: { isBlock: true } }, { new: true })
-     return postData
+      const postData = await Post.findByIdAndUpdate(postId, { $set: { isBlock: true } }, { new: true })
+      return postData
     } catch (error) {
       console.log('error in blocking post')
     }
@@ -394,7 +394,7 @@ export const postRepositoryMongoDb = () => {
       }
 
       // Find posts where the user is tagged
-      const posts = await Post.find({ taggedUsers: user._id })
+      const posts = await Post.find({ taggedUsers: user._id, isBlock: false, userId: { $nin: user.blocklist } })
         .populate('userId', 'profilePic username')
         .sort({ createdAt: -1 });
 

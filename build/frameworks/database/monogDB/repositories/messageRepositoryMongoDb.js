@@ -34,7 +34,7 @@ const messageRepositoryMongoDb = () => {
             // console.log('recieverid is ',recieverId)
             const receiverSocketId = (0, socketConfig_1.getReceiverSocketId)(recieverId);
             if (receiverSocketId) {
-                // console.log('Ready to emit event to ',receiverSocketId)
+                console.log('Ready to emit event to ', receiverSocketId);
                 app_1.io.to(receiverSocketId).emit('newMessage', fullMessage);
             }
             return fullMessage;

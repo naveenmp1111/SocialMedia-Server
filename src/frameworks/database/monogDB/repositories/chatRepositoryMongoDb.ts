@@ -53,7 +53,12 @@ export const chatRepositoryMongoDb = () => {
       const userObjectId = new mongoose.Types.ObjectId(userId); // Convert userId to ObjectId
       const chats = await Chat.find({
         members: { $in: [userObjectId] } // Check if userObjectId exists in the members array
-      }).populate('members', '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt')
+      })
+        .populate({
+          path: 'members',
+          match: { isBlock: false }, // Only include members where isBlock is false
+          select: '-password -savedPosts -posts -refreshToken -refreshTokenExpiresAt' // Exclude sensitive fields
+        })
         .populate('latestMessage')
         .sort({ updatedAt: -1 }); // Sort by createdAt timestamp
       // console.log('chats are ',chats)
@@ -73,8 +78,8 @@ export const chatRepositoryMongoDb = () => {
       //   throw new Error("Message not found or message content is empty");
       // }
 
-      const message=await Message.find({chatId:chatId,isDeleted:false}).sort({createdAt:-1}).limit(1)
-      console.log('latest message to be ',message)
+      const message = await Message.find({ chatId: chatId, isDeleted: false }).sort({ createdAt: -1 }).limit(1)
+      console.log('latest message to be ', message)
 
       // Update the chat's latest message
       const chatData = await Chat.findByIdAndUpdate(

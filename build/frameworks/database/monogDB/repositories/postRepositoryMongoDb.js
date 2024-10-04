@@ -116,10 +116,10 @@ const postRepositoryMongoDb = () => {
                 ? {
                     $or: [
                         { "postUser._id": { $in: user.following, $nin: user.blocklist } },
-                        { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+                        { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } }
                     ]
                 }
-                : { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } };
+                : { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } };
             const posts = await postModel_1.default.aggregate([
                 {
                     $match: { isBlock: false }
@@ -226,7 +226,7 @@ const postRepositoryMongoDb = () => {
                     $unwind: "$postUser"
                 },
                 {
-                    $match: { "postUser.isPrivate": false, "postUser._id": { $nin: user.blocklist } }
+                    $match: { "postUser.isPrivate": false, "postUser.isBlock": false, "postUser._id": { $nin: user.blocklist } }
                 },
                 {
                     $project: {
@@ -382,7 +382,7 @@ const postRepositoryMongoDb = () => {
                 throw new Error('User not found');
             }
             // Find posts where the user is tagged
-            const posts = await postModel_1.default.find({ taggedUsers: user._id })
+            const posts = await postModel_1.default.find({ taggedUsers: user._id, isBlock: false, userId: { $nin: user.blocklist } })
                 .populate('userId', 'profilePic username')
                 .sort({ createdAt: -1 });
             // Transform the result to include `user` object
