@@ -10,7 +10,7 @@ export const chatDbRepository = (repository: ReturnType<ChatRepositoryMongoDb>) 
 
     const fetchChats = (userId: string) => repository.fetchChats(userId)
 
-    const setLatestMessage = (chatId: string, messageId: any) => repository.setLatestMessage(chatId, messageId as string)
+    const setLatestMessage = (chatId: string, messageId?: any) => repository.setLatestMessage(chatId, messageId as string)
 
     return {
         createChat,

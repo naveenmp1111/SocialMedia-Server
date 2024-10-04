@@ -47,7 +47,7 @@ const messageController = (chatDbRepositoryImpl, chatDbRepositoryInterface, mess
     });
     const deleteMessage = (0, express_async_handler_1.default)(async (req, res) => {
         const { messageId, userId } = req.body;
-        await (0, message_1.handleDeleteMessage)(messageId, messageDbRepository);
+        await (0, message_1.handleDeleteMessage)(messageId, messageDbRepository, chatDbRepository);
         res.status(200).json({
             status: 'success',
             message: 'message deleted successfully'

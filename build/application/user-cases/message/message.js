@@ -68,12 +68,15 @@ const handleSetUnreadMessagesRead = async (chatId, userId, messageDbRepository) 
     }
 };
 exports.handleSetUnreadMessagesRead = handleSetUnreadMessagesRead;
-const handleDeleteMessage = async (messageId, messageDbRepository) => {
+const handleDeleteMessage = async (messageId, messageDbRepository, chatDbRepository) => {
     if (!messageId) {
         throw new appError_1.default('Invalid messageId', httpStatus_1.HttpStatus.UNAUTHORIZED);
     }
     try {
-        return await messageDbRepository.deleteMessage(messageId);
+        const deleteMessage = await messageDbRepository.deleteMessage(messageId);
+        console.log('deleted message response is ', deleteMessage);
+        await chatDbRepository.setLatestMessage(deleteMessage[0].chatId);
+        return deleteMessage;
     }
     catch (error) {
         throw new appError_1.default('Error in deleting message', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);

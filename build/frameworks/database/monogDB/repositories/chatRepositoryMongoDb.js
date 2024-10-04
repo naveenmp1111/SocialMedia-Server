@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.chatRepositoryMongoDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const chatModel_1 = __importDefault(require("../models/chatModel"));
+const messageModel_1 = __importDefault(require("../models/messageModel"));
 const chatRepositoryMongoDb = () => {
     const createChat = async (loggedInUserId, otherUserId) => {
         try {
@@ -68,11 +69,13 @@ const chatRepositoryMongoDb = () => {
         try {
             const chatObjectId = new mongoose_1.default.Types.ObjectId(chatId);
             // Ensure the message exists and has a message field
-            if (!messageId) {
-                throw new Error("Message not found or message content is empty");
-            }
+            // if (!messageId) {
+            //   throw new Error("Message not found or message content is empty");
+            // }
+            const message = await messageModel_1.default.find({ chatId: chatId, isDeleted: false }).sort({ createdAt: -1 }).limit(1);
+            console.log('latest message to be ', message);
             // Update the chat's latest message
-            const chatData = await chatModel_1.default.findByIdAndUpdate(chatObjectId, { $set: { latestMessage: messageId } }, { new: true } // Return the updated document
+            const chatData = await chatModel_1.default.findByIdAndUpdate(chatObjectId, { $set: { latestMessage: message[0]._id } }, { new: true } // Return the updated document
             ).populate('latestMessage');
             // Ensure the chat was found and updated
             if (!chatData) {

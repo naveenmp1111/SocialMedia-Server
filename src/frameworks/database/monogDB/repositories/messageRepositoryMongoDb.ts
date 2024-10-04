@@ -133,6 +133,7 @@ export const messageRepositoryMongoDb = () => {
         io.to(receiverSocketId).emit('deleteMessage', messageId)
       }
       const lastMessage = await Message.find({ chatId: messageData?.chatId, isDeleted: false }).sort({ createdAt: -1 }).limit(1)
+      return lastMessage
       //   console.log('latestmessage inside chat is',lastMessage)
       //   //@ts-ignore  
       //   let chatIdObj=new mongoose.Types.ObjectId(messageData?.chatId as string)
@@ -149,7 +150,7 @@ export const messageRepositoryMongoDb = () => {
   const deleteMessageForMe = async (messageId: string, userId: string) => {
     try {
       let messageIdObj = new mongoose.Types.ObjectId(messageId)
-      await Message.findByIdAndUpdate(messageIdObj, { $addToSet: { deletedBy: userId } })
+     return await Message.findByIdAndUpdate(messageIdObj, { $addToSet: { deletedBy: userId } })
     } catch (error) {
       console.log('error is ', error)
       throw new Error('Error in deleting message for me')

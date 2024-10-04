@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import Chat from "../models/chatModel"
+import Message from "../models/messageModel"
 
 export const chatRepositoryMongoDb = () => {
 
@@ -63,19 +64,22 @@ export const chatRepositoryMongoDb = () => {
     }
   }
 
-  const setLatestMessage = async (chatId: string, messageId: string) => {
+  const setLatestMessage = async (chatId: string, messageId?: string) => {
     try {
       const chatObjectId = new mongoose.Types.ObjectId(chatId);
 
       // Ensure the message exists and has a message field
-      if (!messageId) {
-        throw new Error("Message not found or message content is empty");
-      }
+      // if (!messageId) {
+      //   throw new Error("Message not found or message content is empty");
+      // }
+
+      const message=await Message.find({chatId:chatId,isDeleted:false}).sort({createdAt:-1}).limit(1)
+      console.log('latest message to be ',message)
 
       // Update the chat's latest message
       const chatData = await Chat.findByIdAndUpdate(
         chatObjectId,
-        { $set: { latestMessage: messageId } },
+        { $set: { latestMessage: message[0]._id } },
         { new: true } // Return the updated document
       ).populate('latestMessage')
 
